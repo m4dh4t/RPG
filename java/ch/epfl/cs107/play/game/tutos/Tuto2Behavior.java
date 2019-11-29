@@ -1,7 +1,6 @@
 package ch.epfl.cs107.play.game.tutos;
 
 import ch.epfl.cs107.play.game.areagame.AreaBehavior;
-import ch.epfl.cs107.play.game.areagame.Cell;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -49,49 +48,49 @@ public class Tuto2Behavior extends AreaBehavior {
             return NULL;
         }
     }
-}
 
-class Tuto2Cell extends Cell {
-    /// Type of the cell following the enum
-    private final Tuto2Behavior.Tuto2CellType type;
+    public class Tuto2Cell extends AreaBehavior.Cell {
+        /// Type of the cell following the enum
+        private final Tuto2Behavior.Tuto2CellType type;
 
-    /**
-     * Default Tuto2Cell Constructor
-     * @param x (int): x coordinate of the cell
-     * @param y (int): y coordinate of the cell
-     * @param type (EnigmeCellType), not null
-     */
-    public Tuto2Cell(int x, int y, Tuto2Behavior.Tuto2CellType type){
-        super(x, y);
-        this.type = type;
+        /**
+         * Default Tuto2Cell Constructor
+         * @param x (int): x coordinate of the cell
+         * @param y (int): y coordinate of the cell
+         * @param type (EnigmeCellType), not null
+         */
+        public Tuto2Cell(int x, int y, Tuto2Behavior.Tuto2CellType type){
+            super(x, y);
+            this.type = type;
+        }
+
+        public boolean isDoor() {
+            return type == Tuto2Behavior.Tuto2CellType.DOOR;
+        }
+
+        @Override
+        protected boolean canLeave(Interactable entity) {
+            return true;
+        }
+
+        @Override
+        protected boolean canEnter(Interactable entity) {
+            return type.isWalkable;
+        }
+
+        @Override
+        public boolean isCellInteractable() {
+            return true;
+        }
+
+        @Override
+        public boolean isViewInteractable() {
+            return false;
+        }
+
+        @Override
+        public void acceptInteraction(AreaInteractionVisitor v) {
+        }
+
     }
-
-    public boolean isDoor() {
-        return type == Tuto2Behavior.Tuto2CellType.DOOR;
-    }
-
-    @Override
-    protected boolean canLeave(Interactable entity) {
-        return true;
-    }
-
-    @Override
-    protected boolean canEnter(Interactable entity) {
-        return type.isWalkable;
-    }
-
-    @Override
-    public boolean isCellInteractable() {
-        return true;
-    }
-
-    @Override
-    public boolean isViewInteractable() {
-        return false;
-    }
-
-    @Override
-    public void acceptInteraction(AreaInteractionVisitor v) {
-    }
-
 }

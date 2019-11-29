@@ -19,7 +19,7 @@ import java.util.List;
 
 public class GhostPlayer extends MovableAreaEntity {
     /// Animation duration in frame number
-    private final static int ANIMATION_DURATION = 2;
+    private final static int ANIMATION_DURATION = 2; //DEFAULT: 8
     private boolean isPassingADoor;
     private Sprite sprite;
     private TextGraphics message;
