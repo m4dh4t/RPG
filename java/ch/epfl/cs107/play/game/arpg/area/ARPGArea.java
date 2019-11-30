@@ -29,10 +29,6 @@ abstract public class ARPGArea extends Area {
         return false;
     }
 
-    public boolean isDoor(DiscreteCoordinates coord) {
-        return (behavior.isDoor(coord));
-    }
-
     @Override
     public float getCameraScaleFactor() {
         return ARPG.CAMERA_SCALE_FACTOR;

@@ -22,8 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ARPGPlayer extends Player {
-    private final static int ANIMATION_DURATION = 5; //DEFAULT: 8
-    private Sprite[][] sprites;
+    private final static int ANIMATION_DURATION = 4; //DEFAULT: 8
     private Animation[] animations;
     private Animation currentAnimation;
     private TextGraphics message;
@@ -32,6 +31,7 @@ public class ARPGPlayer extends Player {
 
     public ARPGPlayer(Area area, DiscreteCoordinates coordinates) {
         super(area, Orientation.DOWN, coordinates);
+        Sprite[][] sprites;
         this.hp = 10;
         message = new TextGraphics(Integer.toString((int)hp), 0.4f, Color.BLUE);
         message.setParent(this);
@@ -96,14 +96,10 @@ public class ARPGPlayer extends Player {
 
     @Override
     public boolean wantsViewInteraction() {
-        if (getOwnerArea().getKeyboard().get(Keyboard.E).isDown()) {
-            return true;
-        }
-
-        return false;
+        return getOwnerArea().getKeyboard().get(Keyboard.E).isDown();
     }
 
-    public boolean isWeak() {
+    private boolean isWeak() {
         return (hp <= 0.f);
     }
 
@@ -132,18 +128,24 @@ public class ARPGPlayer extends Player {
         moveOrientate(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
         moveOrientate(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
 
+        if (getOrientation() == Orientation.UP) {
+            currentAnimation = animations[0];
+        } else if (getOrientation() == Orientation.RIGHT) {
+            currentAnimation = animations[1];
+        } else if (getOrientation() == Orientation.DOWN) {
+            currentAnimation = animations[2];
+        } else if (getOrientation() == Orientation.LEFT) {
+            currentAnimation = animations[3];
+        }
+
         if (isDisplacementOccurs()) {
             if (getOrientation() == Orientation.UP) {
-                currentAnimation = animations[0];
                 currentAnimation.update(deltaTime);
             } else if (getOrientation() == Orientation.RIGHT) {
-                currentAnimation = animations[1];
                 currentAnimation.update(deltaTime);
             } else if (getOrientation() == Orientation.DOWN) {
-                currentAnimation = animations[2];
                 currentAnimation.update(deltaTime);
             } else if (getOrientation() == Orientation.LEFT) {
-                currentAnimation = animations[3];
                 currentAnimation.update(deltaTime);
             }
         } else {
@@ -159,6 +161,7 @@ public class ARPGPlayer extends Player {
             setIsPassingADoor(door);
         }
 
+        @Override
         public void interactWith(Grass grass) {
             grass.slice();
         }

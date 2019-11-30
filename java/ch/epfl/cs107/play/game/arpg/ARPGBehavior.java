@@ -18,10 +18,6 @@ public class ARPGBehavior extends AreaBehavior {
         }
     }
 
-    public boolean isDoor(DiscreteCoordinates coord) {
-        return (((ARPGCell)getCell(coord.x, coord.y)).isDoor());
-    }
-
     public enum ARPGCellType {
         NULL(0, false),
         WALL(-16777216, false),         // #000000, RGB code of black
@@ -59,13 +55,9 @@ public class ARPGBehavior extends AreaBehavior {
          * @param y (int): y coordinate of the cell
          * @param type (EnigmeCellType), not null
          */
-        public ARPGCell(int x, int y, ARPGBehavior.ARPGCellType type){
+        private ARPGCell(int x, int y, ARPGBehavior.ARPGCellType type){
             super(x, y);
             this.type = type;
-        }
-
-        public boolean isDoor() {
-            return type == ARPGBehavior.ARPGCellType.DOOR;
         }
 
         @Override
@@ -75,7 +67,7 @@ public class ARPGBehavior extends AreaBehavior {
 
         @Override
         protected boolean canEnter(Interactable entity) {
-            return type.isWalkable;
+            return type.isWalkable && !hasNonTraversableContent();
         }
 
         @Override
