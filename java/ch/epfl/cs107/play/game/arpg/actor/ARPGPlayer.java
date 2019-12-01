@@ -52,7 +52,7 @@ public class ARPGPlayer extends Player {
             if (getOrientation() == orientation) {
                 move(ANIMATION_DURATION);
                 animate(orientation);
-            } else if (!isDisplacementOccurs() && !getOwnerArea().getKeyboard().get(getOrientation().getCode(getOrientation())).isDown()) {
+            } else if (!isDisplacementOccurs() && !getOwnerArea().getKeyboard().get(Orientation.getCode(getOrientation())).isDown()) {
                 orientate(orientation);
                 animate(orientation);
             }

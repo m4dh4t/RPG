@@ -88,7 +88,7 @@ public enum Orientation {
         return super.toString()+direction.toString();
     }
 
-    public int getCode(Orientation orientation) {
+    public static int getCode(Orientation orientation) {
         if (orientation == Orientation.LEFT) {
             return 37;
         } else if (orientation == Orientation.UP) {
