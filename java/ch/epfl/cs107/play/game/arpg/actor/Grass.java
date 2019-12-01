@@ -59,9 +59,10 @@ public class Grass extends AreaEntity {
         if (!sliced && !burnt) {
             sprite.draw(canvas);
         } else {
-            if (sliced && !sliceAnimation.isCompleted()) {
+            if (sliced && !sliceAnimation.isCompleted() && !burnt) {
                 sliceAnimation.draw(canvas);
-            } else if (burnt && !burnAnimation.isCompleted()) {
+
+            } else if (burnt && !burnAnimation.isCompleted() && !sliced) {
                 burnAnimation.draw(canvas);
             }
         }

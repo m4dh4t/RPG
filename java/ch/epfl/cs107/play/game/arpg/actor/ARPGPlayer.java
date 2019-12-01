@@ -51,9 +51,23 @@ public class ARPGPlayer extends Player {
         if (button.isDown()) {
             if (getOrientation() == orientation) {
                 move(ANIMATION_DURATION);
-            } else {
+                animate(orientation);
+            } else if (!isDisplacementOccurs() && !getOwnerArea().getKeyboard().get(getOrientation().getCode(getOrientation())).isDown()) {
                 orientate(orientation);
+                animate(orientation);
             }
+        }
+    }
+
+    private void animate(Orientation orientation) {
+        if(orientation == Orientation.UP){
+            currentAnimation = animations[0];
+        } else if(orientation == Orientation.RIGHT){
+            currentAnimation = animations[1];
+        } else if(orientation == Orientation.DOWN){
+            currentAnimation = animations[2];
+        } else if(orientation == Orientation.LEFT){
+            currentAnimation = animations[3];
         }
     }
 
@@ -131,28 +145,12 @@ public class ARPGPlayer extends Player {
         moveOrientate(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
         moveOrientate(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
 
-        if (getOrientation() == Orientation.UP) {
-            currentAnimation = animations[0];
-        } else if (getOrientation() == Orientation.RIGHT) {
-            currentAnimation = animations[1];
-        } else if (getOrientation() == Orientation.DOWN) {
-            currentAnimation = animations[2];
-        } else if (getOrientation() == Orientation.LEFT) {
-            currentAnimation = animations[3];
-        }
-
-        if (isDisplacementOccurs()) {
-            if (getOrientation() == Orientation.UP) {
-                currentAnimation.update(deltaTime);
-            } else if (getOrientation() == Orientation.RIGHT) {
-                currentAnimation.update(deltaTime);
-            } else if (getOrientation() == Orientation.DOWN) {
-                currentAnimation.update(deltaTime);
-            } else if (getOrientation() == Orientation.LEFT) {
-                currentAnimation.update(deltaTime);
+        for(int i = 0; i < 4; i++) {
+            if (isDisplacementOccurs()) {
+                animations[i].update(deltaTime);
+            } else {
+                animations[i].reset();
             }
-        } else {
-            currentAnimation.reset();
         }
 
         super.update(deltaTime);
