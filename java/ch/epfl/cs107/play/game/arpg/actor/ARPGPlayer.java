@@ -48,11 +48,14 @@ public class ARPGPlayer extends Player {
     }
 
     private void moveOrientate(Orientation orientation, Button button) {
+        Keyboard keyboard = getOwnerArea().getKeyboard();
+        Button orientationKey = keyboard.get(Orientation.getCode(getOrientation()));
+
         if (button.isDown()) {
             if (getOrientation() == orientation) {
                 move(ANIMATION_DURATION);
                 animate(orientation);
-            } else if (!isDisplacementOccurs() && !getOwnerArea().getKeyboard().get(Orientation.getCode(getOrientation())).isDown()) {
+            } else if (!isDisplacementOccurs() && !orientationKey.isDown()) {
                 orientate(orientation);
                 animate(orientation);
             }
