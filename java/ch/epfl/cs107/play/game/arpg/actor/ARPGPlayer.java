@@ -25,21 +25,24 @@ public class ARPGPlayer extends Player {
     private final static int ANIMATION_DURATION = 4; //DEFAULT: 8
     private Animation[] animations;
     private Animation currentAnimation;
+
+    private ARPGPlayerHandler handler;
+
     private TextGraphics message;
     private float hp;
-    private ARPGPlayerHandler handler;
 
     public ARPGPlayer(Area area, DiscreteCoordinates coordinates) {
         super(area, Orientation.DOWN, coordinates);
-        Sprite[][] sprites;
-        this.hp = 10;
+        handler = new ARPGPlayerHandler();
+
+        hp = 10;
         message = new TextGraphics(Integer.toString((int)hp), 0.4f, Color.BLUE);
         message.setParent(this);
         message.setAnchor(new Vector(-0.3f, 0.1f));
-        sprites = RPGSprite.extractSprites("zelda/player", 4, 1, 2, this, 16, 32, new Orientation[] {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
+
+        Sprite[][] sprites = RPGSprite.extractSprites("zelda/player", 4, 1, 2, this, 16, 32, new Orientation[] {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
         animations = RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites);
         currentAnimation = animations[2];
-        handler = new ARPGPlayerHandler();
 
         resetMotion();
     }

@@ -177,4 +177,14 @@ public class RPGSprite extends Sprite {
 		}
 		return sprites;
 	}
+
+	public static Sprite[] extractSprites(String name, int nbFrames, float width, float height, Positionable parent, int regionWidth, int regionHeight){
+
+		Sprite[] sprites = new Sprite[nbFrames];
+
+		for(int i = 0; i < nbFrames; i++){
+			sprites[i] = new RPGSprite(name, width, height, parent, new RegionOfInterest(i*regionWidth, 0, regionWidth, regionHeight));
+		}
+		return sprites;
+	}
 }

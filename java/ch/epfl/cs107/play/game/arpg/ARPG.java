@@ -13,6 +13,9 @@ import ch.epfl.cs107.play.window.Window;
 public class ARPG extends RPG {
     public final static float CAMERA_SCALE_FACTOR = 13.f;
 
+    private final String startingArea = "zelda/Farm";
+    private final DiscreteCoordinates startingPosition = new DiscreteCoordinates(6,10);
+
     private void createAreas(){
         addArea(new Farm());
         addArea(new Village());
@@ -37,8 +40,8 @@ public class ARPG extends RPG {
     public boolean begin(Window window, FileSystem fileSystem) {
         if (super.begin(window, fileSystem)){
             createAreas();
-            Area area = setCurrentArea("zelda/Farm", true);
-            initPlayer(new ARPGPlayer(area, new DiscreteCoordinates(6,10)));
+            Area area = setCurrentArea(startingArea, true);
+            initPlayer(new ARPGPlayer(area, startingPosition));
             return true;
         } else {
             return false;

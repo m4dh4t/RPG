@@ -9,6 +9,7 @@ import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
@@ -16,26 +17,52 @@ import java.util.Collections;
 import java.util.List;
 
 public class Grass extends AreaEntity {
-    private final static int ANIMATION_DURATION = 8;
-    private RPGSprite sprite;
+    private final static int SLICE_DURATION = 8;
+    private final static int BURN_DURATION = 8;
+    private Sprite sprite;
+    private Animation sliceAnimation;
+    private Animation burnAnimation;
+
+
     private boolean sliced;
-    private Animation animation;
+    private boolean burnt;
+
 
     public Grass(Area area, DiscreteCoordinates position) {
         super(area, Orientation.DOWN, position);
-        sprite = new RPGSprite("zelda/grass", 1.f,1.f,this,null, Vector.ZERO,1.f,1);
-        Sprite[][] sprites = RPGSprite.extractSprites("zelda/grass.sliced",4,2.f,2.f,this,32,32,new Orientation[] {Orientation.UP,Orientation.RIGHT,Orientation.DOWN,Orientation.LEFT});
-        Animation[] animations = RPGSprite.createAnimations(ANIMATION_DURATION, sprites, false);
-        animation = animations[0];
+        sprite = new RPGSprite("zelda/grass", 1.f,1.f,this,new RegionOfInterest(0,0,16,16));
+
+
+        Sprite[] sliceSprites = RPGSprite.extractSprites("zelda/grass.sliced",4,2.f,2.f,this,32,32);
+        sliceAnimation = new Animation(SLICE_DURATION, sliceSprites, false);
+
+        Sprite[] burnSprites = RPGSprite.extractSprites("zelda/fire",4,1.f,1.f,this,16,16);
+        burnAnimation = new Animation(BURN_DURATION, burnSprites, false);
+    }
+
+    public static Grass[] grassZone(Area area, int xBegin, int xEnd, int yBegin, int yEnd){
+        Grass[] grasses = new Grass[(xEnd-xBegin+1)*(yEnd-yBegin+1)];
+        int grassesIndex = 0;
+
+        for(int i = xBegin; i <= xEnd; i++){
+            for(int j = yBegin; j <= yEnd; j++){
+                grasses[grassesIndex] = new Grass(area, new DiscreteCoordinates(i, j));
+                ++grassesIndex;
+            }
+        }
+
+        return grasses;
     }
 
     @Override
     public void draw(Canvas canvas) {
-        if (!sliced) {
+        if (!sliced && !burnt) {
             sprite.draw(canvas);
         } else {
-            if (!animation.isCompleted()) {
-                animation.draw(canvas);
+            if (sliced && !sliceAnimation.isCompleted()) {
+                sliceAnimation.draw(canvas);
+            } else if (burnt && !burnAnimation.isCompleted()) {
+                burnAnimation.draw(canvas);
             }
         }
     }
@@ -47,7 +74,7 @@ public class Grass extends AreaEntity {
 
     @Override
     public boolean takeCellSpace() {
-        return !sliced;
+        return !sliced && !burnt;
     }
 
     @Override
@@ -69,10 +96,16 @@ public class Grass extends AreaEntity {
         sliced = true;
     }
 
+    void burn() {
+        burnt = true;
+    }
+
     @Override
     public void update(float deltaTime) {
         if (sliced) {
-            animation.update(deltaTime);
+            sliceAnimation.update(deltaTime);
+        } else if (burnt) {
+            burnAnimation.update(deltaTime);
         }
     }
 }
