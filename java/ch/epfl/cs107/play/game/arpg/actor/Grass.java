@@ -67,6 +67,8 @@ public class Grass extends AreaEntity {
 
             } else if (burnt && !burnAnimation.isCompleted() && !cut) {
                 burnAnimation.draw(canvas);
+            } else {
+                getOwnerArea().unregisterActor(this);
             }
         }
     }

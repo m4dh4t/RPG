@@ -41,7 +41,7 @@ public class ARPGPlayer extends Player {
         super(area, Orientation.DOWN, coordinates);
         handler = new ARPGPlayerHandler();
 
-        hp = 10;
+        hp = 5;
         message = new TextGraphics(Integer.toString((int)hp), 0.4f, Color.BLUE);
         message.setParent(this);
         message.setAnchor(new Vector(-0.3f, 0.1f));
