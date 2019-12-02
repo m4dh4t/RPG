@@ -7,6 +7,13 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Window;
 
 public class ARPGBehavior extends AreaBehavior {
+
+    /**
+     * AreaBehavior Constructor
+     *
+     * @param window (Window): graphic context, not null
+     * @param name   (String): name of the behavior image, not null
+     */
     public ARPGBehavior(Window window, String name){
         super(window, name);
 
@@ -47,7 +54,7 @@ public class ARPGBehavior extends AreaBehavior {
 
     public class ARPGCell extends AreaBehavior.Cell {
         /// Type of the cell following the enum
-        private final ARPGBehavior.ARPGCellType type;
+        private final ARPGCellType type;
 
         /**
          * Default ARPGCell Constructor

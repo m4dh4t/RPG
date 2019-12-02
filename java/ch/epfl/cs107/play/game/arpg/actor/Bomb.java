@@ -7,15 +7,13 @@ import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
-import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class Bomb extends AreaEntity implements Interactor {
-    private final static int EXPLOSION_DURATION = 4;
+    private final static int EXPLOSION_DURATION = 2;
     private Sprite sprite;
     private Animation animation;
 
@@ -24,14 +22,20 @@ public class Bomb extends AreaEntity implements Interactor {
     private int timer;
     private boolean exploded;
 
-    public Bomb(Area area, Orientation orientation, DiscreteCoordinates position, int timer) {
-        super(area, orientation, position);
+    /**
+     * Default AreaEntity constructor
+     *
+     * @param area        (Area): Owner area. Not null
+     * @param position    (DiscreteCoordinate): Initial position of the entity in the Area. Not null
+     */
+    public Bomb(Area area,  DiscreteCoordinates position, int timer) {
+        super(area, Orientation.DOWN, position);
 
         this.timer = timer;
         exploded = false;
         handler = new BombHandler();
 
-        sprite = new RPGSprite("zelda/bomb", 1, 1, this, new RegionOfInterest(0, 0, 16, 16), Vector.ZERO, 1.f, 1);
+        sprite = new RPGSprite("zelda/bomb", 1, 1, this, new RegionOfInterest(0, 0, 16, 16));
 
         Sprite[] sprites = RPGSprite.extractSprites("zelda/explosion", 7, 1, 1, this, 32, 32);
         animation = new Animation(EXPLOSION_DURATION, sprites, false);

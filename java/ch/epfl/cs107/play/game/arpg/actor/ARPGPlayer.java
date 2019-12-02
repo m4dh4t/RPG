@@ -31,6 +31,12 @@ public class ARPGPlayer extends Player {
     private TextGraphics message;
     private float hp;
 
+    /**
+     * Default Player constructor
+     *
+     * @param area        (Area): Owner Area, not null
+     * @param coordinates (Coordinates): Initial position, not null
+     */
     public ARPGPlayer(Area area, DiscreteCoordinates coordinates) {
         super(area, Orientation.DOWN, coordinates);
         handler = new ARPGPlayerHandler();
@@ -101,7 +107,6 @@ public class ARPGPlayer extends Player {
 
     @Override
     public void acceptInteraction(AreaInteractionVisitor v) {
-        ((ARPGInteractionVisitor)v).interactWith(this);
     }
 
     @Override
@@ -167,7 +172,7 @@ public class ARPGPlayer extends Player {
 
         @Override
         public void interactWith(Grass grass) {
-            grass.slice();
+            grass.cut();
         }
     }
 }

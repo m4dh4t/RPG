@@ -10,31 +10,34 @@ import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
-import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
 import java.util.Collections;
 import java.util.List;
 
 public class Grass extends AreaEntity {
-    private final static int SLICE_DURATION = 8;
-    private final static int BURN_DURATION = 8;
+    private final static int CUT_DURATION = 4;
+    private final static int BURN_DURATION = 4;
+
     private Sprite sprite;
-    private Animation sliceAnimation;
+    private Animation cutAnimation;
     private Animation burnAnimation;
 
-
-    private boolean sliced;
+    private boolean cut;
     private boolean burnt;
 
 
     public Grass(Area area, DiscreteCoordinates position) {
         super(area, Orientation.DOWN, position);
+
+        cut = false;
+        burnt = false;
+
         sprite = new RPGSprite("zelda/grass", 1.f,1.f,this,new RegionOfInterest(0,0,16,16));
 
 
-        Sprite[] sliceSprites = RPGSprite.extractSprites("zelda/grass.sliced",4,2.f,2.f,this,32,32);
-        sliceAnimation = new Animation(SLICE_DURATION, sliceSprites, false);
+        Sprite[] cutSprites = RPGSprite.extractSprites("zelda/grass.sliced",4,2.f,2.f,this,32,32);
+        cutAnimation = new Animation(CUT_DURATION, cutSprites, false);
 
         Sprite[] burnSprites = RPGSprite.extractSprites("zelda/fire",4,1.f,1.f,this,16,16);
         burnAnimation = new Animation(BURN_DURATION, burnSprites, false);
@@ -56,13 +59,13 @@ public class Grass extends AreaEntity {
 
     @Override
     public void draw(Canvas canvas) {
-        if (!sliced && !burnt) {
+        if (!cut && !burnt) {
             sprite.draw(canvas);
         } else {
-            if (sliced && !sliceAnimation.isCompleted() && !burnt) {
-                sliceAnimation.draw(canvas);
+            if (cut && !cutAnimation.isCompleted() && !burnt) {
+                cutAnimation.draw(canvas);
 
-            } else if (burnt && !burnAnimation.isCompleted() && !sliced) {
+            } else if (burnt && !burnAnimation.isCompleted() && !cut) {
                 burnAnimation.draw(canvas);
             }
         }
@@ -75,7 +78,7 @@ public class Grass extends AreaEntity {
 
     @Override
     public boolean takeCellSpace() {
-        return !sliced && !burnt;
+        return !cut && !burnt;
     }
 
     @Override
@@ -93,8 +96,8 @@ public class Grass extends AreaEntity {
         ((ARPGInteractionVisitor)v).interactWith(this);
     }
 
-    void slice() {
-        sliced = true;
+    void cut() {
+        cut = true;
     }
 
     void burn() {
@@ -103,8 +106,8 @@ public class Grass extends AreaEntity {
 
     @Override
     public void update(float deltaTime) {
-        if (sliced) {
-            sliceAnimation.update(deltaTime);
+        if (cut) {
+            cutAnimation.update(deltaTime);
         } else if (burnt) {
             burnAnimation.update(deltaTime);
         }
