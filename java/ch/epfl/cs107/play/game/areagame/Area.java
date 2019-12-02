@@ -12,10 +12,7 @@ import ch.epfl.cs107.play.window.Keyboard;
 import ch.epfl.cs107.play.window.Mouse;
 import ch.epfl.cs107.play.window.Window;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -122,6 +119,10 @@ public abstract class Area implements Playable {
     public final boolean registerActor(Actor a){
         //  finer Area strategies can be implemented here if wanted
         return registeredActors.add(a);
+    }
+
+    public final boolean registerActors(Actor[] a){
+        return registeredActors.addAll(Arrays.asList(a));
     }
 
     /**
