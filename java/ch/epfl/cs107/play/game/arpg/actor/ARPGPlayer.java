@@ -30,6 +30,7 @@ public class ARPGPlayer extends Player {
 
     private TextGraphics message;
     private float hp;
+    private ARPGInventory inventory;
 
     /**
      * Default Player constructor
@@ -49,6 +50,8 @@ public class ARPGPlayer extends Player {
         Sprite[][] sprites = RPGSprite.extractSprites("zelda/player", 4, 1, 2, this, 16, 32, new Orientation[] {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
         animations = RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites);
         currentAnimation = animations[2];
+
+        inventory = new ARPGInventory(50, this);
 
         resetMotion();
     }
