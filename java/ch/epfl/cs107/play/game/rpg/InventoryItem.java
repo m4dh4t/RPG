@@ -1,23 +1,10 @@
 package ch.epfl.cs107.play.game.rpg;
 
-public class InventoryItem {
-    private String name;
-    private float weight;
-    private int price;
+public interface InventoryItem {
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    String getName();
 
-    public void setWeight(float weight) {
-        this.weight = weight;
-    }
+    float getWeight();
 
-    public void setPrice(int price) {
-        this.price = price;
-    }
-
-    public float getWeight() {
-        return weight;
-    }
+    int getPrice();
 }

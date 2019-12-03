@@ -7,7 +7,10 @@ import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
+import ch.epfl.cs107.play.game.arpg.ARPGItem;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
+import ch.epfl.cs107.play.game.rpg.Inventory;
+import ch.epfl.cs107.play.game.rpg.InventoryItem;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
 import ch.epfl.cs107.play.game.rpg.actor.Player;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
@@ -21,7 +24,7 @@ import java.awt.Color;
 import java.util.Collections;
 import java.util.List;
 
-public class ARPGPlayer extends Player {
+public class ARPGPlayer extends Player implements Inventory.Holder {
     private final static int ANIMATION_DURATION = 4; //DEFAULT: 8
     private Animation[] animations;
     private Animation currentAnimation;
@@ -30,6 +33,8 @@ public class ARPGPlayer extends Player {
 
     private TextGraphics message;
     private float hp;
+    private ARPGInventory inventory;
+    private ARPGItem currentItem;
 
     /**
      * Default Player constructor
@@ -40,6 +45,8 @@ public class ARPGPlayer extends Player {
     public ARPGPlayer(Area area, DiscreteCoordinates coordinates) {
         super(area, Orientation.DOWN, coordinates);
         handler = new ARPGPlayerHandler();
+        inventory = new ARPGInventory(50);
+        inventory.add(ARPGItem.BOMB, 3);
 
         hp = 5;
         message = new TextGraphics(Integer.toString((int)hp), 0.4f, Color.BLUE);
@@ -161,7 +168,25 @@ public class ARPGPlayer extends Player {
             }
         }
 
+        if (keyboard.get(Keyboard.TAB).isDown()) {
+            switchItem();
+        }
+
+        if (keyboard.get(Keyboard.SPACE).isDown()) {
+            currentItemInteraction();
+        }
+
         super.update(deltaTime);
+    }
+
+    private void switchItem() {
+        currentItem = (ARPGItem)inventory.switchItem(currentItem);
+    }
+
+    private void currentItemInteraction() {
+        if (inventory.remove(currentItem, 1)) {
+            currentItem.interaction(getOwnerArea(), getFieldOfViewCells().get(0));
+        }
     }
 
     private class ARPGPlayerHandler implements ARPGInteractionVisitor {

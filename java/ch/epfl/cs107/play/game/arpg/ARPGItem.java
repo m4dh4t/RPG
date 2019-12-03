@@ -1,8 +1,13 @@
 package ch.epfl.cs107.play.game.arpg;
 
-import ch.epfl.cs107.play.game.areagame.actor.Sprite;
+import ch.epfl.cs107.play.game.areagame.Area;
+import ch.epfl.cs107.play.game.arpg.actor.Bomb;
+import ch.epfl.cs107.play.game.rpg.Inventory;
+import ch.epfl.cs107.play.game.rpg.InventoryItem;
+import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.math.Vector;
 
-public enum ARPGItem implements GetInventoryItem {
+public enum ARPGItem implements InventoryItem {
     ARROW("Arrow", 0, 0, "zelda/arrow.icon"),
     SWORD("Sword", 0, 0,"zelda/sword.icon"),
     STAFF("Staff", 0, 0,"zelda/staff_water.icon"),
@@ -10,12 +15,41 @@ public enum ARPGItem implements GetInventoryItem {
     BOMB("Bomb",0,0,"zelda/bomb"),
     CASTLEKEY("CastleKey",0,0,"zelda/key");
 
+    private String name;
+    private float weight;
+    private int price;
     private String spriteName;
 
     ARPGItem(String name, float weight, int price, String spriteName) {
-        setName(name);
-        setWeight(weight);
-        setPrice(price);
+        this.name = name;
+        this.weight = weight;
+        this.price = price;
         this.spriteName = spriteName;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public float getWeight() {
+        return weight;
+    }
+
+    @Override
+    public int getPrice() {
+        return price;
+    }
+
+    public void interaction(Area area, DiscreteCoordinates coordinates) {
+        switch(this) {
+            case BOMB :
+                Bomb bomb = new Bomb(area, coordinates,20);
+                area.registerActor(bomb);
+                break;
+            default:
+                break;
+        }
     }
 }

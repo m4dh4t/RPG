@@ -1,15 +1,16 @@
 package ch.epfl.cs107.play.game.rpg;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Inventory {
     private final float MAXWEIGHT;
     private float weight;
-    private ArrayList<InventoryItem> items;
+    private Map<InventoryItem, Integer> items;
 
     protected Inventory(float maxWeight) {
         MAXWEIGHT = maxWeight;
-        items = new ArrayList<>();
+        items = new HashMap<>();
     }
 
     protected boolean add(InventoryItem item, int quantity) {
@@ -17,35 +18,45 @@ public class Inventory {
             return false;
         }
 
-        for (int i = 0; i < quantity; ++i) {
-            if (weight + item.getWeight() <= MAXWEIGHT) {
-                items.add(item);
-                weight += item.getWeight();
-            }
-        }
+        items.replace(item, items.getOrDefault(item, 0) + quantity);
+        items.putIfAbsent(item, quantity);
+        weight += quantity * item.getWeight();
 
         return true;
     }
 
     protected boolean remove(InventoryItem item, int quantity) {
-        for (int i = 0; i < quantity; ++i) {
-            if (!items.contains(item)) {
-                return false;
-            }
+        if (!items.containsKey(item) || items.getOrDefault(item,0) < quantity) {
+            return false;
         }
 
-
-        for (int i = 0; i < quantity; ++i) {
-            if (items.contains(item)) {
-                items.remove(item);
-                weight -= item.getWeight();
-            }
-        }
+        items.replace(item, items.getOrDefault(item,0) - quantity);
 
         return true;
     }
 
     public boolean isInInventory(InventoryItem item) {
-        return items.contains(item);
+        return items.containsKey(item);
+    }
+
+    public InventoryItem switchItem(InventoryItem currentItem) {
+        InventoryItem[] array = (InventoryItem[])items.keySet().toArray();
+
+        int index = -1;
+
+        for (int i = 0; i < array.length; ++i) {
+            if (array[i].equals(currentItem)) {
+                index = i;
+            }
+        }
+
+        return array[(index + 1)%array.length];
+    }
+
+    public interface Holder {
+
+        default boolean possess(InventoryItem item, Inventory inventory) {
+            return inventory.isInInventory(item);
+        }
     }
 }
