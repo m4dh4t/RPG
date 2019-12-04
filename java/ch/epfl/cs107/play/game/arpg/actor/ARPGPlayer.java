@@ -8,7 +8,9 @@ import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
+import ch.epfl.cs107.play.game.rpg.InventoryItem;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
+import ch.epfl.cs107.play.game.rpg.actor.Inventory;
 import ch.epfl.cs107.play.game.rpg.actor.Player;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -21,7 +23,7 @@ import java.awt.Color;
 import java.util.Collections;
 import java.util.List;
 
-public class ARPGPlayer extends Player {
+public class ARPGPlayer extends Player implements Inventory.Holder{
     private final static int ANIMATION_DURATION = 4; //DEFAULT: 8
     private Animation[] animations;
     private Animation currentAnimation;
@@ -51,7 +53,7 @@ public class ARPGPlayer extends Player {
         animations = RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites);
         currentAnimation = animations[2];
 
-        inventory = new ARPGInventory(50, this);
+        inventory = new ARPGInventory(50);
 
         resetMotion();
     }
@@ -165,6 +167,11 @@ public class ARPGPlayer extends Player {
         }
 
         super.update(deltaTime);
+    }
+
+    @Override
+    public boolean possess(InventoryItem inventoryItem) {
+        return inventory.isStocked(inventoryItem);
     }
 
     private class ARPGPlayerHandler implements ARPGInteractionVisitor {

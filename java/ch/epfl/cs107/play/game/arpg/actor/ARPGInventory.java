@@ -7,8 +7,8 @@ import ch.epfl.cs107.play.game.rpg.InventoryItem;
 public class ARPGInventory extends Inventory {
     private int money;
 
-    public ARPGInventory(int money, Actor actor) {
-        super(1000, actor);
+    public ARPGInventory(int money) {
+        super(1000);
         this.money = money;
     }
 

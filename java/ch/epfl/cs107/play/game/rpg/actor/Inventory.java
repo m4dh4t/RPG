@@ -1,23 +1,20 @@
 package ch.epfl.cs107.play.game.rpg.actor;
 
-import ch.epfl.cs107.play.game.actor.Actor;
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
 
 import java.util.ArrayList;
 
 public class Inventory {
-    private Holder holder;
     private float maxWeight;
     private float currentWeight;
     private ArrayList<InventoryItem> inventory;
     private ArrayList<Integer> inventoryStock;
     
-    protected Inventory(float maxWeight, Actor actor){
+    protected Inventory(float maxWeight){
         currentWeight = 0;
         this.maxWeight = maxWeight;
         inventory = new ArrayList<>();
         inventoryStock = new ArrayList<>();
-        holder = new Holder(actor);
     }
 
     protected boolean addItem(InventoryItem inventoryItem, int qte) {
@@ -70,15 +67,7 @@ public class Inventory {
         return totalValue;
     }
 
-    public class Holder{
-        private Actor holder;
-
-        public Holder(Actor holder){
-            this.holder = holder;
-        }
-
-        public boolean possess(InventoryItem inventoryItem){
-            return isStocked(inventoryItem);
-        }
+    public interface Holder{
+        boolean possess(InventoryItem inventoryItem);
     }
 }
