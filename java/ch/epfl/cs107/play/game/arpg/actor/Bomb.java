@@ -7,13 +7,14 @@ import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
+import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
 import java.util.Collections;
 import java.util.List;
 
 public class Bomb extends AreaEntity implements Interactor {
-    private final static int EXPLOSION_DURATION = 2;
+    private final static int EXPLOSION_DURATION = 3;
     private Sprite sprite;
     private Animation animation;
 
@@ -21,6 +22,7 @@ public class Bomb extends AreaEntity implements Interactor {
 
     private int timer;
     private boolean exploded;
+    private boolean wantsInteraction;
 
     /**
      * Default AreaEntity constructor
@@ -33,11 +35,12 @@ public class Bomb extends AreaEntity implements Interactor {
 
         this.timer = timer;
         exploded = false;
+        wantsInteraction = false;
         handler = new BombHandler();
 
         sprite = new RPGSprite("zelda/bomb", 1, 1, this, new RegionOfInterest(0, 0, 16, 16));
 
-        Sprite[] sprites = RPGSprite.extractSprites("zelda/explosion", 7, 1, 1, this, 32, 32);
+        Sprite[] sprites = RPGSprite.extractSprites("zelda/explosion", 7, 3, 3, this, 32, 32, new Vector(-1.f,-1.f));
         animation = new Animation(EXPLOSION_DURATION, sprites, false);
     }
 
@@ -86,12 +89,12 @@ public class Bomb extends AreaEntity implements Interactor {
 
     @Override
     public boolean wantsCellInteraction() {
-        return exploded;
+        return wantsInteraction;
     }
 
     @Override
     public boolean wantsViewInteraction() {
-        return exploded;
+        return wantsInteraction;
     }
 
     @Override
@@ -105,8 +108,10 @@ public class Bomb extends AreaEntity implements Interactor {
             --timer;
             if(timer <= 0){
                 exploded = true;
+                wantsInteraction = true;
             }
         } else {
+            wantsInteraction = false;
             animation.update(deltaTime);
         }
     }
@@ -115,6 +120,11 @@ public class Bomb extends AreaEntity implements Interactor {
         @Override
         public void interactWith(Grass grass) {
             grass.burn();
+        }
+
+        @Override
+        public void interactWith(ARPGPlayer player) {
+            player.weaken(2);
         }
     }
 }

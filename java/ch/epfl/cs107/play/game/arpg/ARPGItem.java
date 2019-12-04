@@ -2,10 +2,10 @@ package ch.epfl.cs107.play.game.arpg;
 
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.arpg.actor.Bomb;
-import ch.epfl.cs107.play.game.rpg.Inventory;
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
-import ch.epfl.cs107.play.math.Vector;
+
+import java.util.Collections;
 
 public enum ARPGItem implements InventoryItem {
     ARROW("Arrow", 0, 0, "zelda/arrow.icon"),
@@ -42,14 +42,18 @@ public enum ARPGItem implements InventoryItem {
         return price;
     }
 
-    public void interaction(Area area, DiscreteCoordinates coordinates) {
+    public boolean interaction(Area area, DiscreteCoordinates coordinates) {
         switch(this) {
             case BOMB :
                 Bomb bomb = new Bomb(area, coordinates,20);
-                area.registerActor(bomb);
-                break;
+                if (area.canEnterAreaCells(bomb, Collections.singletonList(coordinates))) {
+                    area.registerActor(bomb);
+                    return true;
+                } else {
+                    return false;
+                }
             default:
-                break;
+                return false;
         }
     }
 }

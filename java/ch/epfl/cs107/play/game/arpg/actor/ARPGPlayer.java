@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ARPGPlayer extends Player implements Inventory.Holder {
-    private final static int ANIMATION_DURATION = 4; //DEFAULT: 8
+    private final static int ANIMATION_DURATION = 3; //DEFAULT: 8
     private Animation[] animations;
     private Animation currentAnimation;
 
@@ -47,6 +47,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
         handler = new ARPGPlayerHandler();
         inventory = new ARPGInventory(50);
         inventory.add(ARPGItem.BOMB, 3);
+        currentItem = ARPGItem.BOMB;
 
         hp = 5;
         message = new TextGraphics(Integer.toString((int)hp), 0.4f, Color.BLUE);
@@ -114,6 +115,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
 
     @Override
     public void acceptInteraction(AreaInteractionVisitor v) {
+        ((ARPGInteractionVisitor)v).interactWith(this);
     }
 
     @Override
@@ -139,6 +141,13 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
         hp = 10;
     }
 
+    public void weaken(float hit) {
+        hp -= hit;
+        if (hp < 0) {
+            hp = 0;
+        }
+    }
+
     @Override
     public void draw(Canvas canvas) {
         currentAnimation.draw(canvas);
@@ -147,12 +156,13 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
 
     @Override
     public void update(float deltaTime) {
-        if(!isWeak()){
+        /*if(!isWeak()){
             hp -= deltaTime;
             message.setText(Integer.toString((int)hp));
         } else {
             hp = 0.f;
-        }
+        }*/
+        message.setText(Integer.toString((int)hp));
 
         Keyboard keyboard= getOwnerArea().getKeyboard();
         moveOrientate(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
@@ -168,11 +178,11 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
             }
         }
 
-        if (keyboard.get(Keyboard.TAB).isDown()) {
+        if (keyboard.get(Keyboard.TAB).isPressed()) {
             switchItem();
         }
 
-        if (keyboard.get(Keyboard.SPACE).isDown()) {
+        if (keyboard.get(Keyboard.SPACE).isPressed()) {
             currentItemInteraction();
         }
 
@@ -185,7 +195,9 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
 
     private void currentItemInteraction() {
         if (inventory.remove(currentItem, 1)) {
-            currentItem.interaction(getOwnerArea(), getFieldOfViewCells().get(0));
+            if (!currentItem.interaction(getOwnerArea(), getFieldOfViewCells().get(0))) {
+                inventory.add(currentItem,1);
+            }
         }
     }
 

@@ -40,7 +40,7 @@ public class Inventory {
     }
 
     public InventoryItem switchItem(InventoryItem currentItem) {
-        InventoryItem[] array = (InventoryItem[])items.keySet().toArray();
+        InventoryItem[] array = items.keySet().toArray(new InventoryItem[0]);
 
         int index = -1;
 
