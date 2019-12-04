@@ -30,6 +30,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
     private Animation currentAnimation;
 
     private ARPGPlayerHandler handler;
+    private ARPGPlayerStatusGUI statusGUI;
 
     private TextGraphics message;
     private float hp;
@@ -44,7 +45,10 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
      */
     public ARPGPlayer(Area area, DiscreteCoordinates coordinates) {
         super(area, Orientation.DOWN, coordinates);
+
         handler = new ARPGPlayerHandler();
+        statusGUI = new ARPGPlayerStatusGUI();
+
         inventory = new ARPGInventory(50);
         inventory.add(ARPGItem.BOMB, 3);
         currentItem = ARPGItem.BOMB;
@@ -152,6 +156,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
     public void draw(Canvas canvas) {
         currentAnimation.draw(canvas);
         message.draw(canvas);
+        statusGUI.draw(canvas);
     }
 
     @Override
