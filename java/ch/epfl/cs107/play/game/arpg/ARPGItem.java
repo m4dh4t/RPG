@@ -42,6 +42,10 @@ public enum ARPGItem implements InventoryItem {
         return price;
     }
 
+    public String getSpriteName() {
+        return spriteName;
+    }
+
     public boolean interaction(Area area, DiscreteCoordinates coordinates) {
         switch(this) {
             case BOMB :

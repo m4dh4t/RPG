@@ -10,7 +10,6 @@ import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.ARPGItem;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.Inventory;
-import ch.epfl.cs107.play.game.rpg.InventoryItem;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
 import ch.epfl.cs107.play.game.rpg.actor.Player;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
@@ -32,7 +31,6 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
     private ARPGPlayerHandler handler;
     private ARPGPlayerStatusGUI statusGUI;
 
-    private TextGraphics message;
     private float hp;
     private ARPGInventory inventory;
     private ARPGItem currentItem;
@@ -46,17 +44,17 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
     public ARPGPlayer(Area area, DiscreteCoordinates coordinates) {
         super(area, Orientation.DOWN, coordinates);
 
-        handler = new ARPGPlayerHandler();
-        statusGUI = new ARPGPlayerStatusGUI();
 
         inventory = new ARPGInventory(50);
         inventory.add(ARPGItem.BOMB, 3);
+        inventory.add(ARPGItem.BOW, 2);
         currentItem = ARPGItem.BOMB;
 
+
         hp = 5;
-        message = new TextGraphics(Integer.toString((int)hp), 0.4f, Color.BLUE);
-        message.setParent(this);
-        message.setAnchor(new Vector(-0.3f, 0.1f));
+
+        handler = new ARPGPlayerHandler();
+        statusGUI = new ARPGPlayerStatusGUI(inventory.getMoney(),hp,currentItem);
 
         Sprite[][] sprites = RPGSprite.extractSprites("zelda/player", 4, 1, 2, this, 16, 32, new Orientation[] {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
         animations = RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites);
@@ -155,19 +153,12 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
     @Override
     public void draw(Canvas canvas) {
         currentAnimation.draw(canvas);
-        message.draw(canvas);
         statusGUI.draw(canvas);
     }
 
     @Override
     public void update(float deltaTime) {
-        /*if(!isWeak()){
-            hp -= deltaTime;
-            message.setText(Integer.toString((int)hp));
-        } else {
-            hp = 0.f;
-        }*/
-        message.setText(Integer.toString((int)hp));
+        statusGUI.update(inventory.getMoney(),hp,currentItem);
 
         Keyboard keyboard= getOwnerArea().getKeyboard();
         moveOrientate(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
@@ -183,12 +174,12 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
             }
         }
 
-        if (keyboard.get(Keyboard.TAB).isPressed()) {
-            switchItem();
-        }
-
         if (keyboard.get(Keyboard.SPACE).isPressed()) {
             currentItemInteraction();
+        }
+
+        if (keyboard.get(Keyboard.TAB).isPressed() || !inventory.isInInventory(currentItem)) {
+            switchItem();
         }
 
         super.update(deltaTime);

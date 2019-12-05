@@ -18,7 +18,7 @@ public class Inventory {
             return false;
         }
 
-        items.replace(item, items.getOrDefault(item, 0) + quantity);
+        items.replace(item, items.getOrDefault(item,0) + quantity);
         items.putIfAbsent(item, quantity);
         weight += quantity * item.getWeight();
 
@@ -30,7 +30,11 @@ public class Inventory {
             return false;
         }
 
-        items.replace(item, items.getOrDefault(item,0) - quantity);
+        items.replace(item, items.get(item) - quantity);
+
+        if (items.get(item) == 0) {
+            items.remove(item);
+        }
 
         return true;
     }
@@ -41,6 +45,10 @@ public class Inventory {
 
     public InventoryItem switchItem(InventoryItem currentItem) {
         InventoryItem[] array = items.keySet().toArray(new InventoryItem[0]);
+
+        if (items.isEmpty()) {
+            return null;
+        }
 
         int index = -1;
 
