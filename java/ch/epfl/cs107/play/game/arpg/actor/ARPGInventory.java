@@ -4,13 +4,20 @@ import ch.epfl.cs107.play.game.rpg.Inventory;
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
 
 public class ARPGInventory extends Inventory {
+    private final static int MAXMONEY = 999;
     private int money;
     private int fortune;
 
     public ARPGInventory(int startMoney) {
         super(100);
-        money = startMoney;
-        fortune = startMoney;
+
+        if (startMoney <= MAXMONEY) {
+            money = startMoney;
+            fortune = startMoney;
+        } else {
+            money = MAXMONEY;
+            fortune = MAXMONEY;
+        }
     }
 
     @Override
@@ -36,6 +43,11 @@ public class ARPGInventory extends Inventory {
     protected void addMoney(int money) {
         this.money += money;
         fortune += money;
+
+        if (this.money > MAXMONEY) {
+            fortune -= this.money + MAXMONEY;
+            this.money = MAXMONEY;
+        }
     }
 
     public int getMoney() {

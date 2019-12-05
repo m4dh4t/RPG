@@ -60,11 +60,10 @@ public class ARPGPlayerStatusGUI implements Graphics {
     }
 
     private void drawDigits(Canvas canvas, ImageGraphics coinsDisplay) {
-        int nbDigits = (int) (Math.log10(playerMoney) + 1);
         Vector anchor = coinsDisplay.getAnchor();
         int moneyCalculation = playerMoney;
 
-        for (int i = 0; i < Math.max(3,nbDigits); ++i) {
+        for (int i = 0; i < 3; ++i) {
             ImageGraphics digit = new ImageGraphics(ResourcePath.getSprite("zelda/digits"),0.9f,0.9f, calculateROI(moneyCalculation % 10),anchor.add(3.8f - 0.9f * i,0.85f),1,DEPTH);
             digit.draw(canvas);
             moneyCalculation /= 10;
@@ -111,7 +110,7 @@ public class ARPGPlayerStatusGUI implements Graphics {
             y = 2;
         } else {
             x = (digit - 1) % 4;
-            y = digit/4;
+            y = (digit-1)/4;
         }
 
         x *= 16;

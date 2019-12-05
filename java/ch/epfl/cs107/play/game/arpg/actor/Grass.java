@@ -9,6 +9,7 @@ import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.math.RandomGenerator;
 import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
@@ -19,6 +20,8 @@ import java.util.List;
 public class Grass extends AreaEntity {
     private final static int CUT_DURATION = 4;
     private final static int BURN_DURATION = 6;
+    private final static double PROBABILITY_TO_DROP_ITEM = 0.5;
+    private final static double PROBABILITY_TO_DROP_HEART = 0.5;
 
     private Sprite sprite;
     private Animation cutAnimation;
@@ -101,6 +104,16 @@ public class Grass extends AreaEntity {
 
     void cut() {
         cut = true;
+
+        if (RandomGenerator.getInstance().nextDouble() < PROBABILITY_TO_DROP_ITEM) {
+            if (RandomGenerator.getInstance().nextDouble() < PROBABILITY_TO_DROP_HEART) {
+                Heart heart = new Heart(getOwnerArea(), Orientation.DOWN, getCurrentMainCellCoordinates());
+                getOwnerArea().registerActor(heart);
+            } else {
+                Coin coin = new Coin(getOwnerArea(), Orientation.DOWN, getCurrentMainCellCoordinates());
+                getOwnerArea().registerActor(coin);
+            }
+        }
     }
 
     void burn() {

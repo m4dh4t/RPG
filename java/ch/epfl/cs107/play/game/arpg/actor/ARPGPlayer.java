@@ -1,6 +1,5 @@
 package ch.epfl.cs107.play.game.arpg.actor;
 
-import ch.epfl.cs107.play.game.actor.TextGraphics;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Animation;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
@@ -14,12 +13,10 @@ import ch.epfl.cs107.play.game.rpg.actor.Door;
 import ch.epfl.cs107.play.game.rpg.actor.Player;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
-import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
 
-import java.awt.Color;
 import java.util.Collections;
 import java.util.List;
 
@@ -48,8 +45,9 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
         inventory = new ARPGInventory(50);
         inventory.add(ARPGItem.BOMB, 3);
         inventory.add(ARPGItem.BOW, 2);
+        inventory.add(ARPGItem.SWORD, 10);
+        inventory.add(ARPGItem.STAFF,1);
         currentItem = ARPGItem.BOMB;
-
 
         hp = 5;
 
@@ -132,15 +130,18 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
 
     @Override
     public boolean wantsViewInteraction() {
-        return getOwnerArea().getKeyboard().get(Keyboard.E).isDown();
+        return getOwnerArea().getKeyboard().get(Keyboard.E).isPressed();
     }
 
     private boolean isWeak() {
         return (hp <= 0.f);
     }
 
-    public void strengthen() {
-        hp = 10;
+    public void strengthen(int hp) {
+        this.hp += hp;
+        if (this.hp > 5) {
+            this.hp = 5;
+        }
     }
 
     public void weaken(float hit) {
@@ -206,6 +207,18 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
         @Override
         public void interactWith(Grass grass) {
             grass.cut();
+        }
+
+        @Override
+        public void interactWith(Coin coin) {
+            inventory.addMoney(50);
+            coin.pickUp();
+        }
+
+        @Override
+        public void interactWith(Heart heart) {
+            strengthen(1);
+            heart.pickUp();
         }
     }
 }
