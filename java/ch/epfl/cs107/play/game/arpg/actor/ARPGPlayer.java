@@ -23,6 +23,7 @@ import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
 
+import javax.rmi.ssl.SslRMIClientSocketFactory;
 import java.awt.Color;
 import java.util.Collections;
 import java.util.List;
@@ -137,6 +138,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 
     @Override
     public void acceptInteraction(AreaInteractionVisitor v) {
+        ((ARPGInteractionVisitor)v).interactWith(this);
     }
 
     @Override
@@ -162,6 +164,14 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
         hp = 10;
     }
 
+    public void damage(ARPGItem item){
+        if(item == BOMB){
+            hp -= 2;
+        }
+
+        System.out.println("OUCH");
+    }
+
     @Override
     public void draw(Canvas canvas) {
         currentAnimation.draw(canvas);
@@ -171,7 +181,6 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
     @Override
     public void update(float deltaTime) {
         if(!isWeak()){
-            hp -= deltaTime;
             message.setText(Integer.toString((int)hp));
         } else {
             hp = 0.f;

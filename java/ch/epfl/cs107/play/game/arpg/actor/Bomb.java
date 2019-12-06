@@ -3,6 +3,7 @@ package ch.epfl.cs107.play.game.arpg.actor;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.*;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
+import ch.epfl.cs107.play.game.arpg.ARPGItem;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -21,6 +22,7 @@ public class Bomb extends AreaEntity implements Interactor {
 
     private float timer;
     private boolean exploded;
+    private boolean didDamage;
 
     /**
      * Default AreaEntity constructor
@@ -39,6 +41,7 @@ public class Bomb extends AreaEntity implements Interactor {
 
         Sprite[] sprites = RPGSprite.extractSprites("zelda/explosion", 7, 1, 1, this, 32, 32);
         animation = new Animation(EXPLOSION_DURATION, sprites, false);
+        didDamage = false;
     }
 
     @Override
@@ -113,6 +116,14 @@ public class Bomb extends AreaEntity implements Interactor {
         @Override
         public void interactWith(Grass grass) {
             grass.burn();
+        }
+
+        @Override
+        public void interactWith(ARPGPlayer player) {
+            if(!didDamage) {
+                player.damage(ARPGItem.BOMB);
+                didDamage = true;
+            }
         }
     }
 }

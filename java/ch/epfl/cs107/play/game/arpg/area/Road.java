@@ -18,7 +18,7 @@ public class Road extends ARPGArea {
         registerActor(new Door("zelda/Farm", new DiscreteCoordinates(18,15), Logic.TRUE, this, Orientation.UP, new DiscreteCoordinates(0,15), new DiscreteCoordinates(0,16)));
         registerActor(new Door("zelda/Village", new DiscreteCoordinates(29,18), Logic.TRUE, this, Orientation.DOWN, new DiscreteCoordinates(9,0), new DiscreteCoordinates(10,0)));
         registerActors(Grass.grassZone(this, 5,7,6,11));
-        registerActor(new Bomb(this,new DiscreteCoordinates(6,10), 50));
+        registerActor(new Bomb(this,new DiscreteCoordinates(6,10), 5));
     }
 
     @Override

@@ -52,7 +52,7 @@ public enum ARPGItem implements InventoryItem {
     public boolean use(Area area, DiscreteCoordinates position, Orientation orientation){
         List<DiscreteCoordinates> frontCells = Collections.singletonList(position.jump(orientation.toVector()));
         if(this == BOMB){
-            Actor newBomb = new Bomb(area, position.jump(orientation.toVector()), 10);
+            Actor newBomb = new Bomb(area, position.jump(orientation.toVector()), 3);
             if(area.canEnterAreaCells((Interactable) newBomb, frontCells)){
                 return area.registerActor(newBomb);
             } else {
