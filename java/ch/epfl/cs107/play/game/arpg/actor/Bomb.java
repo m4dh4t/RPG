@@ -16,6 +16,7 @@ import java.util.List;
 public class Bomb extends AreaEntity implements Interactor {
     private final static int EXPLOSION_DURATION = 2;
     private Sprite sprite;
+    private Sprite redSprite;
     private Animation animation;
 
     private BombHandler handler;
@@ -38,6 +39,7 @@ public class Bomb extends AreaEntity implements Interactor {
         handler = new BombHandler();
 
         sprite = new RPGSprite("zelda/bomb", 1, 1, this, new RegionOfInterest(0, 0, 16, 16));
+        redSprite = new RPGSprite("zelda/bomb", 1, 1, this, new RegionOfInterest(16, 0, 16, 16));
 
         Sprite[] sprites = RPGSprite.extractSprites("zelda/explosion", 7, 1, 1, this, 32, 32);
         animation = new Animation(EXPLOSION_DURATION, sprites, false);
@@ -47,7 +49,11 @@ public class Bomb extends AreaEntity implements Interactor {
     @Override
     public void draw(Canvas canvas) {
         if (!exploded) {
-            sprite.draw(canvas);
+            if(timer <= 1){
+                redSprite.draw(canvas);
+            } else {
+                sprite.draw(canvas);
+            }
         } else {
             if (!animation.isCompleted()) {
                 animation.draw(canvas);
