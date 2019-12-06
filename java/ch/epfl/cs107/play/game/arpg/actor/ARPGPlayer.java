@@ -2,11 +2,15 @@ package ch.epfl.cs107.play.game.arpg.actor;
 
 import ch.epfl.cs107.play.game.actor.TextGraphics;
 import ch.epfl.cs107.play.game.areagame.Area;
+import ch.epfl.cs107.play.game.areagame.AreaBehavior;
 import ch.epfl.cs107.play.game.areagame.actor.Animation;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
+import ch.epfl.cs107.play.game.arpg.ARPGBehavior;
+import ch.epfl.cs107.play.game.arpg.ARPGItem;
+import ch.epfl.cs107.play.game.arpg.area.ARPGArea;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
@@ -23,6 +27,8 @@ import java.awt.Color;
 import java.util.Collections;
 import java.util.List;
 
+import static ch.epfl.cs107.play.game.arpg.ARPGItem.*;
+
 public class ARPGPlayer extends Player implements Inventory.Holder{
     private final static int ANIMATION_DURATION = 4; //DEFAULT: 8
     private Animation[] animations;
@@ -32,7 +38,9 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 
     private TextGraphics message;
     private float hp;
+
     private ARPGInventory inventory;
+    private ARPGItem currentItem;
 
     /**
      * Default Player constructor
@@ -54,6 +62,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
         currentAnimation = animations[2];
 
         inventory = new ARPGInventory(50);
+        inventory.addItem(BOMB, 3);
+        currentItem = inventory.nextItem();
 
         resetMotion();
     }
@@ -82,6 +92,21 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
             currentAnimation = animations[2];
         } else if(orientation == Orientation.LEFT){
             currentAnimation = animations[3];
+        }
+    }
+
+    private void inventoryHandler(){
+        final Button TAB = getOwnerArea().getKeyboard().get(Keyboard.TAB);
+        final Button SPACE = getOwnerArea().getKeyboard().get(Keyboard.SPACE);
+
+        if(TAB.isPressed()){
+            inventory.nextItem();
+        }
+
+        if(SPACE.isPressed() && possess(currentItem)){
+            if(currentItem.use(getOwnerArea(), getCurrentMainCellCoordinates(), getOrientation())){
+                inventory.removeItem(currentItem, 1);
+            }
         }
     }
 
@@ -152,11 +177,13 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
             hp = 0.f;
         }
 
-        Keyboard keyboard= getOwnerArea().getKeyboard();
+        Keyboard keyboard = getOwnerArea().getKeyboard();
         moveOrientate(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
         moveOrientate(Orientation.UP, keyboard.get(Keyboard.UP));
         moveOrientate(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
         moveOrientate(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
+
+        inventoryHandler();
 
         for(int i = 0; i < 4; i++) {
             if (isDisplacementOccurs()) {

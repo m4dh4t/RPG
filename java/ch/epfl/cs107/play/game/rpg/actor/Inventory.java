@@ -20,7 +20,7 @@ public class Inventory {
     protected boolean addItem(InventoryItem inventoryItem, int qte) {
         float itemTotalWeight = inventoryItem.getWeight()*qte;
         if(currentWeight + itemTotalWeight <= maxWeight) {
-            if (isStocked(inventoryItem)) {
+            if (!isStocked(inventoryItem)) {
                 inventory.add(inventoryItem);
                 inventoryStock.add(qte);
             } else {
@@ -44,6 +44,10 @@ public class Inventory {
             if(qte <= itemStock){
                 inventoryStock.set(itemIndex, itemStock - qte);
                 currentWeight -= itemTotalWeight;
+                if(inventoryStock.get(itemIndex) <= 0){
+                    inventoryStock.remove(itemIndex);
+                    inventory.remove(itemIndex);
+                }
                 return true;
             } else {
                 return false;
@@ -65,6 +69,10 @@ public class Inventory {
         }
 
         return totalValue;
+    }
+
+    protected ArrayList<InventoryItem> getInventory() {
+        return inventory;
     }
 
     public interface Holder{

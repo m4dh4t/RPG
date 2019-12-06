@@ -19,7 +19,7 @@ public class Bomb extends AreaEntity implements Interactor {
 
     private BombHandler handler;
 
-    private int timer;
+    private float timer;
     private boolean exploded;
 
     /**
@@ -100,7 +100,7 @@ public class Bomb extends AreaEntity implements Interactor {
     @Override
     public void update(float deltaTime) {
         if(!exploded){
-            --timer;
+            timer -= deltaTime;
             if(timer <= 0){
                 exploded = true;
             }
