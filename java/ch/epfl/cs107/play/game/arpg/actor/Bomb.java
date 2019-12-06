@@ -23,6 +23,7 @@ public class Bomb extends AreaEntity implements Interactor {
 
     private float timer;
     private boolean exploded;
+    private boolean explosionEnd;
     private boolean didDamage;
 
     /**
@@ -43,6 +44,7 @@ public class Bomb extends AreaEntity implements Interactor {
 
         Sprite[] sprites = RPGSprite.extractSprites("zelda/explosion", 7, 1, 1, this, 32, 32);
         animation = new Animation(EXPLOSION_DURATION, sprites, false);
+        explosionEnd = false;
         didDamage = false;
     }
 
@@ -115,6 +117,9 @@ public class Bomb extends AreaEntity implements Interactor {
             }
         } else {
             animation.update(deltaTime);
+            if(animation.isCompleted()){
+                explosionEnd = true;
+            }
         }
     }
 
@@ -126,7 +131,7 @@ public class Bomb extends AreaEntity implements Interactor {
 
         @Override
         public void interactWith(ARPGPlayer player) {
-            if(!didDamage) {
+            if(exploded && !explosionEnd && !didDamage) {
                 player.damage(ARPGItem.BOMB);
                 didDamage = true;
             }

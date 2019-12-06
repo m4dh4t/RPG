@@ -168,8 +168,6 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
         if(item == BOMB){
             hp -= 2;
         }
-
-        System.out.println("OUCH");
     }
 
     @Override
