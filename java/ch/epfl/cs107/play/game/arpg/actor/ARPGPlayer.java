@@ -2,15 +2,12 @@ package ch.epfl.cs107.play.game.arpg.actor;
 
 import ch.epfl.cs107.play.game.actor.TextGraphics;
 import ch.epfl.cs107.play.game.areagame.Area;
-import ch.epfl.cs107.play.game.areagame.AreaBehavior;
 import ch.epfl.cs107.play.game.areagame.actor.Animation;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
-import ch.epfl.cs107.play.game.arpg.ARPGBehavior;
 import ch.epfl.cs107.play.game.arpg.ARPGItem;
-import ch.epfl.cs107.play.game.arpg.area.ARPGArea;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
@@ -23,7 +20,6 @@ import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
 
-import javax.rmi.ssl.SslRMIClientSocketFactory;
 import java.awt.Color;
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +33,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 
     private ARPGPlayerHandler handler;
 
+    private ARPGPlayerStatusGUI gui;
     private TextGraphics message;
     private float hp;
 
@@ -61,9 +58,10 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
         Sprite[][] sprites = RPGSprite.extractSprites("zelda/player", 4, 1, 2, this, 16, 32, new Orientation[] {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
         animations = RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites);
         currentAnimation = animations[2];
+        gui = new ARPGPlayerStatusGUI();
 
         inventory = new ARPGInventory(50);
-        inventory.addItem(BOMB, 3);
+        inventory.addItem(BOMB, 5);
         currentItem = inventory.nextItem();
 
         resetMotion();
@@ -166,23 +164,25 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 
     public void damage(ARPGItem item){
         if(item == BOMB){
-            hp -= 2;
+            hp -= 3.f;
+            if(isWeak()){
+                hp = 0.f;
+            }
         }
     }
 
     @Override
     public void draw(Canvas canvas) {
         currentAnimation.draw(canvas);
-        message.draw(canvas);
+        gui.drawGUI(canvas, hp, currentItem, inventory.getMoney());
+
+        //FOR MANUAL HP STATUS CHECK
+        //message.draw(canvas);
     }
 
     @Override
     public void update(float deltaTime) {
-        if(!isWeak()){
-            message.setText(Integer.toString((int)hp));
-        } else {
-            hp = 0.f;
-        }
+        message.setText(Integer.toString((int)hp));
 
         Keyboard keyboard = getOwnerArea().getKeyboard();
         moveOrientate(Orientation.LEFT, keyboard.get(Keyboard.LEFT));

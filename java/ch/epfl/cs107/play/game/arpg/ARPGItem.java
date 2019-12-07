@@ -4,11 +4,8 @@ import ch.epfl.cs107.play.game.actor.Actor;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
-import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.arpg.actor.Bomb;
-import ch.epfl.cs107.play.game.arpg.area.ARPGArea;
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
-import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
 import java.util.Collections;
@@ -47,6 +44,10 @@ public enum ARPGItem implements InventoryItem {
     @Override
     public int getPrice() {
         return price;
+    }
+
+    public String getSpriteName(){
+        return spriteName;
     }
 
     public boolean use(Area area, DiscreteCoordinates position, Orientation orientation){
