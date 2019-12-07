@@ -13,6 +13,7 @@ import ch.epfl.cs107.play.game.rpg.actor.Door;
 import ch.epfl.cs107.play.game.rpg.actor.Player;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.signal.logic.Logic;
 import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
@@ -219,6 +220,22 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
         public void interactWith(Heart heart) {
             strengthen(1);
             heart.pickUp();
+        }
+
+        @Override
+        public void interactWith(CastleDoor door) {
+            if (door.isOpen()) {
+                setIsPassingADoor(door);
+                door.setSignal(Logic.FALSE);
+            } else if (inventory.isInInventory(ARPGItem.CASTLEKEY)) {
+                door.setSignal(Logic.TRUE);
+            }
+        }
+
+        @Override
+        public void interactWith(CastleKey key) {
+            inventory.add(ARPGItem.CASTLEKEY, 1);
+            key.pickUp();
         }
     }
 }

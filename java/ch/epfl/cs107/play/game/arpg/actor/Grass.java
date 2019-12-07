@@ -103,17 +103,19 @@ public class Grass extends AreaEntity {
     }
 
     void cut() {
-        cut = true;
-
-        if (RandomGenerator.getInstance().nextDouble() < PROBABILITY_TO_DROP_ITEM) {
-            if (RandomGenerator.getInstance().nextDouble() < PROBABILITY_TO_DROP_HEART) {
-                Heart heart = new Heart(getOwnerArea(), Orientation.DOWN, getCurrentMainCellCoordinates());
-                getOwnerArea().registerActor(heart);
-            } else {
-                Coin coin = new Coin(getOwnerArea(), Orientation.DOWN, getCurrentMainCellCoordinates());
-                getOwnerArea().registerActor(coin);
+        if (!cut) { //checks if the grass is cut to prevent spawning a heart/coin when the player steps on the grass after he's cut it (during the animation of the grass disappearing)
+            if (RandomGenerator.getInstance().nextDouble() < PROBABILITY_TO_DROP_ITEM) {
+                if (RandomGenerator.getInstance().nextDouble() < PROBABILITY_TO_DROP_HEART) {
+                    Heart heart = new Heart(getOwnerArea(), Orientation.DOWN, getCurrentMainCellCoordinates());
+                    getOwnerArea().registerActor(heart);
+                } else {
+                    Coin coin = new Coin(getOwnerArea(), Orientation.DOWN, getCurrentMainCellCoordinates());
+                    getOwnerArea().registerActor(coin);
+                }
             }
         }
+
+        cut = true;
     }
 
     void burn() {

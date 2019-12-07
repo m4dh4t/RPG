@@ -20,7 +20,7 @@ public class Bomb extends AreaEntity implements Interactor {
 
     private BombHandler handler;
 
-    private int timer;
+    private float timer;
     private boolean exploded;
     private boolean wantsInteraction;
 
@@ -30,7 +30,7 @@ public class Bomb extends AreaEntity implements Interactor {
      * @param area        (Area): Owner area. Not null
      * @param position    (DiscreteCoordinate): Initial position of the entity in the Area. Not null
      */
-    public Bomb(Area area,  DiscreteCoordinates position, int timer) {
+    public Bomb(Area area,  DiscreteCoordinates position, float timer) {
         super(area, Orientation.DOWN, position);
 
         this.timer = timer;
@@ -105,7 +105,7 @@ public class Bomb extends AreaEntity implements Interactor {
     @Override
     public void update(float deltaTime) {
         if(!exploded){
-            --timer;
+            timer -= deltaTime;
             if(timer <= 0){
                 exploded = true;
                 wantsInteraction = true;

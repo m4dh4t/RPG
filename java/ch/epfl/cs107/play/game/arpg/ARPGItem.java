@@ -49,14 +49,14 @@ public enum ARPGItem implements InventoryItem {
     public boolean interaction(Area area, DiscreteCoordinates coordinates) {
         switch(this) {
             case BOMB :
-                Bomb bomb = new Bomb(area, coordinates,20);
+                Bomb bomb = new Bomb(area, coordinates,1.f);
                 if (area.canEnterAreaCells(bomb, Collections.singletonList(coordinates))) {
                     area.registerActor(bomb);
                     return true;
                 } else {
                     return false;
                 }
-            default:
+            default: //case for CASTLEKEY : We don't want the key to be removed from the inventory so we return false so that ARPGPlayer readds it if removed. (See ARPGPlayer class)
                 return false;
         }
     }
