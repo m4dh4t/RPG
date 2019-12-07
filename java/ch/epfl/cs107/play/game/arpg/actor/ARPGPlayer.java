@@ -62,6 +62,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 
         inventory = new ARPGInventory(50);
         inventory.addItem(BOMB, 5);
+        inventory.addItem(SWORD, 1);
         currentItem = inventory.nextItem();
 
         resetMotion();
@@ -99,12 +100,14 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
         final Button SPACE = getOwnerArea().getKeyboard().get(Keyboard.SPACE);
 
         if(TAB.isPressed()){
-            inventory.nextItem();
+            currentItem = inventory.nextItem();
         }
 
         if(SPACE.isPressed() && possess(currentItem)){
             if(currentItem.use(getOwnerArea(), getCurrentMainCellCoordinates(), getOrientation())){
-                inventory.removeItem(currentItem, 1);
+                if(currentItem == BOMB){
+                    inventory.removeItem(currentItem, 1);
+                }
             }
         }
     }

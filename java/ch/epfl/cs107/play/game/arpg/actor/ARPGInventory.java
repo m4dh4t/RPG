@@ -12,7 +12,7 @@ public class ARPGInventory extends Inventory {
     public ARPGInventory(int money) {
         super(1000);
         this.money = money;
-        currentItemIndex = 0;
+        currentItemIndex = -1;
     }
 
     public void addMoney(int money){
@@ -38,12 +38,10 @@ public class ARPGInventory extends Inventory {
     }
 
     public ARPGItem nextItem(){
-        ARPGItem newItem = (ARPGItem) getInventory().get(currentItemIndex);
         ++currentItemIndex;
         if(currentItemIndex >= getInventory().size()){
             currentItemIndex = 0;
         }
-
-        return newItem;
+        return (ARPGItem) getInventory().get(currentItemIndex);
     }
 }
