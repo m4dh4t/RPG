@@ -48,9 +48,9 @@ public class ARPGPlayerStatusGUI implements Graphics {
         gearDisplay = new ImageGraphics[2];
 
         //BACKGROUND
-        gearDisplay[0] = new ImageGraphics(ResourcePath.getSprite("zelda/gearDisplay"), 1.5f, 1.5f, new RegionOfInterest(0, 0, 32, 32), anchor.add(new Vector(0, height - 1.5f)));
+        gearDisplay[0] = new ImageGraphics(ResourcePath.getSprite("zelda/gearDisplay"), 1.5f, 1.5f, new RegionOfInterest(0, 0, 32, 32), anchor.add(new Vector(0, height - 1.5f)), 1, 2000);
         //ITEM
-        gearDisplay[1] = new ImageGraphics(ResourcePath.getSprite(item.getSpriteName()), 1f, 1f, new RegionOfInterest(0, 0, 16, 16), anchor.add(new Vector(0.25f, height - 1.25f)));
+        gearDisplay[1] = new ImageGraphics(ResourcePath.getSprite(item.getSpriteName()), 1f, 1f, new RegionOfInterest(0, 0, 16, 16), anchor.add(new Vector(0.25f, height - 1.25f)), 1, 2001);
     }
 
     private void heartDisplay(float hp){
@@ -61,19 +61,19 @@ public class ARPGPlayerStatusGUI implements Graphics {
 
         //FULL HEARTS
         for(int i = 0; i < fullHearts; i++){
-            heartDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(32, 0, 16, 16), anchor.add(new Vector(1.75f+i, height - 1.25f)));
+            heartDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(32, 0, 16, 16), anchor.add(new Vector(1.75f+i, height - 1.25f)), 1, 2000);
         }
 
         //HALF-HEART
         if(hp % 2 != 0){
-            heartDisplay[fullHearts] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(16, 0, 16, 16), anchor.add(new Vector(1.75f+fullHearts, height - 1.25f)));
+            heartDisplay[fullHearts] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(16, 0, 16, 16), anchor.add(new Vector(1.75f+fullHearts, height - 1.25f)), 1, 2000);
             halfHeart = true;
         }
 
         //EMPTY HEARTS
         for(int i = fullHearts; i < 5; i++){
             if(halfHeart && !didOffset){ i++; didOffset = true;}
-            heartDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(0, 0, 16, 16), anchor.add(new Vector(1.75f+i, height - 1.25f)));
+            heartDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(0, 0, 16, 16), anchor.add(new Vector(1.75f+i, height - 1.25f)), 1, 2000);
         }
     }
 
@@ -87,7 +87,7 @@ public class ARPGPlayerStatusGUI implements Graphics {
         }
 
         //BACKGROUND
-        coinsDisplay[number.length()] = new ImageGraphics(ResourcePath.getSprite("zelda/coinsDisplay"), 3f, 1.5f, new RegionOfInterest(0, 0, 64, 32), anchor.add(new Vector(0, 0)), 1, 0);
+        coinsDisplay[number.length()] = new ImageGraphics(ResourcePath.getSprite("zelda/coinsDisplay"), 3f, 1.5f, new RegionOfInterest(0, 0, 64, 32), anchor.add(new Vector(0, 0)), 1, 2000);
 
         //DIGITS
         for(int i = 0; i < digits.length; i++){
@@ -102,7 +102,7 @@ public class ARPGPlayerStatusGUI implements Graphics {
                 y = digits[i] / 4;
             }
 
-            coinsDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/digits"), 0.75f, 0.75f, new RegionOfInterest(x * 16, y * 16, 16, 16), anchor.add(new Vector(1.1f+(i*0.5f), 0.4f)), 1, 1);
+            coinsDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/digits"), 0.75f, 0.75f, new RegionOfInterest(x * 16, y * 16, 16, 16), anchor.add(new Vector(1.1f+(i*0.5f), 0.4f)), 1, 2001);
         }
     }
 }
