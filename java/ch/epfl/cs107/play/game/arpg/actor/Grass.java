@@ -9,6 +9,7 @@ import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.math.RandomGenerator;
 import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.window.Canvas;
 
@@ -62,11 +63,12 @@ public class Grass extends AreaEntity {
         if (!cut && !burnt) {
             sprite.draw(canvas);
         } else {
-            if (cut && !cutAnimation.isCompleted() && !burnt) {
+            if (cut && !cutAnimation.isCompleted()) {
                 cutAnimation.draw(canvas);
-
-            } else if (burnt && !burnAnimation.isCompleted() && !cut) {
+            } else if (burnt && !burnAnimation.isCompleted()) {
                 burnAnimation.draw(canvas);
+            } else if (burnAnimation.isCompleted() || cutAnimation.isCompleted()){
+                getOwnerArea().unregisterActor(this);
             }
         }
     }
@@ -83,12 +85,12 @@ public class Grass extends AreaEntity {
 
     @Override
     public boolean isCellInteractable() {
-        return true;
+        return !cut && !burnt;
     }
 
     @Override
     public boolean isViewInteractable() {
-        return true;
+        return !cut && !burnt;
     }
 
     @Override
@@ -96,11 +98,28 @@ public class Grass extends AreaEntity {
         ((ARPGInteractionVisitor)v).interactWith(this);
     }
 
-    void cut() {
+    public void cut() {
         cut = true;
+        dropItem();
+        //getOwnerArea().registerActor(new Coin(getOwnerArea(), Orientation.DOWN, getCurrentMainCellCoordinates()));
     }
 
-    void burn() {
+    private void dropItem(){
+        double PROBABILITY_TO_DROP_ITEM = 0.5;
+        double PROBABILITY_TO_DROP_HEART = 0.5;
+        double randomDouble = RandomGenerator.getInstance().nextDouble();
+
+        if(randomDouble < PROBABILITY_TO_DROP_ITEM){
+            randomDouble = RandomGenerator.getInstance().nextDouble();
+            if(randomDouble < PROBABILITY_TO_DROP_HEART){
+                getOwnerArea().registerActor(new Heart(getOwnerArea(), Orientation.DOWN, getCurrentMainCellCoordinates()));
+            } else {
+                getOwnerArea().registerActor(new Coin(getOwnerArea(), Orientation.DOWN, getCurrentMainCellCoordinates()));
+            }
+        }
+    }
+
+    public void burn() {
         burnt = true;
     }
 

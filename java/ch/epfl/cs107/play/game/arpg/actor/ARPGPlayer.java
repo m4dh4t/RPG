@@ -221,5 +221,17 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
         public void interactWith(Grass grass) {
             grass.cut();
         }
+
+        @Override
+        public void interactWith(Coin coin) {
+            coin.collect();
+            inventory.addMoney(50);
+        }
+
+        @Override
+        public void interactWith(Heart heart) {
+            heart.collect();
+            hp += 2;
+        }
     }
 }

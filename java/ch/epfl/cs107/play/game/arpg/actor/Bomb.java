@@ -59,6 +59,8 @@ public class Bomb extends AreaEntity implements Interactor {
         } else {
             if (!animation.isCompleted()) {
                 animation.draw(canvas);
+            } else {
+                getOwnerArea().unregisterActor(this);
             }
         }
     }

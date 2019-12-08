@@ -16,7 +16,7 @@ public class ARPGInventory extends Inventory {
     }
 
     public void addMoney(int money){
-        money += money;
+        this.money += money;
     }
 
     public int getMoney() {
