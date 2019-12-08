@@ -101,12 +101,11 @@ public class Grass extends AreaEntity {
     public void cut() {
         cut = true;
         dropItem();
-        //getOwnerArea().registerActor(new Coin(getOwnerArea(), Orientation.DOWN, getCurrentMainCellCoordinates()));
     }
 
     private void dropItem(){
-        double PROBABILITY_TO_DROP_ITEM = 0.5;
-        double PROBABILITY_TO_DROP_HEART = 0.5;
+        final double PROBABILITY_TO_DROP_ITEM = 0.5;
+        final double PROBABILITY_TO_DROP_HEART = 0.5;
         double randomDouble = RandomGenerator.getInstance().nextDouble();
 
         if(randomDouble < PROBABILITY_TO_DROP_ITEM){
