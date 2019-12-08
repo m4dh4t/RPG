@@ -55,9 +55,7 @@ public class ARPGPlayerStatusGUI implements Graphics {
 
     private void heartDisplay(float hp){
         heartDisplay = new ImageGraphics[5];
-        int fullHearts = (int)hp / 2;
-        boolean halfHeart = false;
-        boolean didOffset = false;
+        int fullHearts = (int)(hp / 2);
 
         //FULL HEARTS
         for(int i = 0; i < fullHearts; i++){
@@ -67,13 +65,15 @@ public class ARPGPlayerStatusGUI implements Graphics {
         //HALF-HEART
         if(hp % 2 != 0){
             heartDisplay[fullHearts] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(16, 0, 16, 16), anchor.add(new Vector(1.75f+fullHearts, height - 1.25f)), 1, 2000);
-            halfHeart = true;
-        }
-
-        //EMPTY HEARTS
-        for(int i = fullHearts; i < 5; i++){
-            if(halfHeart && !didOffset){ i++; didOffset = true;}
-            heartDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(0, 0, 16, 16), anchor.add(new Vector(1.75f+i, height - 1.25f)), 1, 2000);
+            //EMPTY-HEARTS W/ OFFSET
+            for(int i = fullHearts+1; i < 5; i++){
+                heartDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(0, 0, 16, 16), anchor.add(new Vector(1.75f+i, height - 1.25f)), 1, 2000);
+            }
+        } else {
+            //EMPTY-HEARTS W/O OFFSET
+            for(int i = fullHearts; i < 5; i++){
+                heartDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(0, 0, 16, 16), anchor.add(new Vector(1.75f+i, height - 1.25f)), 1, 2000);
+            }
         }
     }
 
