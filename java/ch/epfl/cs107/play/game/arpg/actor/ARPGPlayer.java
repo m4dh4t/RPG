@@ -8,7 +8,6 @@ import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.ARPGItem;
-import ch.epfl.cs107.play.game.arpg.area.Castle;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
