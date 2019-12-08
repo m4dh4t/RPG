@@ -3,6 +3,7 @@ package ch.epfl.cs107.play.game.arpg.actor;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.*;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
+import ch.epfl.cs107.play.game.arpg.Vulnerability;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -44,6 +45,11 @@ public class Bomb extends AreaEntity implements Interactor {
         animation = new Animation(EXPLOSION_DURATION, sprites, false);
     }
 
+    public void explode() {
+        exploded = true;
+        wantsInteraction = true;
+    }
+
     @Override
     public void draw(Canvas canvas) {
         if (!exploded) {
@@ -69,17 +75,17 @@ public class Bomb extends AreaEntity implements Interactor {
 
     @Override
     public boolean isCellInteractable() {
-        return false;
+        return !exploded;
     }
 
     @Override
     public boolean isViewInteractable() {
-        return false;
+        return !exploded;
     }
 
     @Override
     public void acceptInteraction(AreaInteractionVisitor v) {
-
+        ((ARPGInteractionVisitor)v).interactWith(this);
     }
 
     @Override
@@ -107,8 +113,7 @@ public class Bomb extends AreaEntity implements Interactor {
         if(!exploded){
             timer -= deltaTime;
             if(timer <= 0){
-                exploded = true;
-                wantsInteraction = true;
+                explode();
             }
         } else {
             wantsInteraction = false;
@@ -125,6 +130,11 @@ public class Bomb extends AreaEntity implements Interactor {
         @Override
         public void interactWith(ARPGPlayer player) {
             player.weaken(2);
+        }
+
+        @Override
+        public void interactWith(Monster monster) {
+            monster.weaken(1.f, Vulnerability.PHYSICAL);
         }
     }
 }

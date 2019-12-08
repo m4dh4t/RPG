@@ -10,6 +10,7 @@ import ch.epfl.cs107.play.window.Canvas;
 
 public class ARPGPlayerStatusGUI implements Graphics {
     private final static int DEPTH = 1001;
+    private final float PLAYERMAXHP;
     private int playerMoney;
     private float playerHealth;
     private ARPGItem playerCurrentItem;
@@ -17,6 +18,7 @@ public class ARPGPlayerStatusGUI implements Graphics {
     protected ARPGPlayerStatusGUI(int startingMoney, float healthPoints, ARPGItem currentItem) {
         playerMoney = startingMoney;
         playerHealth = healthPoints;
+        PLAYERMAXHP = healthPoints;
         playerCurrentItem = currentItem;
     }
 
@@ -76,7 +78,7 @@ public class ARPGPlayerStatusGUI implements Graphics {
         Vector anchor = canvas.getTransform().getOrigin().add(-width/2, height/2);
 
         float healthCalculation = playerHealth;
-        for (int i = 0; i < 5; ++i) {
+        for (int i = 0; i < PLAYERMAXHP; ++i) {
             ImageGraphics heart = calculateHeart(healthCalculation, anchor.add(1.75f + i, -1.5f));
             heart.draw(canvas);
             healthCalculation -= 1;

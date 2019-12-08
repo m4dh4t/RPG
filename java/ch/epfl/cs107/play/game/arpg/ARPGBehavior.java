@@ -3,6 +3,7 @@ package ch.epfl.cs107.play.game.arpg;
 import ch.epfl.cs107.play.game.areagame.AreaBehavior;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
+import ch.epfl.cs107.play.game.arpg.actor.FlyableEntity;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Window;
 
@@ -26,19 +27,21 @@ public class ARPGBehavior extends AreaBehavior {
     }
 
     public enum ARPGCellType {
-        NULL(0, false),
-        WALL(-16777216, false),         // #000000, RGB code of black
-        IMPASSABLE(-8750470, false),    // #7A7A7A, RGB code of gray
-        INTERACT(-256, true),           // #FFFF00, RGB code of yellow
-        DOOR(-195580, true),            // #FD0404, RGB code of red
-        WALKABLE(-1, true);             // #FFFFFF, RGB code of white
+        NULL(0, false, false),
+        WALL(-16777216, false, false),         // #000000, RGB code of black
+        IMPASSABLE(-8750470, false, true),    // #7A7A7A, RGB code of gray
+        INTERACT(-256, true, true),           // #FFFF00, RGB code of yellow
+        DOOR(-195580, true, true),            // #FD0404, RGB code of red
+        WALKABLE(-1, true, true);             // #FFFFFF, RGB code of white
 
         final int type;
         final boolean isWalkable;
+        final boolean isFlyable;
 
-        ARPGCellType(int type, boolean isWalkable){
+        ARPGCellType(int type, boolean isWalkable, boolean isFlyable){
             this.type = type;
             this.isWalkable = isWalkable;
+            this.isFlyable = isFlyable;
         }
 
         public static ARPGCellType toType(int type){
@@ -74,6 +77,14 @@ public class ARPGBehavior extends AreaBehavior {
 
         @Override
         protected boolean canEnter(Interactable entity) {
+            try {
+                if (((FlyableEntity) entity).canFly()) {
+                    return type.isFlyable;
+                }
+            }
+            catch(ClassCastException e) { //In case the entity is not a FlyableEntity
+                return type.isWalkable && !hasNonTraversableContent();
+            }
             return type.isWalkable && !hasNonTraversableContent();
         }
 

@@ -32,4 +32,12 @@ public interface ARPGInteractionVisitor extends RPGInteractionVisitor {
     default void interactWith(CastleKey key) {
         // by default the interaction is empty
     }
+
+    default void interactWith(Monster monster) {
+        // by default the interaction is empty
+    }
+
+    default void interactWith(Bomb bomb) {
+        // by default the interaction is empty
+    }
 }

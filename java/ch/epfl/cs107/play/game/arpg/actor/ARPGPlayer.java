@@ -23,6 +23,7 @@ import java.util.List;
 
 public class ARPGPlayer extends Player implements Inventory.Holder {
     private final static int ANIMATION_DURATION = 3; //DEFAULT: 8
+    private final static int MAXHP = 5;
     private Animation[] animations;
     private Animation currentAnimation;
 
@@ -50,10 +51,10 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
         inventory.add(ARPGItem.STAFF,1);
         currentItem = ARPGItem.BOMB;
 
-        hp = 5;
+        hp = MAXHP;
 
         handler = new ARPGPlayerHandler();
-        statusGUI = new ARPGPlayerStatusGUI(inventory.getMoney(),hp,currentItem);
+        statusGUI = new ARPGPlayerStatusGUI(inventory.getMoney(), MAXHP, currentItem);
 
         Sprite[][] sprites = RPGSprite.extractSprites("zelda/player", 4, 1, 2, this, 16, 32, new Orientation[] {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
         animations = RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites);
@@ -140,8 +141,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
 
     public void strengthen(int hp) {
         this.hp += hp;
-        if (this.hp > 5) {
-            this.hp = 5;
+        if (this.hp > MAXHP) {
+            this.hp = MAXHP;
         }
     }
 
@@ -162,7 +163,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
     public void update(float deltaTime) {
         statusGUI.update(inventory.getMoney(),hp,currentItem);
 
-        Keyboard keyboard= getOwnerArea().getKeyboard();
+        Keyboard keyboard = getOwnerArea().getKeyboard();
         moveOrientate(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
         moveOrientate(Orientation.UP, keyboard.get(Keyboard.UP));
         moveOrientate(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));

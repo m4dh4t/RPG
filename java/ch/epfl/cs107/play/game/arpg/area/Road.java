@@ -4,6 +4,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Background;
 import ch.epfl.cs107.play.game.areagame.actor.Foreground;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.arpg.actor.Bomb;
+import ch.epfl.cs107.play.game.arpg.actor.FlameSkull;
 import ch.epfl.cs107.play.game.arpg.actor.Grass;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -20,6 +21,7 @@ public class Road extends ARPGArea {
         registerActor(new Door("zelda/RoadCastle", new DiscreteCoordinates(9,1), Logic.TRUE, this, Orientation.UP, new DiscreteCoordinates(9,19), new DiscreteCoordinates(10,19)));
         registerActors(Grass.grassZone(this, 5,7,6,11));
         registerActor(new Bomb(this,new DiscreteCoordinates(6,10), 2.5f));
+        registerActor(new FlameSkull(this, Orientation.DOWN, new DiscreteCoordinates(6,8)));
     }
 
     @Override
