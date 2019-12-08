@@ -162,7 +162,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
     }
 
     public void strengthen() {
-        hp = 10;
+        hp = 10.f;
     }
 
     public void damage(ARPGItem item){
@@ -171,6 +171,13 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
             if(isWeak()){
                 hp = 0.f;
             }
+        }
+    }
+
+    private void addHp(float hp){
+        this.hp += hp;
+        if(this.hp > 10.f){
+            this.hp = 10.f;
         }
     }
 
@@ -231,7 +238,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
         @Override
         public void interactWith(Heart heart) {
             heart.collect();
-            hp += 2;
+            addHp(2.f);
         }
     }
 }
