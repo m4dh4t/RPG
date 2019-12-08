@@ -18,11 +18,10 @@ public class Coin extends ARPGCollectableAreaEntity {
      * Default AreaEntity constructor
      *
      * @param area        (Area): Owner area. Not null
-     * @param orientation (Orientation): Initial orientation of the entity in the Area. Not null
      * @param position    (DiscreteCoordinate): Initial position of the entity in the Area. Not null
      */
-    public Coin(Area area, Orientation orientation, DiscreteCoordinates position) {
-        super(area, orientation, position);
+    public Coin(Area area, DiscreteCoordinates position) {
+        super(area, Orientation.DOWN, position);
 
         Sprite[] sprites = RPGSprite.extractSprites("zelda/coin",4,1,1,this,16,16);
         animation = new Animation(SPIN_DURATION, sprites);

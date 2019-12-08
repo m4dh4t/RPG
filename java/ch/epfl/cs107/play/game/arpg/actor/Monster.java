@@ -73,8 +73,8 @@ public abstract class Monster extends MovableAreaEntity implements Interactor {
         } else {
             if (!deadAnimation.isCompleted()) {
                 deadAnimation.draw(canvas);
-                spawnCollectables();
             } else {
+                spawnCollectables();
                 getOwnerArea().unregisterActor(this);
             }
         }
