@@ -12,7 +12,7 @@ public class Castle extends ARPGArea {
     protected void createArea() {
         registerActor(new Background(this));
         registerActor(new Foreground(this));
-        registerActor(new Door("zelda/RoadCastle", new DiscreteCoordinates(9,13), Logic.TRUE, this, Orientation.DOWN, new DiscreteCoordinates(7,0), new DiscreteCoordinates(8,0)));
+        registerActor(new Door("zelda/RoadCastle", new DiscreteCoordinates(9,12), Logic.TRUE, this, Orientation.DOWN, new DiscreteCoordinates(7,0), new DiscreteCoordinates(8,0)));
     }
 
     @Override
