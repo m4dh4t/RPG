@@ -9,7 +9,9 @@ import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.math.RandomGenerator;
 import ch.epfl.cs107.play.math.RegionOfInterest;
+import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
 import java.util.Collections;
@@ -17,7 +19,9 @@ import java.util.List;
 
 public class Grass extends AreaEntity {
     private final static int CUT_DURATION = 4;
-    private final static int BURN_DURATION = 4;
+    private final static int BURN_DURATION = 6;
+    private final static double PROBABILITY_TO_DROP_ITEM = 0.5;
+    private final static double PROBABILITY_TO_DROP_HEART = 0.5;
 
     private Sprite sprite;
     private Animation cutAnimation;
@@ -33,7 +37,7 @@ public class Grass extends AreaEntity {
         cut = false;
         burnt = false;
 
-        sprite = new RPGSprite("zelda/grass", 1.f,1.f,this,new RegionOfInterest(0,0,16,16));
+        sprite = new RPGSprite("zelda/grass", 1.f,1.f,this,new RegionOfInterest(0,0,16,16), Vector.ZERO, 1.f, -1);
 
 
         Sprite[] cutSprites = RPGSprite.extractSprites("zelda/grass.sliced",4,2.f,2.f,this,32,32);
@@ -67,6 +71,8 @@ public class Grass extends AreaEntity {
 
             } else if (burnt && !burnAnimation.isCompleted() && !cut) {
                 burnAnimation.draw(canvas);
+            } else {
+                getOwnerArea().unregisterActor(this);
             }
         }
     }
@@ -97,6 +103,18 @@ public class Grass extends AreaEntity {
     }
 
     void cut() {
+        if (!cut) { //checks if the grass is cut to prevent spawning a heart/coin when the player steps on the grass after he's cut it (during the animation of the grass disappearing)
+            if (RandomGenerator.getInstance().nextDouble() < PROBABILITY_TO_DROP_ITEM) {
+                if (RandomGenerator.getInstance().nextDouble() < PROBABILITY_TO_DROP_HEART) {
+                    Heart heart = new Heart(getOwnerArea(), Orientation.DOWN, getCurrentMainCellCoordinates());
+                    getOwnerArea().registerActor(heart);
+                } else {
+                    Coin coin = new Coin(getOwnerArea(), Orientation.DOWN, getCurrentMainCellCoordinates());
+                    getOwnerArea().registerActor(coin);
+                }
+            }
+        }
+
         cut = true;
     }
 
