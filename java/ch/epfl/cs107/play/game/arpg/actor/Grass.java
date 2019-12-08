@@ -34,7 +34,7 @@ public class Grass extends AreaEntity {
         cut = false;
         burnt = false;
 
-        sprite = new RPGSprite("zelda/grass", 1.f,1.f,this,new RegionOfInterest(0,0,16,16));
+        sprite = new RPGSprite("zelda/grass", 1.f,1.f,this, new RegionOfInterest(0,0,16,16));
 
 
         Sprite[] cutSprites = RPGSprite.extractSprites("zelda/grass.sliced",4,2.f,2.f,this,32,32);

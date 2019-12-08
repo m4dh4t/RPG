@@ -1,10 +1,7 @@
 package ch.epfl.cs107.play.game.arpg.handler;
 
 import ch.epfl.cs107.play.game.arpg.ARPGBehavior;
-import ch.epfl.cs107.play.game.arpg.actor.ARPGPlayer;
-import ch.epfl.cs107.play.game.arpg.actor.Coin;
-import ch.epfl.cs107.play.game.arpg.actor.Grass;
-import ch.epfl.cs107.play.game.arpg.actor.Heart;
+import ch.epfl.cs107.play.game.arpg.actor.*;
 import ch.epfl.cs107.play.game.rpg.handler.RPGInteractionVisitor;
 
 public interface ARPGInteractionVisitor extends RPGInteractionVisitor {
@@ -25,6 +22,14 @@ public interface ARPGInteractionVisitor extends RPGInteractionVisitor {
     }
 
     default void interactWith(Heart heart) {
+        // by default the interaction is empty
+    }
+
+    default void interactWith(CastleDoor castleDoor) {
+        // by default the interaction is empty
+    }
+
+    default void interactWith(CastleKey castleKey) {
         // by default the interaction is empty
     }
 }

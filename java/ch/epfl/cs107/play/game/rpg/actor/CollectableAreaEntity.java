@@ -47,7 +47,7 @@ public abstract class CollectableAreaEntity extends AreaEntity {
         return collected;
     }
 
-    public void setCollected(boolean collected) {
+    private void setCollected(boolean collected) {
         this.collected = collected;
     }
 

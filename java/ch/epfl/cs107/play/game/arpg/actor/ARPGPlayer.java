@@ -8,6 +8,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.ARPGItem;
+import ch.epfl.cs107.play.game.arpg.area.Castle;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
@@ -221,7 +222,18 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
     private class ARPGPlayerHandler implements ARPGInteractionVisitor {
         @Override
         public void interactWith(Door door) {
-            setIsPassingADoor(door);
+            if(door instanceof CastleDoor){
+                if(door.isOpen()){
+                    setIsPassingADoor(door);
+                    ((CastleDoor) door).close();
+                } else {
+                    if(possess(CASTLEKEY)){
+                        ((CastleDoor) door).open();
+                    }
+                }
+            } else {
+                setIsPassingADoor(door);
+            }
         }
 
         @Override
@@ -239,6 +251,12 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
         public void interactWith(Heart heart) {
             heart.collect();
             addHp(2.f);
+        }
+
+        @Override
+        public void interactWith(CastleKey castleKey) {
+            castleKey.collect();
+            inventory.addItem(CASTLEKEY, 1);
         }
     }
 }
