@@ -55,9 +55,9 @@ public enum ARPGItem implements InventoryItem {
 
         switch (this){
             case BOMB:
-                Actor newBomb = new Bomb(area, position.jump(orientation.toVector()), 3);
-                if(area.canEnterAreaCells((Interactable) newBomb, frontCells)){
-                    return area.registerActor(newBomb);
+                Bomb bomb = new Bomb(area, position.jump(orientation.toVector()), 3);
+                if(area.canEnterAreaCells(bomb, frontCells)){
+                    return area.registerActor(bomb);
                 } else {
                     return false;
                 }
