@@ -10,7 +10,6 @@ import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RandomGenerator;
 import ch.epfl.cs107.play.math.Vector;
-import ch.epfl.cs107.play.window.Canvas;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -105,7 +104,7 @@ public class LogMonster extends Monster {
     }
 
     private class LogMonsterState {
-        private final static int ANIMATION_DURATION = 8;
+        private final int ANIMATION_DURATION = getAnimationDuration();
         private final static int FIELD_OF_VIEW_DISTANCE = 8;
 
         LogMonsterState(String spriteName, Orientation orientation) {
