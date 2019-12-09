@@ -1,6 +1,6 @@
 package ch.epfl.cs107.play.game.arpg.actor;
 
-import ch.epfl.cs107.play.game.rpg.Inventory;
+import ch.epfl.cs107.play.game.rpg.actor.Inventory;
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
 
 public class ARPGInventory extends Inventory {

@@ -3,7 +3,6 @@ package ch.epfl.cs107.play.game.arpg.actor;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
-import ch.epfl.cs107.play.game.arpg.Vulnerability;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RandomGenerator;
@@ -13,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class FlameSkull extends Monster implements FlyableEntity {
-    private final static int ANIMATION_DURATION = 8;
+    private final static int ANIMATION_DURATION = getAnimationDuration();
     private final static double PROBABILITY_TO_CHANGE_DIRECTION = 0.1;
     private final static int MIN_LIFE_TIME = 3;
     private final static int MAX_LIFE_TIME = 12;

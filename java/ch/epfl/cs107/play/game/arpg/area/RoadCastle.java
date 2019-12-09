@@ -6,6 +6,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.arpg.actor.Bomb;
 import ch.epfl.cs107.play.game.arpg.actor.CastleDoor;
 import ch.epfl.cs107.play.game.arpg.actor.FlameSkull;
+import ch.epfl.cs107.play.game.arpg.actor.LogMonster;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.signal.logic.Logic;
@@ -24,10 +25,15 @@ public class RoadCastle extends ARPGArea {
     public void update(float deltaTime) {
         if (getKeyboard().get(Keyboard.S).isPressed()) {
             registerActor(new FlameSkull(this, Orientation.DOWN, new DiscreteCoordinates(8,10)));
-        } if (getKeyboard().get(Keyboard.B).isPressed()) {
+        }
+
+        if (getKeyboard().get(Keyboard.B).isPressed()) {
             registerActor(new Bomb(this, new DiscreteCoordinates(8,11), 10));
         }
 
+        if (getKeyboard().get(Keyboard.L).isPressed()) {
+            registerActor(new LogMonster(this, Orientation.DOWN, new DiscreteCoordinates(9,9)));
+        }
         super.update(deltaTime);
     }
 

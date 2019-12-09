@@ -3,7 +3,6 @@ package ch.epfl.cs107.play.game.arpg.actor;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.*;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
-import ch.epfl.cs107.play.game.arpg.Vulnerability;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -41,15 +40,26 @@ public abstract class Monster extends MovableAreaEntity implements Interactor {
         this.vulnerabilities = vulnerabilities;
 
         Sprite[][] aliveSprites = RPGSprite.extractSprites(spriteName, nbFrames, 2.f,2.f, this, 32, 32, new Vector(-0.5f, 0.f),orientations);
-        animationsAlive = RPGSprite.createAnimations(ALIVE_ANIMATION_DURATION, aliveSprites);
+        animationsAlive = RPGSprite.createAnimations(ALIVE_ANIMATION_DURATION/2, aliveSprites);
         currentAnimationAlive = animationsAlive[orientation.ordinal()];
 
         Sprite[] deadSprites = RPGSprite.extractSprites("zelda/vanish", 7, 2.f, 2.f, this, 32, 32, new Vector(-0.5f,0.f));
-        deadAnimation = new Animation(DEAD_ANIMATION_DURATION, deadSprites, false);
+        deadAnimation = new Animation(DEAD_ANIMATION_DURATION/2, deadSprites, false);
+    }
+
+    public static int getAnimationDuration() {return ALIVE_ANIMATION_DURATION;}
+
+    public boolean isAnimationCompleted() {
+        return currentAnimationAlive.isCompleted();
     }
 
     public List<Vulnerability> getVulnerabilities() {
         return vulnerabilities;
+    }
+
+    public void setAnimations(Animation[] animations, Orientation orientation) {
+        animationsAlive = animations;
+        currentAnimationAlive = animationsAlive[orientation.ordinal()];
     }
 
     public void weaken(float damage, Vulnerability vulnerability) {
@@ -133,4 +143,10 @@ public abstract class Monster extends MovableAreaEntity implements Interactor {
     }
 
     abstract void spawnCollectables();
+
+    public enum Vulnerability {
+        PHYSICAL,
+        FIRE,
+        MAGIC;
+    }
 }
