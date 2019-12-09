@@ -27,7 +27,7 @@ import java.util.List;
 import static ch.epfl.cs107.play.game.arpg.ARPGItem.*;
 
 public class ARPGPlayer extends Player implements Inventory.Holder{
-    private final static int ANIMATION_DURATION = 4; //DEFAULT: 8
+    private final static int ANIMATION_DURATION = 3; //DEFAULT: 8
     private Animation[] animations;
     private Animation currentAnimation;
 
@@ -35,6 +35,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 
     private ARPGPlayerStatusGUI gui;
     private TextGraphics message;
+    private final float MAX_HP = 10.f;
     private float hp;
 
     private ARPGInventory inventory;
@@ -56,7 +57,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
         message.setAnchor(new Vector(-0.3f, 0.1f));
 
         Sprite[][] sprites = RPGSprite.extractSprites("zelda/player", 4, 1, 2, this, 16, 32, new Orientation[] {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
-        animations = RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites);
+        animations = RPGSprite.createAnimations(ANIMATION_DURATION, sprites);
         currentAnimation = animations[2];
         gui = new ARPGPlayerStatusGUI();
 
@@ -162,7 +163,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
     }
 
     public void strengthen() {
-        hp = 10.f;
+        hp = MAX_HP;
     }
 
     public void damage(ARPGItem item){
@@ -176,8 +177,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 
     private void addHp(float hp){
         this.hp += hp;
-        if(this.hp > 10.f){
-            this.hp = 10.f;
+        if(this.hp > MAX_HP){
+            this.hp = MAX_HP;
         }
     }
 
