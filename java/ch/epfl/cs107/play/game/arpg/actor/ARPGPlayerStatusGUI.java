@@ -9,6 +9,8 @@ import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
 public class ARPGPlayerStatusGUI implements Graphics {
+    private static final int MAX_HEART = 5;
+
     private float width;
     private float height;
     private Vector anchor;
@@ -17,20 +19,18 @@ public class ARPGPlayerStatusGUI implements Graphics {
     private ImageGraphics[] gearDisplay;
     private ImageGraphics[] coinsDisplay;
 
-    public void drawGUI(Canvas canvas, float hp, ARPGItem item, int money){
-        width = canvas.getScaledWidth();
-        height = canvas.getScaledHeight();
-        anchor = canvas.getTransform().getOrigin().sub(new Vector(width/2, height/2));
-
+    public void update(float hp, ARPGItem item, int money){
         heartDisplay(hp);
         gearDisplay(item);
         coinsDisplay(money);
-
-        draw(canvas);
     }
 
     @Override
     public void draw(Canvas canvas) {
+        width = canvas.getScaledWidth();
+        height = canvas.getScaledHeight();
+        anchor = canvas.getTransform().getOrigin().sub(new Vector(width/2, height/2));
+
         for(int i = 0; i < gearDisplay.length; i++){
             gearDisplay[i].draw(canvas);
         }
@@ -54,7 +54,7 @@ public class ARPGPlayerStatusGUI implements Graphics {
     }
 
     private void heartDisplay(float hp){
-        heartDisplay = new ImageGraphics[5];
+        heartDisplay = new ImageGraphics[MAX_HEART];
         int fullHearts = (int)(hp / 2);
 
         //FULL HEARTS
@@ -66,12 +66,12 @@ public class ARPGPlayerStatusGUI implements Graphics {
         if(hp % 2 != 0){
             heartDisplay[fullHearts] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(16, 0, 16, 16), anchor.add(new Vector(1.75f+fullHearts, height - 1.25f)), 1, 2000);
             //EMPTY-HEARTS W/ OFFSET
-            for(int i = fullHearts+1; i < 5; i++){
+            for(int i = fullHearts+1; i < MAX_HEART; i++){
                 heartDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(0, 0, 16, 16), anchor.add(new Vector(1.75f+i, height - 1.25f)), 1, 2000);
             }
         } else {
             //EMPTY-HEARTS W/O OFFSET
-            for(int i = fullHearts; i < 5; i++){
+            for(int i = fullHearts; i < MAX_HEART; i++){
                 heartDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(0, 0, 16, 16), anchor.add(new Vector(1.75f+i, height - 1.25f)), 1, 2000);
             }
         }

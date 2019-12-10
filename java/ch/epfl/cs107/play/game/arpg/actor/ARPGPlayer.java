@@ -1,6 +1,5 @@
 package ch.epfl.cs107.play.game.arpg.actor;
 
-import ch.epfl.cs107.play.game.actor.TextGraphics;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Animation;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
@@ -9,35 +8,29 @@ import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.ARPGItem;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
+import ch.epfl.cs107.play.game.rpg.actor.Inventory;
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
-import ch.epfl.cs107.play.game.rpg.actor.Inventory;
 import ch.epfl.cs107.play.game.rpg.actor.Player;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
-import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
 
-import java.awt.Color;
 import java.util.Collections;
 import java.util.List;
 
-import static ch.epfl.cs107.play.game.arpg.ARPGItem.*;
-
-public class ARPGPlayer extends Player implements Inventory.Holder{
+public class ARPGPlayer extends Player implements Inventory.Holder {
+    private final static float MAX_HP = 10.f;
     private final static int ANIMATION_DURATION = 3; //DEFAULT: 8
     private Animation[] animations;
     private Animation currentAnimation;
 
     private ARPGPlayerHandler handler;
+    private ARPGPlayerStatusGUI statusGUI;
 
-    private ARPGPlayerStatusGUI gui;
-    private TextGraphics message;
-    private final float MAX_HP = 10.f;
     private float hp;
-
     private ARPGInventory inventory;
     private ARPGItem currentItem;
 
@@ -49,22 +42,23 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
      */
     public ARPGPlayer(Area area, DiscreteCoordinates coordinates) {
         super(area, Orientation.DOWN, coordinates);
-        handler = new ARPGPlayerHandler();
 
-        hp = 10;
-        message = new TextGraphics(Integer.toString((int)hp), 0.4f, Color.BLUE);
-        message.setParent(this);
-        message.setAnchor(new Vector(-0.3f, 0.1f));
+
+        inventory = new ARPGInventory(50);
+        inventory.add(ARPGItem.BOMB, 3);
+        inventory.add(ARPGItem.BOW, 2);
+        inventory.add(ARPGItem.SWORD, 10);
+        inventory.add(ARPGItem.STAFF,1);
+        currentItem = ARPGItem.BOMB;
+
+        hp = MAX_HP;
+
+        handler = new ARPGPlayerHandler();
+        statusGUI = new ARPGPlayerStatusGUI();
 
         Sprite[][] sprites = RPGSprite.extractSprites("zelda/player", 4, 1, 2, this, 16, 32, new Orientation[] {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
         animations = RPGSprite.createAnimations(ANIMATION_DURATION, sprites);
         currentAnimation = animations[2];
-        gui = new ARPGPlayerStatusGUI();
-
-        inventory = new ARPGInventory(50);
-        inventory.addItem(BOMB, 5);
-        inventory.addItem(SWORD, 1);
-        currentItem = inventory.nextItem();
 
         resetMotion();
     }
@@ -101,13 +95,13 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
         final Button SPACE = getOwnerArea().getKeyboard().get(Keyboard.SPACE);
 
         if(TAB.isPressed()){
-            currentItem = inventory.nextItem();
+            currentItem = (ARPGItem) inventory.switchItem(currentItem);
         }
 
         if(SPACE.isPressed() && possess(currentItem)){
             if(currentItem.use(getOwnerArea(), getCurrentMainCellCoordinates(), getOrientation())){
-                if(currentItem == BOMB){
-                    inventory.removeItem(currentItem, 1);
+                if(currentItem == ARPGItem.BOMB){
+                    inventory.remove(currentItem, 1);
                 }
             }
         }
@@ -155,45 +149,36 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 
     @Override
     public boolean wantsViewInteraction() {
-        return getOwnerArea().getKeyboard().get(Keyboard.E).isDown();
+        return getOwnerArea().getKeyboard().get(Keyboard.E).isPressed();
     }
 
     private boolean isWeak() {
         return (hp <= 0.f);
     }
 
-    public void strengthen() {
-        hp = MAX_HP;
-    }
-
-    public void damage(ARPGItem item){
-        if(item == BOMB){
-            hp -= 3.f;
-            if(isWeak()){
-                hp = 0.f;
-            }
+    public void strengthen(float hp) {
+        this.hp += hp;
+        if (this.hp > MAX_HP) {
+            this.hp = MAX_HP;
         }
     }
 
-    private void addHp(float hp){
-        this.hp += hp;
-        if(this.hp > MAX_HP){
-            this.hp = MAX_HP;
+    public void weaken(float hit) {
+        hp -= hit;
+        if (hp < 0) {
+            hp = 0;
         }
     }
 
     @Override
     public void draw(Canvas canvas) {
         currentAnimation.draw(canvas);
-        gui.drawGUI(canvas, hp, currentItem, inventory.getMoney());
-
-        //FOR MANUAL HP STATUS CHECK
-        //message.draw(canvas);
+        statusGUI.draw(canvas);
     }
 
     @Override
     public void update(float deltaTime) {
-        message.setText(Integer.toString((int)hp));
+        statusGUI.update(hp, currentItem, inventory.getMoney());
 
         Keyboard keyboard = getOwnerArea().getKeyboard();
         moveOrientate(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
@@ -215,8 +200,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
     }
 
     @Override
-    public boolean possess(InventoryItem inventoryItem) {
-        return inventory.isStocked(inventoryItem);
+    public boolean possess(InventoryItem item) {
+        return inventory.isInInventory(item);
     }
 
     private class ARPGPlayerHandler implements ARPGInteractionVisitor {
@@ -227,7 +212,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
                     setIsPassingADoor(door);
                     ((CastleDoor) door).close();
                 } else {
-                    if(possess(CASTLEKEY)){
+                    if(possess(ARPGItem.CASTLEKEY)){
                         ((CastleDoor) door).open();
                     }
                 }
@@ -250,13 +235,13 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
         @Override
         public void interactWith(Heart heart) {
             heart.collect();
-            addHp(2.f);
+            strengthen(2.f);
         }
 
         @Override
         public void interactWith(CastleKey castleKey) {
             castleKey.collect();
-            inventory.addItem(CASTLEKEY, 1);
+            inventory.add(ARPGItem.CASTLEKEY, 1);
         }
     }
 }

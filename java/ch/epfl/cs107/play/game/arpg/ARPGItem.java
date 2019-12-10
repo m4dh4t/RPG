@@ -1,8 +1,6 @@
 package ch.epfl.cs107.play.game.arpg;
 
-import ch.epfl.cs107.play.game.actor.Actor;
 import ch.epfl.cs107.play.game.areagame.Area;
-import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.arpg.actor.Bomb;
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
@@ -57,7 +55,8 @@ public enum ARPGItem implements InventoryItem {
             case BOMB:
                 Bomb bomb = new Bomb(area, position.jump(orientation.toVector()), 3);
                 if(area.canEnterAreaCells(bomb, frontCells)){
-                    return area.registerActor(bomb);
+                    area.registerActor(bomb);
+                    return true;
                 } else {
                     return false;
                 }
