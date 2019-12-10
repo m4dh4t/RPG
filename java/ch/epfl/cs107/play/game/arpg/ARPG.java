@@ -2,9 +2,7 @@ package ch.epfl.cs107.play.game.arpg;
 
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.arpg.actor.ARPGPlayer;
-import ch.epfl.cs107.play.game.arpg.area.Farm;
-import ch.epfl.cs107.play.game.arpg.area.Road;
-import ch.epfl.cs107.play.game.arpg.area.Village;
+import ch.epfl.cs107.play.game.arpg.area.*;
 import ch.epfl.cs107.play.game.rpg.RPG;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -21,6 +19,8 @@ public class ARPG extends RPG {
         addArea(new Farm());
         addArea(new Village());
         addArea(new Road());
+        addArea(new RoadCastle());
+        addArea(new Castle());
     }
 
     @Override
