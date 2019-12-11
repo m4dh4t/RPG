@@ -23,7 +23,8 @@ import java.util.List;
 
 public class ARPGPlayer extends Player implements Inventory.Holder {
     private final static float MAX_HP = 10.f;
-    private final static int ANIMATION_DURATION = 4; //DEFAULT: 8
+    private final static int DEFAULT_ANIMATION_DURATION = 8;
+    private int animation_duration;
     private Animation[] animations;
     private Animation currentAnimation;
 
@@ -51,13 +52,14 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
         currentItem = ARPGItem.BOMB;
 
         hp = MAX_HP;
+        animation_duration = DEFAULT_ANIMATION_DURATION;
 
         handler = new ARPGPlayerHandler();
         statusGUI = new ARPGPlayerStatusGUI();
 
         Sprite[][] sprites = RPGSprite.extractSprites("zelda/player", 4, 1, 2, this, 16, 32, new Orientation[] {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
-        animations = RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites);
-        currentAnimation = animations[2];
+        animations = RPGSprite.createAnimations(DEFAULT_ANIMATION_DURATION/2, sprites);
+        currentAnimation = animations[Orientation.DOWN.ordinal()];
 
         resetMotion();
     }
@@ -68,7 +70,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
 
         if (button.isDown()) {
             if (getOrientation() == orientation) {
-                move(ANIMATION_DURATION);
+                move(animation_duration);
                 animate(orientation);
             } else if (!isDisplacementOccurs() && !orientationKey.isDown()) { //Prevents the player from orientating if the key which corresponds to its orientation is down
                 orientate(orientation);
@@ -187,6 +189,18 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
     @Override
     public void update(float deltaTime) {
         Keyboard keyboard = getOwnerArea().getKeyboard();
+        if (keyboard.get(Keyboard.Q).isDown()) { //Checks if Q is pressed to allow the player to sprint
+            animation_duration = DEFAULT_ANIMATION_DURATION/2;
+            for (int i = 0; i < Orientation.values().length; ++i) {
+                animations[i].setSpeedFactor(2);
+            }
+        } else {
+            animation_duration = DEFAULT_ANIMATION_DURATION;
+            for (int i = 0; i < Orientation.values().length; ++i) {
+                animations[i].setSpeedFactor(1);
+            }
+        }
+
         moveOrientate(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
         moveOrientate(Orientation.UP, keyboard.get(Keyboard.UP));
         moveOrientate(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
@@ -194,7 +208,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
 
         inventoryHandler();
 
-        for(int i = 0; i < 4; i++) {
+        for(int i = 0; i < Orientation.values().length; i++) {
             if (isDisplacementOccurs()) {
                 animations[i].update(deltaTime);
             } else {
