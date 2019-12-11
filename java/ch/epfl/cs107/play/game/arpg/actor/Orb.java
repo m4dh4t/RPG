@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class Orb extends MovableAreaEntity {
-    private final static int ANIMATION_DURATION = 6;
+    private final static int ANIMATION_DURATION = 3;
     private final static DiscreteCoordinates BRIDGE_COORDINATES = new DiscreteCoordinates(15,10);
     private Animation animation;
     /**

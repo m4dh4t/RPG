@@ -13,7 +13,16 @@ import ch.epfl.cs107.play.window.Canvas;
 public class CastleDoor extends Door {
     private Sprite sprite;
 
-
+    /**
+     * CastleDoor constructor
+     * @param destination        (String): Name of the destination area, not null
+     * @param otherSideCoordinates (DiscreteCoordinate):Coordinates of the other side, not null
+     * @param area        (Area): Owner area, not null
+     * @param orientation (Orientation): Initial orientation of the entity, not null
+     * @param position    (DiscreteCoordinates): Initial position of the entity, not null
+     * @param otherCell (DiscreteCoordinates): Second initial position of the entity, not null (We want a second position
+     *                  because the sprite is two-cases large.)
+     */
     public CastleDoor(String destination, DiscreteCoordinates otherSideCoordinates, Area area, Orientation orientation, DiscreteCoordinates position, DiscreteCoordinates otherCell) {
         super(destination, otherSideCoordinates, Logic.FALSE, area, orientation, position, otherCell);
         sprite = new RPGSprite("zelda/castleDoor.close",2.f,2.f,this);

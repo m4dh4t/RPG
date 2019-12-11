@@ -13,7 +13,7 @@ public class ARPG extends RPG {
 
     private ARPGPlayer player;
     private final String startingArea = "zelda/Road";
-    private final DiscreteCoordinates startingPosition = new DiscreteCoordinates(19,9);
+    private final DiscreteCoordinates startingPosition = new DiscreteCoordinates(18,9);
 
     private void createAreas(){
         addArea(new Farm());
@@ -21,6 +21,8 @@ public class ARPG extends RPG {
         addArea(new Road());
         addArea(new RoadCastle());
         addArea(new Castle());
+        addArea(new RoadTemple());
+        addArea(new Temple());
     }
 
     @Override
