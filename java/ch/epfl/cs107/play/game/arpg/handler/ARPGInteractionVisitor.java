@@ -25,10 +25,6 @@ public interface ARPGInteractionVisitor extends RPGInteractionVisitor {
         // by default the interaction is empty
     }
 
-    default void interactWith(CastleDoor door) {
-        // by default the interaction is empty
-    }
-
     default void interactWith(CastleKey key) {
         // by default the interaction is empty
     }

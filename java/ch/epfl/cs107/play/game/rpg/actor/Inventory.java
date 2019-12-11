@@ -64,9 +64,6 @@ public class Inventory {
     }
 
     public interface Holder {
-
-        default boolean possess(InventoryItem item, Inventory inventory) {
-            return inventory.isInInventory(item);
-        }
+        boolean possess(InventoryItem item);
     }
 }

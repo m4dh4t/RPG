@@ -34,8 +34,7 @@ public class Play {
 			// Create a demo game and initialize corresponding texts
 			XMLTexts.initialize(fileSystem, "strings/icmon_fr.xml");
 
-			//final Game game = new ARPG();
-			final AreaGame game = new ARPG();
+			final Game game = new ARPG();
 
 			// Use Swing display
 			final Window window = new SwingWindow(game.getTitle(), fileSystem, 550, 550);

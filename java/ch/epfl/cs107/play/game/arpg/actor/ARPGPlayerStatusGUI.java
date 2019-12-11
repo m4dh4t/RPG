@@ -9,120 +9,102 @@ import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
 public class ARPGPlayerStatusGUI implements Graphics {
-    private final static int DEPTH = 1001;
-    private final float PLAYERMAXHP;
-    private int playerMoney;
-    private float playerHealth;
-    private ARPGItem playerCurrentItem;
+    private static final int MAX_HEART = 5;
 
-    protected ARPGPlayerStatusGUI(int startingMoney, float healthPoints, ARPGItem currentItem) {
-        playerMoney = startingMoney;
-        playerHealth = healthPoints;
-        PLAYERMAXHP = healthPoints;
-        playerCurrentItem = currentItem;
+    private float width;
+    private float height;
+    private Vector anchor;
+
+    private ImageGraphics[] heartDisplay;
+    private ImageGraphics[] gearDisplay;
+    private ImageGraphics[] coinsDisplay;
+
+    public void drawGUI(Canvas canvas, float hp, ARPGItem item, int money){
+        width = canvas.getScaledWidth();
+        height = canvas.getScaledHeight();
+        anchor = canvas.getTransform().getOrigin().sub(new Vector(width/2, height/2));
+
+        heartDisplay(hp);
+        gearDisplay(item);
+        coinsDisplay(money);
+
+        draw(canvas);
     }
 
     @Override
     public void draw(Canvas canvas) {
-        drawItem(canvas,drawGearDisplay(canvas));
-        drawDigits(canvas, drawCoinsDisplay(canvas));
-        drawHearts(canvas);
-    }
+        for(int i = 0; i < gearDisplay.length; i++){
+            gearDisplay[i].draw(canvas);
+        }
 
-    private ImageGraphics drawGearDisplay(Canvas canvas) {
-        float width = canvas.getScaledWidth();
-        float height = canvas.getScaledHeight();
-        Vector anchor = canvas.getTransform().getOrigin().sub(new Vector(width/2, height/2));
+        for(int i = 0; i < heartDisplay.length; i++){
+            heartDisplay[i].draw(canvas);
+        }
 
-        ImageGraphics gearDisplay = new ImageGraphics(ResourcePath.getSprite("zelda/gearDisplay"), 1.5f, 1.5f, new RegionOfInterest(0, 0, 32, 32), anchor.add(0, height - 1.75f), 1, DEPTH);
-
-        gearDisplay.draw(canvas);
-        return gearDisplay;
-    }
-
-    private void drawItem(Canvas canvas, ImageGraphics gearDisplay) {
-        Vector anchor = gearDisplay.getAnchor();
-
-        if (playerCurrentItem != null) {
-            ImageGraphics item = new ImageGraphics(ResourcePath.getSprite(playerCurrentItem.getSpriteName()), 1.f, 1.f, new RegionOfInterest(0, 0, 16, 16), anchor.add(0.25f, 0.3f), 1, DEPTH);
-
-            item.draw(canvas);
+        for(int i = 0; i < coinsDisplay.length; i++){
+            coinsDisplay[i].draw(canvas);
         }
     }
 
-    private ImageGraphics drawCoinsDisplay(Canvas canvas) {
-        float width = canvas.getScaledWidth();
-        float height = canvas.getScaledHeight();
-        Vector anchor = canvas.getTransform().getOrigin().sub(width/2, height/2);
+    private void gearDisplay(ARPGItem item){
+        gearDisplay = new ImageGraphics[2];
 
-        ImageGraphics coinsDisplay = new ImageGraphics(ResourcePath.getSprite("zelda/coinsDisplay"), 5.f,2.5f, new RegionOfInterest(0,0,64,32),anchor,1,DEPTH);
-
-        coinsDisplay.draw(canvas);
-        return coinsDisplay;
+        //BACKGROUND
+        gearDisplay[0] = new ImageGraphics(ResourcePath.getSprite("zelda/gearDisplay"), 1.5f, 1.5f, new RegionOfInterest(0, 0, 32, 32), anchor.add(new Vector(0, height - 1.5f)), 1, 2000);
+        //ITEM
+        gearDisplay[1] = new ImageGraphics(ResourcePath.getSprite(item.getSpriteName()), 1f, 1f, new RegionOfInterest(0, 0, 16, 16), anchor.add(new Vector(0.25f, height - 1.25f)), 1, 2001);
     }
 
-    private void drawDigits(Canvas canvas, ImageGraphics coinsDisplay) {
-        Vector anchor = coinsDisplay.getAnchor();
-        int moneyCalculation = playerMoney;
+    private void heartDisplay(float hp){
+        heartDisplay = new ImageGraphics[MAX_HEART];
+        int fullHearts = (int)(hp / 2);
 
-        for (int i = 0; i < 3; ++i) {
-            ImageGraphics digit = new ImageGraphics(ResourcePath.getSprite("zelda/digits"),0.9f,0.9f, calculateROI(moneyCalculation % 10),anchor.add(3.8f - 0.9f * i,0.85f),1,DEPTH);
-            digit.draw(canvas);
-            moneyCalculation /= 10;
+        //FULL HEARTS
+        for(int i = 0; i < fullHearts; i++){
+            heartDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(32, 0, 16, 16), anchor.add(new Vector(1.75f+i, height - 1.25f)), 1, 2000);
         }
-    }
 
-    private void drawHearts(Canvas canvas) {
-        float width = canvas.getScaledWidth();
-        float height = canvas.getScaledHeight();
-        Vector anchor = canvas.getTransform().getOrigin().add(-width/2, height/2);
-
-        float healthCalculation = playerHealth;
-        for (int i = 0; i < PLAYERMAXHP; ++i) {
-            ImageGraphics heart = calculateHeart(healthCalculation, anchor.add(1.75f + i, -1.5f));
-            heart.draw(canvas);
-            healthCalculation -= 1;
-        }
-    }
-
-    private ImageGraphics calculateHeart(float health, Vector anchor) {
-        ImageGraphics heart;
-        if (health >= 1) {
-            heart = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1.f,1.f, new RegionOfInterest(32,0,16,16),anchor,1,DEPTH);
-        } else if (health > 0) {
-            heart = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1.f,1.f, new RegionOfInterest(16,0,16,16),anchor,1,DEPTH);
+        //HALF-HEART
+        if(hp % 2 != 0){
+            heartDisplay[fullHearts] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(16, 0, 16, 16), anchor.add(new Vector(1.75f+fullHearts, height - 1.25f)), 1, 2000);
+            //EMPTY-HEARTS W/ OFFSET
+            for(int i = fullHearts+1; i < MAX_HEART; i++){
+                heartDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(0, 0, 16, 16), anchor.add(new Vector(1.75f+i, height - 1.25f)), 1, 2000);
+            }
         } else {
-            heart = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1.f,1.f, new RegionOfInterest(0,0,16,16),anchor,1,DEPTH);
+            //EMPTY-HEARTS W/O OFFSET
+            for(int i = fullHearts; i < MAX_HEART; i++){
+                heartDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(0, 0, 16, 16), anchor.add(new Vector(1.75f+i, height - 1.25f)), 1, 2000);
+            }
         }
-
-        return heart;
     }
 
+    private void coinsDisplay(int money){
+        String number = Integer.toString(money);
+        coinsDisplay = new ImageGraphics[1 + number.length()];
+        int[] digits = new int[number.length()];
 
-    private RegionOfInterest calculateROI(int digit) {
-        int x;
-        int y;
-
-        if (digit < 0 || digit > 9) {
-            return null;
+        for(int i = 0; i < number.length(); i++){
+            digits[i] = number.charAt(i) - 48;
         }
 
-        if (digit == 0) {
-            x = 1;
-            y = 2;
-        } else {
-            x = (digit - 1) % 4;
-            y = (digit-1)/4;
+        //BACKGROUND
+        coinsDisplay[number.length()] = new ImageGraphics(ResourcePath.getSprite("zelda/coinsDisplay"), 3f, 1.5f, new RegionOfInterest(0, 0, 64, 32), anchor.add(new Vector(0, 0)), 1, 2000);
+
+        //DIGITS
+        for(int i = 0; i < digits.length; i++){
+            int x;
+            int y;
+
+            if (digits[i] == 0) {
+                x = 1;
+                y = 2;
+            } else {
+                x = (digits[i] - 1) % 4;
+                y = digits[i] / 4;
+            }
+
+            coinsDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/digits"), 0.75f, 0.75f, new RegionOfInterest(x * 16, y * 16, 16, 16), anchor.add(new Vector(1.1f+(i*0.5f), 0.4f)), 1, 2001);
         }
-
-        x *= 16;
-        y *= 16;
-        return new RegionOfInterest(x,y,16,16);
-    }
-
-    public void update(int playerMoney, float playerHealth, ARPGItem playerCurrentItem) {
-        this.playerMoney = playerMoney;
-        this.playerHealth = playerHealth;
-        this.playerCurrentItem = playerCurrentItem;
     }
 }

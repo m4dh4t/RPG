@@ -5,8 +5,12 @@ import ch.epfl.cs107.play.game.areagame.actor.AreaEntity;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
+import java.util.Collections;
+import java.util.List;
+
 public abstract class CollectableAreaEntity extends AreaEntity {
-    private boolean pickedUp;
+    boolean collected;
+
     /**
      * Default AreaEntity constructor
      *
@@ -16,14 +20,35 @@ public abstract class CollectableAreaEntity extends AreaEntity {
      */
     public CollectableAreaEntity(Area area, Orientation orientation, DiscreteCoordinates position) {
         super(area, orientation, position);
-        pickedUp = false;
+        collected = false;
     }
 
-    public boolean pickedUp() {
-        return pickedUp;
+    public boolean isCollected() {
+        return collected;
     }
 
-    public void pickUp() {
-        pickedUp = true;
+    public void collect(){
+        collected = true;
+        getOwnerArea().unregisterActor(this);
+    }
+
+    @Override
+    public List<DiscreteCoordinates> getCurrentCells() {
+        return Collections.singletonList(getCurrentMainCellCoordinates());
+    }
+
+    @Override
+    public boolean takeCellSpace() {
+        return false;
+    }
+
+    @Override
+    public boolean isCellInteractable() {
+        return !isCollected();
+    }
+
+    @Override
+    public boolean isViewInteractable() {
+        return false;
     }
 }

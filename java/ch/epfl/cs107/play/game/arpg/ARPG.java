@@ -19,8 +19,8 @@ public class ARPG extends RPG {
         addArea(new Farm());
         addArea(new Village());
         addArea(new Road());
-        addArea(new Castle());
         addArea(new RoadCastle());
+        addArea(new Castle());
     }
 
     @Override

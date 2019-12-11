@@ -1,19 +1,21 @@
 package ch.epfl.cs107.play.game.arpg;
 
 import ch.epfl.cs107.play.game.areagame.Area;
+import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.arpg.actor.Bomb;
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
 import java.util.Collections;
+import java.util.List;
 
 public enum ARPGItem implements InventoryItem {
-    ARROW("Arrow", 0, 0, "zelda/arrow.icon"),
-    SWORD("Sword", 0, 0,"zelda/sword.icon"),
-    STAFF("Staff", 0, 0,"zelda/staff_water.icon"),
-    BOW("Bow",0,0,"zelda/bow.icon"),
-    BOMB("Bomb",0,0,"zelda/bomb"),
-    CASTLEKEY("CastleKey",0,0,"zelda/key");
+    ARROW("Arrow", 0.5f, 1, "zelda/arrow.icon"),
+    SWORD("Sword", 1.5f, 10, "zelda/sword.icon"),
+    STAFF("Staff", 2.5f, 50, "zelda/staff_water.icon"),
+    BOW("Bow", 1.5f, 20, "zelda/bow.icon"),
+    BOMB("Bomb", 15.f, 30, "zelda/bomb"),
+    CASTLEKEY("Castle Key", 0.1f, 100, "zelda/key");
 
     private String name;
     private float weight;
@@ -42,21 +44,23 @@ public enum ARPGItem implements InventoryItem {
         return price;
     }
 
-    public String getSpriteName() {
+    public String getSpriteName(){
         return spriteName;
     }
 
-    public boolean interaction(Area area, DiscreteCoordinates coordinates) {
-        switch(this) {
-            case BOMB :
-                Bomb bomb = new Bomb(area, coordinates,1.f);
-                if (area.canEnterAreaCells(bomb, Collections.singletonList(coordinates))) {
+    public boolean use(Area area, DiscreteCoordinates position, Orientation orientation){
+        List<DiscreteCoordinates> frontCells = Collections.singletonList(position.jump(orientation.toVector()));
+
+        switch (this){
+            case BOMB:
+                Bomb bomb = new Bomb(area, position.jump(orientation.toVector()), 3);
+                if(area.canEnterAreaCells(bomb, frontCells)){
                     area.registerActor(bomb);
                     return true;
                 } else {
                     return false;
                 }
-            default: //case for CASTLEKEY : We don't want the key to be removed from the inventory so we return false so that ARPGPlayer readds it if removed. (See ARPGPlayer class)
+            default:
                 return false;
         }
     }

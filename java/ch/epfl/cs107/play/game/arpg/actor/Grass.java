@@ -37,7 +37,7 @@ public class Grass extends AreaEntity {
         cut = false;
         burnt = false;
 
-        sprite = new RPGSprite("zelda/grass", 1.f,1.f,this,new RegionOfInterest(0,0,16,16), Vector.ZERO, 1.f, -1);
+        sprite = new RPGSprite("zelda/grass", 1.f,1.f,this, new RegionOfInterest(0,0,16,16), Vector.ZERO, 1.f, -1);
 
 
         Sprite[] cutSprites = RPGSprite.extractSprites("zelda/grass.sliced",4,2.f,2.f,this,32,32);
@@ -66,12 +66,11 @@ public class Grass extends AreaEntity {
         if (!cut && !burnt) {
             sprite.draw(canvas);
         } else {
-            if (cut && !cutAnimation.isCompleted() && !burnt) {
+            if (cut && !cutAnimation.isCompleted()) {
                 cutAnimation.draw(canvas);
-
-            } else if (burnt && !burnAnimation.isCompleted() && !cut) {
+            } else if (burnt && !burnAnimation.isCompleted()) {
                 burnAnimation.draw(canvas);
-            } else {
+            } else if (burnAnimation.isCompleted() || cutAnimation.isCompleted()){
                 getOwnerArea().unregisterActor(this);
             }
         }
@@ -89,12 +88,12 @@ public class Grass extends AreaEntity {
 
     @Override
     public boolean isCellInteractable() {
-        return true;
+        return !cut && !burnt;
     }
 
     @Override
     public boolean isViewInteractable() {
-        return true;
+        return !cut && !burnt;
     }
 
     @Override
@@ -102,23 +101,25 @@ public class Grass extends AreaEntity {
         ((ARPGInteractionVisitor)v).interactWith(this);
     }
 
-    void cut() {
-        if (!cut) { //checks if the grass is cut to prevent spawning a heart/coin when the player steps on the grass after he's cut it (during the animation of the grass disappearing)
-            if (RandomGenerator.getInstance().nextDouble() < PROBABILITY_TO_DROP_ITEM) {
-                if (RandomGenerator.getInstance().nextDouble() < PROBABILITY_TO_DROP_HEART) {
-                    Heart heart = new Heart(getOwnerArea(), getCurrentMainCellCoordinates());
-                    getOwnerArea().registerActor(heart);
-                } else {
-                    Coin coin = new Coin(getOwnerArea(), getCurrentMainCellCoordinates());
-                    getOwnerArea().registerActor(coin);
-                }
-            }
-        }
-
+    public void cut() {
         cut = true;
+        dropItem();
     }
 
-    void burn() {
+    private void dropItem(){
+        double randomDouble = RandomGenerator.getInstance().nextDouble();
+
+        if(randomDouble < PROBABILITY_TO_DROP_ITEM){
+            randomDouble = RandomGenerator.getInstance().nextDouble();
+            if(randomDouble < PROBABILITY_TO_DROP_HEART){
+                getOwnerArea().registerActor(new Heart(getOwnerArea(), getCurrentMainCellCoordinates()));
+            } else {
+                getOwnerArea().registerActor(new Coin(getOwnerArea(), getCurrentMainCellCoordinates()));
+            }
+        }
+    }
+
+    public void burn() {
         burnt = true;
     }
 
