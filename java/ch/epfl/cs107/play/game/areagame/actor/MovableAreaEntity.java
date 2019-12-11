@@ -22,10 +22,12 @@ public abstract class MovableAreaEntity extends AreaEntity {
     private int remainingFramesForCurrentMove;
 
     // The cells the entity left
-    private List<DiscreteCoordinates> leftCells; 
+    private List<DiscreteCoordinates> leftCells;
     // The cells the entity entered
     private List<DiscreteCoordinates> enteredCells;
 
+    private Vector targetPosition;
+    private Vector originPosition;
 
     /**
      * Default MovableAreaEntity constructor
@@ -57,10 +59,10 @@ public abstract class MovableAreaEntity extends AreaEntity {
      * @param frameForMove (int): the frame. This value will be cropped to 1 if smaller
      * @return (boolean): indicate if the move is initiated
      */
-    protected final boolean move(int frameForMove){ 
-    	return move(frameForMove, 0);
+    protected final boolean move(int frameForMove){
+        return move(frameForMove, 0);
     }
-    
+
     /**
      * Final move method
      * If no displacement occurs or if the displacement just ends now,
@@ -73,44 +75,55 @@ public abstract class MovableAreaEntity extends AreaEntity {
      * @return (boolean): indicate if the move is initiated
      */
     protected final boolean move(int frameForMove, int startingFrame){
-    	if(!displacementOccurs || isTargetReached() ) {
+        if(!displacementOccurs || isTargetReached() ) {
 
-        	List<DiscreteCoordinates> leavingCells = getLeftCells();
-        	List<DiscreteCoordinates> enteringCells = getEnteringCells();
+            List<DiscreteCoordinates> leavingCells = getLeftCells();
+            List<DiscreteCoordinates> enteringCells = getEnteringCells();
 
             if(getOwnerArea().enterAreaCells(this, enteringCells) && getOwnerArea().leaveAreaCells(this, leavingCells)){
 
-            	leftCells = leavingCells;
-            	enteredCells = enteringCells;
-            	
+                leftCells = leavingCells;
+                enteredCells = enteringCells;
+
                 displacementOccurs = true;
                 this.framesForCurrentMove = Math.max(1, frameForMove);
                 startingFrame = Math.min(startingFrame, frameForMove);
                 remainingFramesForCurrentMove = framesForCurrentMove - startingFrame;
 
+                originPosition = getPosition();
+                targetPosition = getPosition().add(getOrientation().toVector());
+
                 increasePositionOf(startingFrame);
-                
+
                 return true;
             }
         }
         return false;
     }
-    
+
     /**
      * Final abortCurrentMove method
      * If a displacement occurs and if the displacement is not end,
      * abort the current move, returning to the previous cell
      * Note the abort is possible only if this MovableAreaEntity can:
-     * - return to the cells it leaved 
+     * - return to the cells it leaved
      * - leave the cells it entered
      * @return (boolean): indicate if the abort is initiated
      */
     protected final boolean abortCurrentMove(){
         if(displacementOccurs && !isTargetReached() && leftCells != null && enteredCells != null) {
             if(getOwnerArea().enterAreaCells(this, leftCells) && getOwnerArea().leaveAreaCells(this, enteredCells)){
-                
+
                 remainingFramesForCurrentMove = framesForCurrentMove - remainingFramesForCurrentMove;
-                
+
+                Vector tempPos = originPosition;
+                originPosition = targetPosition;
+                targetPosition = tempPos;
+
+                List<DiscreteCoordinates> tempCells = leftCells;
+                leftCells = enteredCells;
+                enteredCells = tempCells;
+
                 return true;
             }
         }
@@ -123,33 +136,33 @@ public abstract class MovableAreaEntity extends AreaEntity {
      * @return (List<DiscreteCoordinates>): the cells after the move
      */
     protected List<DiscreteCoordinates> getNextCurrentCells() {
-    	List<DiscreteCoordinates> nextCells = new ArrayList<>();
-    	for(DiscreteCoordinates coord : getCurrentCells()) {
-    		nextCells.add(coord.jump(getOrientation().toVector()));
-    	}
-    	return nextCells;
+        List<DiscreteCoordinates> nextCells = new ArrayList<>();
+        for(DiscreteCoordinates coord : getCurrentCells()) {
+            nextCells.add(coord.jump(getOrientation().toVector()));
+        }
+        return nextCells;
     }
-    
+
     /** @return (List of DiscreteCoordinates): the cells a movement will implies to leave. May be empty but not null */
     private List<DiscreteCoordinates> getLeftCells(){
-    	Set<DiscreteCoordinates> leavingCells = new HashSet<>(getCurrentCells());
-    	List<DiscreteCoordinates> nextCells = new ArrayList<>();
-    	for(DiscreteCoordinates coord : getCurrentCells()) {
-    		nextCells.add(coord.jump(getOrientation().toVector()));
-    	}
+        Set<DiscreteCoordinates> leavingCells = new HashSet<>(getCurrentCells());
+        List<DiscreteCoordinates> nextCells = new ArrayList<>();
+        for(DiscreteCoordinates coord : getCurrentCells()) {
+            nextCells.add(coord.jump(getOrientation().toVector()));
+        }
 
-    	leavingCells.removeAll(getNextCurrentCells());
-    	
-    	return new ArrayList<>(leavingCells);
+        leavingCells.removeAll(getNextCurrentCells());
+
+        return new ArrayList<>(leavingCells);
     }
 
     /** @return (List of DiscreteCoordinates): the cells a movement will implies to enter. May be empty but not null*/
     private List<DiscreteCoordinates> getEnteringCells(){
-    	Set<DiscreteCoordinates> enteringCells = new HashSet<>(getNextCurrentCells());
-    	
-    	enteringCells.removeAll(getCurrentCells());
-    	
-    	return new ArrayList<>(enteringCells);
+        Set<DiscreteCoordinates> enteringCells = new HashSet<>(getNextCurrentCells());
+
+        enteringCells.removeAll(getCurrentCells());
+
+        return new ArrayList<>(enteringCells);
     }
 
 //    /** @return (List of DiscreteCoordinates): the cells previous movement entered */
@@ -162,7 +175,7 @@ public abstract class MovableAreaEntity extends AreaEntity {
 //    	return leftCells;
 //    }
 
-  /**
+    /**
      * Indicate if a displacement is occurring
      * @return (boolean)
      */
@@ -174,7 +187,7 @@ public abstract class MovableAreaEntity extends AreaEntity {
     protected boolean isTargetReached(){
         return remainingFramesForCurrentMove == 0;
     }
-    
+
     /**
      * Increase the position of a certain amount of frame
      * @param frame
@@ -187,10 +200,10 @@ public abstract class MovableAreaEntity extends AreaEntity {
     @Override
     protected boolean orientate(Orientation orientation) {
         // Allow reorientation only if no displacement is occurring or if abort current move (opposite orientation)
-    	if(getOrientation().opposite().equals(orientation)) {
-    		if(abortCurrentMove())
-    			return super.orientate(orientation);
-    	}
+        if(getOrientation().opposite().equals(orientation)) {
+            if(abortCurrentMove())
+                return super.orientate(orientation);
+        }
         return !displacementOccurs && super.orientate(orientation);
     }
 
@@ -201,12 +214,13 @@ public abstract class MovableAreaEntity extends AreaEntity {
     public void update(float deltaTime) {
         if (displacementOccurs) {
             if (!isTargetReached()) {
-            	increasePositionOf(1);
+                increasePositionOf(1);
             } else {
+                setCurrentPosition(targetPosition);
                 resetMotion();
             }
         }
-    	remainingFramesForCurrentMove = Math.max(remainingFramesForCurrentMove - 1, 0);
+        remainingFramesForCurrentMove = Math.max(remainingFramesForCurrentMove - 1, 0);
     }
 
     /// Implements Positionable

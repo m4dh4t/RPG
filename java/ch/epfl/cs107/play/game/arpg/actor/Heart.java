@@ -43,7 +43,7 @@ public class Heart extends CollectableAreaEntity {
     public void update(float deltaTime) {
         animation.update(deltaTime);
 
-        if(!isCollected()){
+        if(isCollected()){
             getOwnerArea().unregisterActor(this);
         }
     }

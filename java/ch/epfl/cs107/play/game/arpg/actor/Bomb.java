@@ -130,7 +130,7 @@ public class Bomb extends AreaEntity implements Interactor {
 
         @Override
         public void interactWith(ARPGPlayer player) {
-            player.weaken(2);
+            player.weaken(3);
         }
     }
 }
