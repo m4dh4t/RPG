@@ -107,6 +107,10 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
                 if(currentItem == ARPGItem.BOMB){
                     inventory.remove(currentItem, 1);
                 }
+
+                if(!possess(currentItem)) {
+                    currentItem = (ARPGItem) inventory.switchItem(currentItem);
+                }
             }
         }
     }

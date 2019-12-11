@@ -1,10 +1,7 @@
 package ch.epfl.cs107.play.game.arpg.actor;
 
 import ch.epfl.cs107.play.game.areagame.Area;
-import ch.epfl.cs107.play.game.areagame.actor.Animation;
-import ch.epfl.cs107.play.game.areagame.actor.AreaEntity;
-import ch.epfl.cs107.play.game.areagame.actor.Orientation;
-import ch.epfl.cs107.play.game.areagame.actor.Sprite;
+import ch.epfl.cs107.play.game.areagame.actor.*;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
@@ -17,7 +14,7 @@ import ch.epfl.cs107.play.window.Canvas;
 import java.util.Collections;
 import java.util.List;
 
-public class Grass extends AreaEntity {
+public class Grass extends AreaEntity implements Interactor {
     private final static int CUT_DURATION = 4;
     private final static int BURN_DURATION = 7;
     private final static double PROBABILITY_TO_DROP_ITEM = 0.5;
@@ -27,6 +24,8 @@ public class Grass extends AreaEntity {
     private Animation cutAnimation;
     private Animation burnAnimation;
 
+    private GrassHandler handler;
+
     private boolean cut;
     private boolean burnt;
 
@@ -34,6 +33,7 @@ public class Grass extends AreaEntity {
     public Grass(Area area, DiscreteCoordinates position) {
         super(area, Orientation.DOWN, position);
 
+        handler = new GrassHandler();
         cut = false;
         burnt = false;
 
@@ -77,6 +77,26 @@ public class Grass extends AreaEntity {
     @Override
     public List<DiscreteCoordinates> getCurrentCells() {
         return Collections.singletonList(getCurrentMainCellCoordinates());
+    }
+
+    @Override
+    public List<DiscreteCoordinates> getFieldOfViewCells() {
+        return null;
+    }
+
+    @Override
+    public boolean wantsCellInteraction() {
+        return burnt;
+    }
+
+    @Override
+    public boolean wantsViewInteraction() {
+        return false;
+    }
+
+    @Override
+    public void interactWith(Interactable other) {
+        other.acceptInteraction(handler);
     }
 
     @Override
@@ -131,6 +151,13 @@ public class Grass extends AreaEntity {
 
         if (cutAnimation.isCompleted() || burnAnimation.isCompleted()) {
             getOwnerArea().unregisterActor(this);
+        }
+    }
+
+    private class GrassHandler implements ARPGInteractionVisitor {
+        @Override
+        public void interactWith(ARPGPlayer player) {
+            player.weaken(1.f);
         }
     }
 }
