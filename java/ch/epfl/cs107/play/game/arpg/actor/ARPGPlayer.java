@@ -263,5 +263,10 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
             castleKey.collect();
             inventory.add(ARPGItem.CASTLEKEY, 1);
         }
+
+        @Override
+        public void interactWith(Orb orb) {
+            orb.hit();
+        }
     }
 }

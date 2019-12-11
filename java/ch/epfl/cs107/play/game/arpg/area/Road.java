@@ -20,6 +20,7 @@ public class Road extends ARPGArea {
         registerActors(Grass.grassZone(this, 5,7,6,11));
         registerActor(new Bomb(this,new DiscreteCoordinates(6,10), 2.5f));
         registerActor(new Waterfall(this, new DiscreteCoordinates(15,4)));
+        registerActor(new Orb(this, new DiscreteCoordinates(19, 8)));
     }
 
     @Override
