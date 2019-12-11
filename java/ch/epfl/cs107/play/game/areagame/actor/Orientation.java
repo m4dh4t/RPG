@@ -88,6 +88,12 @@ public enum Orientation {
         return super.toString()+direction.toString();
     }
 
+    /**
+     * Method used in ARGPlayer to prevent a bug that would allow the player to orientate if a key was pressed while another
+     * one was down while facing a wall
+     * @param orientation   The orientation we need the code for
+     * @return The code of the orientation given
+     */
     public static int getCode(Orientation orientation) {
         if (orientation == Orientation.LEFT) {
             return 37;

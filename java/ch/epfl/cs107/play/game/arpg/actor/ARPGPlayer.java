@@ -56,7 +56,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
         statusGUI = new ARPGPlayerStatusGUI();
 
         Sprite[][] sprites = RPGSprite.extractSprites("zelda/player", 4, 1, 2, this, 16, 32, new Orientation[] {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
-        animations = RPGSprite.createAnimations(ANIMATION_DURATION, sprites);
+        animations = RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites);
         currentAnimation = animations[2];
 
         resetMotion();
@@ -70,7 +70,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
             if (getOrientation() == orientation) {
                 move(ANIMATION_DURATION);
                 animate(orientation);
-            } else if (!isDisplacementOccurs() && !orientationKey.isDown()) {
+            } else if (!isDisplacementOccurs() && !orientationKey.isDown()) { //Prevents the player from orientating if the key which corresponds to its orientation is down
                 orientate(orientation);
                 animate(orientation);
             }

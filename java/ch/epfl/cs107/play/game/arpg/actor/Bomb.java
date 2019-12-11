@@ -10,6 +10,8 @@ import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
+import static ch.epfl.cs107.play.game.arpg.actor.Monster.Vulnerability;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -46,6 +48,11 @@ public class Bomb extends AreaEntity implements Interactor {
         animation = new Animation(EXPLOSION_DURATION, sprites, false);
     }
 
+    public void explode() {
+        exploded = true;
+        wantsInteraction = true;
+    }
+
     @Override
     public void draw(Canvas canvas) {
         if (!exploded) {
@@ -75,17 +82,17 @@ public class Bomb extends AreaEntity implements Interactor {
 
     @Override
     public boolean isCellInteractable() {
-        return false;
+        return !exploded;
     }
 
     @Override
     public boolean isViewInteractable() {
-        return false;
+        return !exploded;
     }
 
     @Override
     public void acceptInteraction(AreaInteractionVisitor v) {
-
+        ((ARPGInteractionVisitor)v).interactWith(this);
     }
 
     @Override
@@ -113,8 +120,7 @@ public class Bomb extends AreaEntity implements Interactor {
         if(!exploded){
             timer -= deltaTime;
             if(timer <= 0){
-                exploded = true;
-                wantsInteraction = true;
+                explode();
             }
         } else {
             wantsInteraction = false;
@@ -131,6 +137,11 @@ public class Bomb extends AreaEntity implements Interactor {
         @Override
         public void interactWith(ARPGPlayer player) {
             player.weaken(3);
+        }
+
+        @Override
+        public void interactWith(Monster monster) {
+            monster.weaken(1.f, Vulnerability.PHYSICAL);
         }
     }
 }
