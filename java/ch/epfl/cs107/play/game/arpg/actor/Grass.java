@@ -70,8 +70,6 @@ public class Grass extends AreaEntity {
                 cutAnimation.draw(canvas);
             } else if (burnt && !burnAnimation.isCompleted()) {
                 burnAnimation.draw(canvas);
-            } else if (burnAnimation.isCompleted() || cutAnimation.isCompleted()){
-                getOwnerArea().unregisterActor(this);
             }
         }
     }
@@ -129,6 +127,10 @@ public class Grass extends AreaEntity {
             cutAnimation.update(deltaTime);
         } else if (burnt) {
             burnAnimation.update(deltaTime);
+        }
+
+        if (cutAnimation.isCompleted() || burnAnimation.isCompleted()) {
+            getOwnerArea().unregisterActor(this);
         }
     }
 }
