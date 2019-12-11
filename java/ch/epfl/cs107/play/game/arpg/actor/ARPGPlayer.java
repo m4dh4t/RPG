@@ -43,7 +43,6 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
     public ARPGPlayer(Area area, DiscreteCoordinates coordinates) {
         super(area, Orientation.DOWN, coordinates);
 
-
         inventory = new ARPGInventory(50);
         inventory.add(ARPGItem.BOMB, 3);
         inventory.add(ARPGItem.BOW, 2);
@@ -79,14 +78,19 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
     }
 
     private void animate(Orientation orientation) {
-        if(orientation == Orientation.UP){
-            currentAnimation = animations[0];
-        } else if(orientation == Orientation.RIGHT){
-            currentAnimation = animations[1];
-        } else if(orientation == Orientation.DOWN){
-            currentAnimation = animations[2];
-        } else if(orientation == Orientation.LEFT){
-            currentAnimation = animations[3];
+        switch (orientation){
+            case UP:
+                currentAnimation = animations[0];
+                break;
+            case RIGHT:
+                currentAnimation = animations[1];
+                break;
+            case DOWN:
+                currentAnimation = animations[2];
+                break;
+            case LEFT:
+                currentAnimation = animations[3];
+                break;
         }
     }
 
