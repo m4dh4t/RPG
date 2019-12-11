@@ -23,7 +23,7 @@ import java.util.List;
 
 public class ARPGPlayer extends Player implements Inventory.Holder {
     private final static float MAX_HP = 10.f;
-    private final static int ANIMATION_DURATION = 3; //DEFAULT: 8
+    private final static int ANIMATION_DURATION = 4; //DEFAULT: 8
     private Animation[] animations;
     private Animation currentAnimation;
 
