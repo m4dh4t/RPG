@@ -173,13 +173,11 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
     @Override
     public void draw(Canvas canvas) {
         currentAnimation.draw(canvas);
-        statusGUI.draw(canvas);
+        statusGUI.drawGUI(canvas, hp, currentItem, inventory.getMoney());
     }
 
     @Override
     public void update(float deltaTime) {
-        statusGUI.update(hp, currentItem, inventory.getMoney());
-
         Keyboard keyboard = getOwnerArea().getKeyboard();
         moveOrientate(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
         moveOrientate(Orientation.UP, keyboard.get(Keyboard.UP));

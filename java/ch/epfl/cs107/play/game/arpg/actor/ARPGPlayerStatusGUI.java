@@ -19,18 +19,20 @@ public class ARPGPlayerStatusGUI implements Graphics {
     private ImageGraphics[] gearDisplay;
     private ImageGraphics[] coinsDisplay;
 
-    public void update(float hp, ARPGItem item, int money){
-        heartDisplay(hp);
-        gearDisplay(item);
-        coinsDisplay(money);
-    }
-
-    @Override
-    public void draw(Canvas canvas) {
+    public void drawGUI(Canvas canvas, float hp, ARPGItem item, int money){
         width = canvas.getScaledWidth();
         height = canvas.getScaledHeight();
         anchor = canvas.getTransform().getOrigin().sub(new Vector(width/2, height/2));
 
+        heartDisplay(hp);
+        gearDisplay(item);
+        coinsDisplay(money);
+
+        draw(canvas);
+    }
+
+    @Override
+    public void draw(Canvas canvas) {
         for(int i = 0; i < gearDisplay.length; i++){
             gearDisplay[i].draw(canvas);
         }
