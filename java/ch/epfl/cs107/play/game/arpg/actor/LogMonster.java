@@ -18,7 +18,7 @@ import java.util.List;
 
 public class LogMonster extends Monster {
     private static final int ANIMATION_DURATION = getAnimationDuration();
-    private final static float MAX_INACTIVE_DURATION = 1.f; //in seconds
+    private final static float MAX_INACTIVE_DURATION = 2.f; //in seconds
     private final static float MIN_SLEEPING_DURATION = 1.f; //in seconds
     private final static float MAX_SLEEPING_DURATION = 3.f; //in seconds
     private final static float MAXHP = 3.f;
@@ -38,7 +38,7 @@ public class LogMonster extends Monster {
      */
     public LogMonster(Area area, Orientation orientation, DiscreteCoordinates position) {
         super(area, orientation, position, MAXHP, new ArrayList<>(Arrays.asList(Vulnerability.PHYSICAL, Vulnerability.FIRE)), "zelda/logMonster", 4, new Orientation[] {Orientation.DOWN, Orientation.UP, Orientation.RIGHT, Orientation.LEFT});
-        currentState = new LogMonsterIdle(orientation);;
+        currentState = new LogMonsterIdle();;
         inactive = false;
         handler = new LogMonsterHandler();
         inactiveTimeLeft = 0;
@@ -46,7 +46,8 @@ public class LogMonster extends Monster {
 
     @Override
     void spawnCollectables() {
-        getOwnerArea().registerActor(new Coin(getOwnerArea(), new DiscreteCoordinates((int)getPosition().x, (int)getPosition().y)));
+        Coin coin = new Coin(getOwnerArea(), new DiscreteCoordinates((int)getPosition().x, (int)getPosition().y));
+        getOwnerArea().registerActor(coin);
     }
 
     @Override
@@ -62,13 +63,6 @@ public class LogMonster extends Monster {
     @Override
     public boolean wantsViewInteraction() {
         return currentState.getClass() == LogMonsterIdle.class || currentState.getClass() == LogMonsterAttacking.class;
-    }
-
-    private void move(Orientation orientation) {
-        orientate(orientation);
-        move(ANIMATION_DURATION);
-        animate(orientation);
-
     }
 
     @Override
@@ -98,22 +92,21 @@ public class LogMonster extends Monster {
             if (currentState instanceof LogMonsterAttacking) {
                 player.weaken(2);
             } else {
-                currentState = new LogMonsterAttacking(getOrientation()); //If not attacking, switches to mode "attack"
+                currentState = new LogMonsterAttacking(); //If not attacking, switches to mode "attack"
             }
         }
     }
 
-    private class LogMonsterState {
-        private final int ANIMATION_DURATION = getAnimationDuration();
+    private abstract class LogMonsterState {
         private final static int FIELD_OF_VIEW_DISTANCE = 8;
 
-        LogMonsterState(String spriteName, Orientation orientation) {
+        LogMonsterState(String spriteName) { //Constructor for Idle, Attacking and Falling Asleep
             Sprite[][] sprites = RPGSprite.extractSprites(spriteName, 4, 2.f, 2.f, LogMonster.this, 32, 32, new Vector(-0.5f, 0.f), new Orientation[] {Orientation.DOWN, Orientation.UP, Orientation.RIGHT, Orientation.LEFT});
-            Animation[] animations = RPGSprite.createAnimations(ANIMATION_DURATION, sprites);
-            setAnimations(animations, orientation);
+            Animation[] animations = RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites);
+            setAnimations(animations, getOrientation());
         }
 
-        LogMonsterState(String spriteName, boolean repeat) {
+        LogMonsterState(String spriteName, boolean repeat) { //Constructor for Sleeping and Waking Up
             Sprite[][] sprites = RPGSprite.extractSprites(spriteName, 1, 2.f, 2.f, LogMonster.this, 32, 32, new Vector(-0.5f,0.f), new Orientation[] {Orientation.UP, Orientation.RIGHT, Orientation.DOWN, Orientation.LEFT});
 
             Animation[] animations = RPGSprite.createAnimations(ANIMATION_DURATION, sprites, repeat);
@@ -132,17 +125,15 @@ public class LogMonster extends Monster {
             return list;
         }
 
-        public void update(float deltaTime) {
-
-        }
+        public abstract void update(float deltaTime);
     }
 
     private class LogMonsterIdle extends LogMonsterState {
         private static final double PROBABILITY_TO_CHANGE_DIRECTION = 0.1;
         private static final double PROBABILITY_TO_GO_INACTIVE = 0.05;
 
-        LogMonsterIdle(Orientation orientation) {
-            super("zelda/logMonster", orientation);
+        LogMonsterIdle() {
+            super("zelda/logMonster");
         }
 
         @Override
@@ -151,19 +142,25 @@ public class LogMonster extends Monster {
                 if (RandomGenerator.getInstance().nextDouble() < PROBABILITY_TO_CHANGE_DIRECTION) {
                     switch (RandomGenerator.getInstance().nextInt(4)) {
                         case 0:
-                            move(Orientation.LEFT);
+                            orientate(Orientation.LEFT);
+                            animate(Orientation.LEFT);
                             break;
                         case 1:
-                            move(Orientation.UP);
+                            orientate(Orientation.UP);
+                            animate(Orientation.UP);
                             break;
                         case 2:
-                            move(Orientation.RIGHT);
+                            orientate(Orientation.RIGHT);
+                            animate(Orientation.RIGHT);
                             break;
                         case 3:
-                            move(Orientation.DOWN);
+                            orientate(Orientation.DOWN);
+                            animate(Orientation.DOWN);
                             break;
                     }
                 }
+                move(ANIMATION_DURATION);
+                animate(getOrientation());
             } else {
                 inactive = true;
                 inactiveTimeLeft = RandomGenerator.getInstance().nextFloat() * MAX_INACTIVE_DURATION;
@@ -172,8 +169,8 @@ public class LogMonster extends Monster {
     }
 
     private class LogMonsterAttacking extends LogMonsterState {
-        LogMonsterAttacking(Orientation orientation) {
-            super("zelda/logMonster", orientation);
+        LogMonsterAttacking() {
+            super("zelda/logMonster");
         }
 
         @Override
@@ -184,16 +181,16 @@ public class LogMonster extends Monster {
         @Override
         public void update(float deltaTime) {
             if (isDisplacementOccurs() || getOwnerArea().canEnterAreaCells(LogMonster.this, getFieldOfViewCells())) {
-                move(getOrientation());
+                move(ANIMATION_DURATION);
             } else {
-                currentState = new LogMonsterFallingAsleep(getOrientation());
+                currentState = new LogMonsterFallingAsleep();
             }
         }
     }
 
     private class LogMonsterFallingAsleep extends LogMonsterState {
-        LogMonsterFallingAsleep(Orientation orientation) {
-            super("zelda/logMonster", orientation);
+        LogMonsterFallingAsleep() {
+            super("zelda/logMonster");
         }
 
         @Override
@@ -223,7 +220,7 @@ public class LogMonster extends Monster {
         @Override
         public void update(float deltaTime) {
             if (isAnimationCompleted()) {
-                currentState = new LogMonsterIdle(getOrientation());
+                currentState = new LogMonsterIdle();
             }
         }
     }

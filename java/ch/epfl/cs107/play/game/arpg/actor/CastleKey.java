@@ -12,8 +12,8 @@ import ch.epfl.cs107.play.window.Canvas;
 public class CastleKey extends ARPGCollectableAreaEntity {
     private Sprite sprite;
 
-    public CastleKey(Area area, Orientation orientation, DiscreteCoordinates position) {
-        super(area, orientation, position);
+    public CastleKey(Area area, DiscreteCoordinates position) {
+        super(area, Orientation.DOWN, position);
         sprite = new RPGSprite("zelda/key",1.f,1.f,this);
     }
 

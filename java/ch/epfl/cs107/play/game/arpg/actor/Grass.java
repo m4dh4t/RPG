@@ -19,7 +19,7 @@ import java.util.List;
 
 public class Grass extends AreaEntity {
     private final static int CUT_DURATION = 4;
-    private final static int BURN_DURATION = 6;
+    private final static int BURN_DURATION = 7;
     private final static double PROBABILITY_TO_DROP_ITEM = 0.5;
     private final static double PROBABILITY_TO_DROP_HEART = 0.5;
 
@@ -43,7 +43,7 @@ public class Grass extends AreaEntity {
         Sprite[] cutSprites = RPGSprite.extractSprites("zelda/grass.sliced",4,2.f,2.f,this,32,32);
         cutAnimation = new Animation(CUT_DURATION, cutSprites, false);
 
-        Sprite[] burnSprites = RPGSprite.extractSprites("zelda/fire",4,1.f,1.f,this,16,16);
+        Sprite[] burnSprites = RPGSprite.extractSprites("zelda/fire",7,1.f,1.f,this,16,16);
         burnAnimation = new Animation(BURN_DURATION, burnSprites, false);
     }
 

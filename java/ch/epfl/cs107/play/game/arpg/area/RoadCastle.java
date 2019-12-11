@@ -16,6 +16,8 @@ public class RoadCastle extends ARPGArea {
         registerActor(new Foreground(this));
         registerActor(new Door("zelda/Road", new DiscreteCoordinates(9,18), Logic.TRUE, this, Orientation.DOWN, new DiscreteCoordinates(9,0), new DiscreteCoordinates(10,0)));
         registerActor(new CastleDoor("zelda/Castle", new DiscreteCoordinates(7,1), this, Orientation.UP, new DiscreteCoordinates(9,13), new DiscreteCoordinates(10,13)));
+        //registerActor(new FireSpell(this, Orientation.DOWN, new DiscreteCoordinates(9,8), 5));
+        registerActor(new DarkLord(this, Orientation.DOWN, new DiscreteCoordinates(9,9)));
     }
 
     @Override

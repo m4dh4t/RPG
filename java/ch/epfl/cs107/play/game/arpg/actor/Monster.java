@@ -13,8 +13,8 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class Monster extends MovableAreaEntity implements Interactor {
-    private final static int DEAD_ANIMATION_DURATION = 4;
-    private final static int ALIVE_ANIMATION_DURATION = 4;
+    private final static int DEAD_ANIMATION_DURATION = 6;
+    private final static int ALIVE_ANIMATION_DURATION = 8;
     private final float MAXHP;
     private float hp;
     private boolean dead;
@@ -134,7 +134,9 @@ public abstract class Monster extends MovableAreaEntity implements Interactor {
         }
 
         if (!dead) {
-            currentAnimationAlive.update(deltaTime);
+            if (isDisplacementOccurs()) {
+                currentAnimationAlive.update(deltaTime);
+            }
         } else {
             deadAnimation.update(deltaTime);
         }

@@ -17,7 +17,7 @@ public class Farm extends ARPGArea {
         registerActor(new Door("zelda/Road", new DiscreteCoordinates(1,15), Logic.TRUE, this, Orientation.RIGHT, new DiscreteCoordinates(19,15), new DiscreteCoordinates(19,16)));
         registerActor(new Door("zelda/Village", new DiscreteCoordinates(4,18), Logic.TRUE, this, Orientation.DOWN, new DiscreteCoordinates(4,0), new DiscreteCoordinates(5,0)));
         registerActor(new Door("zelda/Village", new DiscreteCoordinates(14,18), Logic.TRUE, this, Orientation.DOWN, new DiscreteCoordinates(13,0), new DiscreteCoordinates(14,0), new DiscreteCoordinates(15,0)));
-        registerActor(new CastleKey(this, Orientation.DOWN, new DiscreteCoordinates(6,6)));
+        //registerActor(new CastleKey(this, new DiscreteCoordinates(6,6)));
     }
 
     @Override

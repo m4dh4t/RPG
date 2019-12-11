@@ -71,7 +71,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
             if (getOrientation() == orientation) {
                 move(ANIMATION_DURATION);
                 animate(orientation);
-            } else if (!isDisplacementOccurs() && !orientationKey.isDown()) {
+            } else if (!isDisplacementOccurs() && !orientationKey.isDown()) { //Prevents the player from orientating if the key which corresponds to its orientation is down
                 orientate(orientation);
                 animate(orientation);
             }

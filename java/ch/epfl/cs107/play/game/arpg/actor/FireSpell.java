@@ -8,7 +8,7 @@ import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RandomGenerator;
 import ch.epfl.cs107.play.window.Canvas;
-import static ch.epfl.cs107.play.game.arpg.actor.Monster.Vulnerability;
+import ch.epfl.cs107.play.game.arpg.actor.Monster.Vulnerability;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,11 +17,12 @@ public class FireSpell extends AreaEntity implements Interactor {
     private final static int ANIMATION_DURATION = 8;
     private final static float MIN_LIFE_TIME = 5.f; //in seconds
     private final static float MAX_LIFE_TIME = 10.f; //in seconds
-    private final static float PROPAGATION_TIME_FIRE = 10.f; //in seconds
+    private final static float PROPAGATION_TIME_FIRE = 0.5f; //in seconds
 
     private float lifeTime;
     private float countDown;
-    private float force;
+    private boolean summoned;
+    private int force;
 
     private Animation animation;
     private FireSpellHandler handler;
@@ -33,10 +34,11 @@ public class FireSpell extends AreaEntity implements Interactor {
      * @param orientation (Orientation): Initial orientation of the entity in the Area. Not null
      * @param position    (DiscreteCoordinate): Initial position of the entity in the Area. Not null
      */
-    public FireSpell(Area area, Orientation orientation, DiscreteCoordinates position, float force) {
+    public FireSpell(Area area, Orientation orientation, DiscreteCoordinates position, int force) {
         super(area, orientation, position);
         lifeTime = MIN_LIFE_TIME + RandomGenerator.getInstance().nextFloat() * (MAX_LIFE_TIME - MIN_LIFE_TIME);
         countDown = PROPAGATION_TIME_FIRE;
+        summoned = false;
         this.force = force;
         handler = new FireSpellHandler();
 
@@ -46,8 +48,11 @@ public class FireSpell extends AreaEntity implements Interactor {
 
     public void summon() {
         if (force > 1) {
-            FireSpell spell = new FireSpell(getOwnerArea(), getOrientation(), getCurrentMainCellCoordinates().jump(getOrientation().toVector()), force - 1);
-            getOwnerArea().registerActor(spell);
+            DiscreteCoordinates spellPosition = getCurrentMainCellCoordinates().jump(getOrientation().toVector());
+            FireSpell spell = new FireSpell(getOwnerArea(), getOrientation(), spellPosition, force - 1);
+            if (getOwnerArea().canEnterAreaCells(spell, Collections.singletonList(spellPosition))) {
+                getOwnerArea().registerActor(spell);
+            }
         }
     }
 
@@ -111,9 +116,9 @@ public class FireSpell extends AreaEntity implements Interactor {
         } else {
             animation.update(deltaTime);
 
-            if (countDown <= 0) {
+            if (!summoned && countDown <= 0) {
                 summon();
-                countDown = PROPAGATION_TIME_FIRE;
+                summoned = true;
             }
         }
 
