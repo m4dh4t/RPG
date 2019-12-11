@@ -121,7 +121,6 @@ public class DarkLord extends Monster {
         @Override
         public void interactWith(ARPGPlayer player) {
             if (!(currentState instanceof DarkLordTP)) {
-                System.out.println("yo");
                 currentState = new DarkLordCastingTP();
             }
         }
@@ -227,7 +226,6 @@ public class DarkLord extends Monster {
         @Override
         public void update(float deltaTime) {
             if (!isDisplacementOccurs()) {
-                System.out.println("wesh");
                 currentState = new DarkLordTP();
             }
         }
