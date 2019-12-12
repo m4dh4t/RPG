@@ -83,7 +83,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
         Keyboard keyboard = getOwnerArea().getKeyboard();
         Button orientationKey = keyboard.get(Orientation.getCode(getOrientation()));
 
-        if (button.isDown()) {
+        if (button.isDown() && !animateAction) {
             if (getOrientation() == orientation) {
                 move(ANIMATION_DURATION);
             } else if (!isDisplacementOccurs() && !orientationKey.isDown()) { //Prevents the player from orientating if the key which corresponds to its orientation is down
@@ -113,7 +113,10 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
                     case BOW:
                         animateAction = true;
                         currentAnimation = bowAnimations[getOrientation().ordinal()];
-                        inventory.remove(ARPGItem.ARROW, 1);
+                        if(possess(ARPGItem.ARROW)){
+                            ARPGItem.ARROW.use(getOwnerArea(), getCurrentMainCellCoordinates(), getOrientation());
+                            inventory.remove(ARPGItem.ARROW, 1);
+                        }
                         break;
                     case SWORD:
                         animateAction = true;
@@ -204,6 +207,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
     @Override
     public void update(float deltaTime) {
         Keyboard keyboard = getOwnerArea().getKeyboard();
+
         moveOrientate(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
         moveOrientate(Orientation.UP, keyboard.get(Keyboard.UP));
         moveOrientate(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));

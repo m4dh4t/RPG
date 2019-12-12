@@ -65,6 +65,8 @@ public enum ARPGItem implements InventoryItem {
                     return false;
                 }
             case BOW:
+                return true;
+            case ARROW:
                 Arrow arrow = new Arrow(area, orientation, position.jump(orientation.toVector()), 5f, 5f);
                 if(area.canEnterAreaCells(arrow, frontCells)){
                     area.registerActor(arrow);
