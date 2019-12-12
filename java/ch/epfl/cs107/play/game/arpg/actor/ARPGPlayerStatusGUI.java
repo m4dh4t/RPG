@@ -52,7 +52,14 @@ public class ARPGPlayerStatusGUI implements Graphics {
         //BACKGROUND
         gearDisplay[0] = new ImageGraphics(ResourcePath.getSprite("zelda/gearDisplay"), 1.5f, 1.5f, new RegionOfInterest(0, 0, 32, 32), anchor.add(new Vector(0, height - 1.5f)), 1, 2000);
         //ITEM
-        gearDisplay[1] = new ImageGraphics(ResourcePath.getSprite(item.getSpriteName()), 1f, 1f, new RegionOfInterest(0, 0, 16, 16), anchor.add(new Vector(0.25f, height - 1.25f)), 1, 2001);
+        if (item != null) {
+            if (item == ARPGItem.WINGS) {
+                gearDisplay[1] = new ImageGraphics(ResourcePath.getSprite(item.getSpriteName()), 1f, 1f, null, anchor.add(new Vector(0.25f, height - 1.25f)), 1, 2001);
+            }
+            gearDisplay[1] = new ImageGraphics(ResourcePath.getSprite(item.getSpriteName()), 1f, 1f, new RegionOfInterest(0, 0, 16, 16), anchor.add(new Vector(0.25f, height - 1.25f)), 1, 2001);
+        } else {
+            gearDisplay[1] = new ImageGraphics(null, 1.f, 1.f, null);
+        }
     }
 
     private void heartDisplay(float hp){
