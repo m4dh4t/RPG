@@ -23,6 +23,7 @@ public class Grass extends AreaEntity implements Interactor {
     private Sprite sprite;
     private Animation cutAnimation;
     private Animation burnAnimation;
+    private Animation currentAnimation;
 
     private GrassHandler handler;
 
@@ -45,6 +46,8 @@ public class Grass extends AreaEntity implements Interactor {
 
         Sprite[] burnSprites = RPGSprite.extractSprites("zelda/fire",7,1.f,1.f,this,16,16);
         burnAnimation = new Animation(BURN_DURATION, burnSprites, false);
+
+        currentAnimation = cutAnimation;
     }
 
     public static Grass[] grassZone(Area area, int xBegin, int xEnd, int yBegin, int yEnd){
@@ -65,12 +68,8 @@ public class Grass extends AreaEntity implements Interactor {
     public void draw(Canvas canvas) {
         if (!cut && !burnt) {
             sprite.draw(canvas);
-        } else {
-            if (cut && !cutAnimation.isCompleted()) {
-                cutAnimation.draw(canvas);
-            } else if (burnt && !burnAnimation.isCompleted()) {
-                burnAnimation.draw(canvas);
-            }
+        } else if (!currentAnimation.isCompleted()){
+            currentAnimation.draw(canvas);
         }
     }
 
@@ -120,6 +119,7 @@ public class Grass extends AreaEntity implements Interactor {
     }
 
     public void cut() {
+        currentAnimation = cutAnimation;
         cut = true;
         dropItem();
     }
@@ -138,19 +138,19 @@ public class Grass extends AreaEntity implements Interactor {
     }
 
     public void burn() {
+        currentAnimation = burnAnimation;
         burnt = true;
     }
 
     @Override
     public void update(float deltaTime) {
-        if (cut) {
-            cutAnimation.update(deltaTime);
-        } else if (burnt) {
-            burnAnimation.update(deltaTime);
+        if(cut || burnt){
+            currentAnimation.update(deltaTime);
         }
 
-        if (cutAnimation.isCompleted() || burnAnimation.isCompleted()) {
+        if (currentAnimation.isCompleted()) {
             getOwnerArea().unregisterActor(this);
+            System.out.println("out");
         }
     }
 

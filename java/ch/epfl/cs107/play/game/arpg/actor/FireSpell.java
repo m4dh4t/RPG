@@ -56,6 +56,10 @@ public class FireSpell extends AreaEntity implements Interactor {
         }
     }
 
+    public void extinguish(){
+        getOwnerArea().unregisterActor(this);
+    }
+
     @Override
     public void draw(Canvas canvas) {
         animation.draw(canvas);

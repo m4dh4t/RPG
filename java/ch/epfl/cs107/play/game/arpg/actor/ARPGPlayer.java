@@ -48,6 +48,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
         inventory.add(ARPGItem.BOW, 2);
         inventory.add(ARPGItem.SWORD, 10);
         inventory.add(ARPGItem.STAFF,1);
+        inventory.add(ARPGItem.ARROW,10);
         currentItem = ARPGItem.BOMB;
 
         hp = MAX_HP;
@@ -104,8 +105,13 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
 
         if(SPACE.isPressed() && possess(currentItem)){
             if(currentItem.use(getOwnerArea(), getCurrentMainCellCoordinates(), getOrientation())){
-                if(currentItem == ARPGItem.BOMB){
-                    inventory.remove(currentItem, 1);
+                switch(currentItem){
+                    case BOMB:
+                        inventory.remove(currentItem, 1);
+                        break;
+                    case BOW:
+                        inventory.remove(ARPGItem.ARROW, 1);
+                        break;
                 }
 
                 if(!possess(currentItem)) {

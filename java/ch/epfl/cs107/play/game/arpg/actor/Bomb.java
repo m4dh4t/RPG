@@ -33,7 +33,7 @@ public class Bomb extends AreaEntity implements Interactor {
      * @param area        (Area): Owner area. Not null
      * @param position    (DiscreteCoordinate): Initial position of the entity in the Area. Not null
      */
-    public Bomb(Area area,  DiscreteCoordinates position, float timer) {
+    public Bomb(Area area, DiscreteCoordinates position, float timer) {
         super(area, Orientation.DOWN, position);
 
         this.timer = timer;
