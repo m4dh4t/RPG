@@ -12,6 +12,7 @@ import ch.epfl.cs107.play.game.rpg.actor.Dialog;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.math.Vector;
+import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
 
@@ -19,14 +20,14 @@ import java.util.Collections;
 import java.util.List;
 
 public class Chest extends AreaEntity {
-    private final static int ANIMATION_DURATION = 4;
+    private final static int ANIMATION_DURATION = 2;
     private Sprite spriteClosed;
-    private Sprite spriteOpened;
+    private Sprite spriteOpen;
     private Animation animation;
     private Dialog dialog;
 
     private boolean skip;
-    private boolean opened;
+    private boolean open;
 
     private ARPGInventory inventory;
     /**
@@ -38,7 +39,7 @@ public class Chest extends AreaEntity {
     public Chest(Area area, DiscreteCoordinates position) {
         super(area, Orientation.DOWN, position);
         skip = false;
-        opened = false;
+        open = false;
         inventory = new ARPGInventory(0);
         inventory.add(ARPGItem.STAFF, 1);
         inventory.add(ARPGItem.ARROW, 1);
@@ -53,53 +54,60 @@ public class Chest extends AreaEntity {
         sprites[3] = new Sprite("chest", 2.f, 2.f, this, new RegionOfInterest(0, 336, 48, 48), new Vector(-0.5f, 0.f), 1.f, -15);
 
         spriteClosed = sprites[0];
-        spriteOpened = sprites[3];
+        spriteOpen = sprites[3];
 
         animation = new Animation(ANIMATION_DURATION, sprites, false);
     }
 
     public void open(ARPGInventory otherInventory) {
-        opened = true;
+        skip = false; //If someone wants to open the chest, it will automatically show something (even if the chest is already open)
+        if (!open) {
+            String message = "You just got : ";
+            for (int i = 0; i < inventory.getItems().length; ++i) {
+                ARPGItem item = (ARPGItem) inventory.getItems()[i];
 
-        String message = "You just got : ";
-        for (int i = 0; i < inventory.getItems().length; ++i) {
-            ARPGItem item = (ARPGItem) inventory.getItems()[i];
+                if (inventory.getQuantity(item) == 1) {
 
-            if (inventory.getQuantity(item) == 1) {
+                    message += "a";
 
-                message += "a";
+                    if (isVowel(item.getName().charAt(0))) { //Checks if the first letter of the item is a vowel (to choose between "a" and "an")
+                        message += "n ";
+                    } else {
+                        message += " ";
+                    }
 
-                if (isVowel(item.getName().charAt(0))) {
-                    message += "n ";
                 } else {
-                    message += " ";
+                    message += inventory.getQuantity(item) + " ";
                 }
 
-            } else {
-                message += inventory.getQuantity(item) + " ";
-            }
+                message += item.getName();
 
-            message += item.getName();
+                message += inventory.getQuantity(item) > 1 ? "s" : ""; //Plural
 
-            message += inventory.getQuantity(item) > 1 ? "s" : "";
-
-            if (i == inventory.getItems().length - 1) { //Checks if we are at the last item or not to know if we need to put a final stop
-                message += ".";
-            } else {
-                if (i == inventory.getItems().length - 2) { //Checks if we are at the next-to-last to know if we need to put a comma or "and" before the last item
-                    message += " and ";
+                if (i == inventory.getItems().length - 1) { //Checks if we are at the last item or not to know if we need to put a final stop
+                    message += ".";
                 } else {
-                    message += ", ";
+                    if (i == inventory.getItems().length - 2) { //Checks if we are at the next-to-last to know if we need to put a comma or "and" before the last item
+                        message += " and ";
+                    } else {
+                        message += ", ";
+                    }
                 }
+
+                otherInventory.add(item, inventory.getQuantity(item));
+                inventory.remove(item, inventory.getQuantity(item));
+
+                --i; /*Needed because inventory.getItems().length will decrease as the loops goes (because we remove items from inventory)
+                So, in fact, we are not incrementing i ever (it always stays at 0) but the number of items decreases by 1
+                at each iteration of the loop*/
             }
 
-            otherInventory.add(item, inventory.getQuantity(item));
-            inventory.remove(item, inventory.getQuantity(item));
-
-            --i;
+            dialog = new Dialog(message, "zelda/dialog", getOwnerArea());
+        } else {
+            dialog = new Dialog ("This chest is already open !", "zelda/dialog", getOwnerArea());
         }
 
-        dialog = new Dialog(message, "zelda/dialog", getOwnerArea());
+        open = true;
     }
 
     public boolean isVowel(char c) {
@@ -116,13 +124,13 @@ public class Chest extends AreaEntity {
 
     @Override
     public void draw(Canvas canvas) {
-        if (opened) {
+        if (open) {
             if (!skip) {
                 dialog.draw(canvas);
             }
 
             if (animation.isCompleted()) {
-                spriteOpened.draw(canvas);
+                spriteOpen.draw(canvas);
             } else {
                 animation.draw(canvas);
             }
@@ -158,12 +166,12 @@ public class Chest extends AreaEntity {
 
     @Override
     public void update(float deltaTime) {
-        if (opened) {
+        if (open) {
             animation.update(deltaTime);
         }
 
-        Keyboard keyboard = getOwnerArea().getKeyboard();
-        if (keyboard.get(Keyboard.ENTER).isPressed()) {
+        Button enterButton = getOwnerArea().getKeyboard().get(Keyboard.ENTER);
+        if (enterButton.isPressed()) { //if Enter is pressed, the message disappears
             skip = true;
         }
     }
