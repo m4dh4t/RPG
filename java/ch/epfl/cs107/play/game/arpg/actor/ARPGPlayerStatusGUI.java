@@ -54,7 +54,7 @@ public class ARPGPlayerStatusGUI implements Graphics {
         //ITEM
         if (item != null) {
             if (item == ARPGItem.WINGS) {
-                gearDisplay[1] = new ImageGraphics(ResourcePath.getSprite(item.getSpriteName()), 1f, 1f, new RegionOfInterest(128,128,32,32), anchor.add(new Vector(0.25f, height - 1.25f)), 1, 2001);
+                gearDisplay[1] = new ImageGraphics(ResourcePath.getSprite(item.getSpriteName()), 1f, 1f, null, anchor.add(new Vector(0.25f, height - 1.25f)), 1, 2001);
             }
             gearDisplay[1] = new ImageGraphics(ResourcePath.getSprite(item.getSpriteName()), 1f, 1f, new RegionOfInterest(0, 0, 16, 16), anchor.add(new Vector(0.25f, height - 1.25f)), 1, 2001);
         } else {
