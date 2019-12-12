@@ -40,4 +40,12 @@ public interface ARPGInteractionVisitor extends RPGInteractionVisitor {
     default void interactWith(FireSpell fireSpell) {
         //by default the interaction is empty
     }
+
+    default void interactWith(Orb orb) {
+        //by default the interaction is empty
+    }
+
+    default void interactWith(Chest chest) {
+        //by default the interaction is empty
+    }
 }

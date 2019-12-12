@@ -16,7 +16,7 @@ public class Inventory {
     }
 
     protected boolean add(InventoryItem item, int quantity) {
-        if (weight + quantity * item.getWeight() > MAXWEIGHT) {
+        if (weight + quantity * item.getWeight() > MAXWEIGHT || quantity <= 0) {
             return false;
         }
 
@@ -43,6 +43,14 @@ public class Inventory {
 
     public boolean isInInventory(InventoryItem item) {
         return items.containsKey(item);
+    }
+
+    public InventoryItem[] getItems() {
+        return items.keySet().toArray(new InventoryItem[0]);
+    }
+
+    public int getQuantity(InventoryItem item) {
+        return items.getOrDefault(item, 0);
     }
 
     public InventoryItem switchItem(InventoryItem currentItem) {

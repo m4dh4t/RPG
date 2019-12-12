@@ -178,16 +178,70 @@ public class RPGSprite extends Sprite {
 		return sprites;
 	}
 
+	/**
+	 * Extracts from an image the sprites corresponding to a given orientation
+	 * the returned array has 4 entry, each one of which represents a sprite
+	 * which will be used in an animation
+	 * @param name (String): the name of the image
+	 * @param nbFrames (int): number of frames
+	 * @param width (int): actual image width, before transformation
+	 * @param height (int): actual image height, before transformation
+	 * @param parent (Positionable): parent of this, not null
+	 * @param regionWidth (int): width of frame (number of pixels in the image)
+	 * @param regionHeight (int): height of frame (number of pixels in the image)
+	 *
+	 *
+	 * @return an array of 4 Sprite
+	 * This method is used in Coin.java, Firespell.java, Grass.java, Heart.java, Waterfall.java
+	 */
 	public static Sprite[] extractSprites(String name, int nbFrames, float width, float height, Positionable parent, int regionWidth, int regionHeight){
+		return extractSprites(name, nbFrames, width, height, parent, 0, regionWidth, regionHeight);
+	}
+
+	/**
+	 * Extracts from an image the sprites corresponding to a given orientation
+	 * the returned array has 4 entry, each one of which represents a sprite
+	 * which will be used in an animation
+	 * @param name (String): the name of the image
+	 * @param nbFrames (int): number of frames
+	 * @param width (int): actual image width, before transformation
+	 * @param height (int): actual image height, before transformation
+	 * @param parent (Positionable): parent of this, not null
+	 * @param heightOfRegion (int): height of the region we want to extract the sprites from
+	 * @param regionWidth (int): width of frame (number of pixels in the image)
+	 * @param regionHeight (int): height of frame (number of pixels in the image)
+	 *
+	 *
+	 * @return an array of 4 Sprite
+	 * This method is used in Orb.java
+	 */
+	public static Sprite[] extractSprites(String name, int nbFrames, float width, float height, Positionable parent, int heightOfRegion, int regionWidth, int regionHeight){
 
 		Sprite[] sprites = new Sprite[nbFrames];
 
 		for(int i = 0; i < nbFrames; i++){
-			sprites[i] = new RPGSprite(name, width, height, parent, new RegionOfInterest(i*regionWidth, 0, regionWidth, regionHeight));
+			sprites[i] = new RPGSprite(name, width, height, parent, new RegionOfInterest(i*regionWidth, heightOfRegion, regionWidth, regionHeight));
 		}
 		return sprites;
 	}
 
+	/**
+	 * Extracts from an image the sprites corresponding to a given orientation
+	 * the returned array has 4 entry, each one of which represents a sprite
+	 * which will be used in an animation
+	 * @param name (String): the name of the image
+	 * @param nbFrames (int): number of frames
+	 * @param width (int): actual image width, before transformation
+	 * @param height (int): actual image height, before transformation
+	 * @param parent (Positionable): parent of this, not null
+	 * @param regionWidth (int): width of frame (number of pixels in the image)
+	 * @param regionHeight (int): height of frame (number of pixels in the image)
+	 * @param anchor (Vector) : image anchor, not null
+	 *
+	 *
+	 * @return an array of 4 Sprite
+	 * This method is used in Bomb.java, Monster.java
+	 */
 	public static Sprite[] extractSprites(String name, int nbFrames, float width, float height, Positionable parent, int regionWidth, int regionHeight, Vector anchor){
 
 		Sprite[] sprites = new Sprite[nbFrames];

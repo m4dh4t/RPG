@@ -73,6 +73,6 @@ public abstract class Projectile extends MovableAreaEntity implements Interactor
 
     @Override
     public boolean wantsViewInteraction() {
-        return false;
+        return true;
     }
 }

@@ -13,6 +13,7 @@ import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Arrow extends Projectile {
@@ -56,7 +57,7 @@ public class Arrow extends Projectile {
 
     @Override
     public List<DiscreteCoordinates> getFieldOfViewCells() {
-        return null;
+        return Collections.singletonList(getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
     }
 
     @Override
@@ -86,6 +87,11 @@ public class Arrow extends Projectile {
         @Override
         public void interactWith(FireSpell fireSpell) {
             fireSpell.extinguish();
+        }
+
+        @Override
+        public void interactWith(Orb orb) {
+            orb.hit();
         }
     }
 }
