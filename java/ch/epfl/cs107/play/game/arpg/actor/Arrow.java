@@ -67,8 +67,14 @@ public class Arrow extends Projectile implements FlyableEntity{
     private class ArrowHandler implements ARPGInteractionVisitor {
         @Override
         public void interactWith(Grass grass) {
-            grass.cut();
-            hit = true;
+            if (grass.isBurnt()) {
+                grass.extinguish();
+            } else {
+                if (!grass.isCut()) { //Checks if the grass is cut so that the arrow doesn't disappear if the grass is in a cut animation
+                    hit = true;
+                }
+                grass.cut();
+            }
         }
 
         @Override

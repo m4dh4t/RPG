@@ -5,14 +5,14 @@ import ch.epfl.cs107.play.game.areagame.actor.Interactor;
 import ch.epfl.cs107.play.game.areagame.actor.MovableAreaEntity;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.math.Vector;
 
 import java.util.Collections;
 import java.util.List;
 
 public abstract class Projectile extends MovableAreaEntity implements Interactor {
     private final float MOVE_DURATION;
-    private final float MAX_TRAVEL;
-    private float currentTravel;
+    private final DiscreteCoordinates MAX_TRAVEL;
 
     /**
      * Projectile constructor
@@ -24,15 +24,15 @@ public abstract class Projectile extends MovableAreaEntity implements Interactor
     public Projectile(Area area, Orientation orientation, DiscreteCoordinates position, float moveSpeed, float maxTravel) {
         super(area, orientation, position);
         MOVE_DURATION = moveSpeed;
-        MAX_TRAVEL = maxTravel;
-        currentTravel = 0f;
+        Vector maxVector = orientation.toVector().mul(maxTravel);
+        MAX_TRAVEL = new DiscreteCoordinates((int) (position.x + maxVector.x), (int) (position.y + maxVector.y));
     }
 
     @Override
     public void update(float deltaTime) {
-        currentTravel += (deltaTime * MOVE_DURATION);
+        DiscreteCoordinates position = new DiscreteCoordinates((int) getPosition().x, (int) getPosition().y);
 
-        if(currentTravel >= MAX_TRAVEL){
+        if(position.equals(MAX_TRAVEL)){
             getOwnerArea().unregisterActor(this);
         }
 
@@ -67,7 +67,7 @@ public abstract class Projectile extends MovableAreaEntity implements Interactor
 
     @Override
     public boolean wantsCellInteraction() {
-        return (currentTravel < MAX_TRAVEL);
+        return true;
     }
 
     @Override

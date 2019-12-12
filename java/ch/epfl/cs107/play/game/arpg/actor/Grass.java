@@ -105,12 +105,12 @@ public class Grass extends AreaEntity implements Interactor {
 
     @Override
     public boolean isCellInteractable() {
-        return !cut && !burnt;
+        return true;
     }
 
     @Override
     public boolean isViewInteractable() {
-        return !cut && !burnt;
+        return true;
     }
 
     @Override
@@ -120,8 +120,14 @@ public class Grass extends AreaEntity implements Interactor {
 
     public void cut() {
         currentAnimation = cutAnimation;
+        if (!cut) {
+            dropItem();
+        }
         cut = true;
-        dropItem();
+    }
+
+    public boolean isCut() {
+        return cut;
     }
 
     private void dropItem(){
@@ -140,6 +146,16 @@ public class Grass extends AreaEntity implements Interactor {
     public void burn() {
         currentAnimation = burnAnimation;
         burnt = true;
+    }
+
+    public boolean isBurnt() {
+        return burnt;
+    }
+
+    public void extinguish() {
+        if (isBurnt()) { //Cannot be extinguished if not burnt
+            getOwnerArea().unregisterActor(this);
+        }
     }
 
     @Override
