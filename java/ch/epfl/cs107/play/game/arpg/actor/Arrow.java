@@ -15,10 +15,10 @@ import ch.epfl.cs107.play.window.Canvas;
 
 import java.util.List;
 
-public class Arrow extends Projectile implements FlyableEntity{
+public class Arrow extends Projectile {
     private ArrowHandler handler;
-    private boolean hit;
     private Sprite sprite;
+    private boolean hit;
 
     /**
      * Arrow constructor

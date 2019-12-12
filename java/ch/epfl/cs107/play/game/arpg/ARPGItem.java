@@ -5,6 +5,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.arpg.actor.Arrow;
 import ch.epfl.cs107.play.game.arpg.actor.Bomb;
 import ch.epfl.cs107.play.game.arpg.actor.MagicWaterProjectile;
+import ch.epfl.cs107.play.game.arpg.actor.Sword;
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
@@ -75,6 +76,14 @@ public enum ARPGItem implements InventoryItem {
                 MagicWaterProjectile magicWaterProjectile = new MagicWaterProjectile(area, orientation, position.jump(orientation.toVector()), 5f, 5f);
                 if(area.canEnterAreaCells(magicWaterProjectile, frontCells)){
                     area.registerActor(magicWaterProjectile);
+                    return true;
+                } else {
+                    return false;
+                }
+            case SWORD:
+                Sword sword = new Sword(area, orientation, position.jump(orientation.toVector()));
+                if(area.canEnterAreaCells(sword, frontCells)){
+                    area.registerActor(sword);
                     return true;
                 } else {
                     return false;

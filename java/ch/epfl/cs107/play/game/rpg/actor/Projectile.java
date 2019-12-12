@@ -4,13 +4,14 @@ import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Interactor;
 import ch.epfl.cs107.play.game.areagame.actor.MovableAreaEntity;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
+import ch.epfl.cs107.play.game.arpg.actor.FlyableEntity;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Vector;
 
 import java.util.Collections;
 import java.util.List;
 
-public abstract class Projectile extends MovableAreaEntity implements Interactor {
+public abstract class Projectile extends MovableAreaEntity implements Interactor, FlyableEntity {
     private final float MOVE_DURATION;
     private final DiscreteCoordinates MAX_TRAVEL;
 

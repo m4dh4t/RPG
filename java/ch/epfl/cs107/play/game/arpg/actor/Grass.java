@@ -166,7 +166,6 @@ public class Grass extends AreaEntity implements Interactor {
 
         if (currentAnimation.isCompleted()) {
             getOwnerArea().unregisterActor(this);
-            System.out.println("out");
         }
     }
 

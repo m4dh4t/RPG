@@ -15,10 +15,10 @@ import ch.epfl.cs107.play.window.Canvas;
 import java.util.List;
 
 public class MagicWaterProjectile extends Projectile {
-    private static int ANIMATION_DURATION = 2;
+    private static int ANIMATION_DURATION = 4;
     private MagicWaterProjectileHandler handler;
-    private boolean hit;
     private Animation animation;
+    private boolean hit;
 
     /**
      * MagicWaterProjectile constructor
@@ -35,7 +35,7 @@ public class MagicWaterProjectile extends Projectile {
         hit = false;
 
         Sprite[] sprites = RPGSprite.extractSprites("zelda/magicWaterProjectile",7,1.f,1.f,this,16,16);
-        animation = new Animation(ANIMATION_DURATION, sprites, true);
+        animation = new Animation(ANIMATION_DURATION/2, sprites, true);
     }
 
     @Override
