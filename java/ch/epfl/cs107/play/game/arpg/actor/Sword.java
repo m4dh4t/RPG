@@ -46,5 +46,15 @@ public class Sword extends Weapon {
         public void interactWith(Grass grass) {
             grass.cut();
         }
+
+        @Override
+        public void interactWith(Bomb bomb) {
+            bomb.explode();
+        }
+
+        @Override
+        public void interactWith(Monster monster) {
+            monster.weaken(1f, Monster.Vulnerability.PHYSICAL);
+        }
     }
 }
