@@ -8,10 +8,12 @@ import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.ARPGItem;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
+import ch.epfl.cs107.play.game.rpg.actor.Dialog;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
+import ch.epfl.cs107.play.window.Keyboard;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +23,9 @@ public class Chest extends AreaEntity {
     private Sprite spriteClosed;
     private Sprite spriteOpened;
     private Animation animation;
+    private Dialog dialog;
+
+    private boolean skip;
     private boolean opened;
 
     private ARPGInventory inventory;
@@ -32,9 +37,13 @@ public class Chest extends AreaEntity {
      */
     public Chest(Area area, DiscreteCoordinates position) {
         super(area, Orientation.DOWN, position);
+        skip = false;
         opened = false;
         inventory = new ARPGInventory(0);
         inventory.add(ARPGItem.STAFF, 1);
+        inventory.add(ARPGItem.ARROW, 2);
+        inventory.add(ARPGItem.CASTLEKEY, 3);
+        inventory.add(ARPGItem.BOW,1);
 
         Sprite[] sprites = new Sprite[4];
 
@@ -52,18 +61,58 @@ public class Chest extends AreaEntity {
     public void open(ARPGInventory otherInventory) {
         opened = true;
 
-        for (int i = 0; i < ARPGItem.values().length; ++i) {
-            ARPGItem item = ARPGItem.values()[i];
-            if (inventory.isInInventory(item)) {
-                otherInventory.add(item, inventory.howMany(item));
-                inventory.remove(item, inventory.howMany(item));
+        String message = "You just got : ";
+        for (int i = 0; i < inventory.getItems().length; ++i) {
+            ARPGItem item = (ARPGItem) inventory.getItems()[i];
+
+            message += "a";
+
+            if (isVowel(item.getName().charAt(0))) {
+                message += "n ";
+            } else {
+                message += " ";
             }
+
+            message += item.getName();
+
+            if (i == inventory.getItems().length - 1) { //Checks if we are at the last item or not to know if we need to put a final stop
+                message += ".";
+            } else {
+                if (i == inventory.getItems().length - 2) { //Checks if we are at the next-to-last to know if we need to put a comma or "and" before the last item
+                    message += " and ";
+                } else {
+                    message += ", ";
+                }
+            }
+
+            otherInventory.add(item, inventory.howMany(item));
+            inventory.remove(item, inventory.howMany(item));
+
+            --i;
+        }
+
+        dialog = new Dialog(message, "zelda/dialog", getOwnerArea());
+    }
+
+    public boolean isVowel(char c) {
+        switch (Character.toLowerCase(c)) {
+            case 'a':
+            case 'e':
+            case 'i':
+            case 'o':
+            case 'u':
+            case 'y': return true;
+            default: return false;
         }
     }
 
     @Override
     public void draw(Canvas canvas) {
         if (opened) {
+            if (!skip) {
+                dialog.draw(canvas);
+            }
+
             if (animation.isCompleted()) {
                 spriteOpened.draw(canvas);
             } else {
@@ -103,6 +152,11 @@ public class Chest extends AreaEntity {
     public void update(float deltaTime) {
         if (opened) {
             animation.update(deltaTime);
+        }
+
+        Keyboard keyboard = getOwnerArea().getKeyboard();
+        if (keyboard.get(Keyboard.ENTER).isPressed()) {
+            skip = true;
         }
     }
 }
