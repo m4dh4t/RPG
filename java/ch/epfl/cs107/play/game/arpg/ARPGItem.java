@@ -2,10 +2,14 @@ package ch.epfl.cs107.play.game.arpg;
 
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
+import ch.epfl.cs107.play.game.arpg.actor.Arrow;
 import ch.epfl.cs107.play.game.arpg.actor.Bomb;
+import ch.epfl.cs107.play.game.arpg.actor.MagicWaterProjectile;
+import ch.epfl.cs107.play.game.arpg.actor.Sword;
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -61,8 +65,30 @@ public enum ARPGItem implements InventoryItem {
                 } else {
                     return false;
                 }
-            case WINGS:
-
+            case BOW:
+                Arrow arrow = new Arrow(area, orientation, position.jump(orientation.toVector()), 5f, 5f);
+                if(area.canEnterAreaCells(arrow, frontCells)){
+                    area.registerActor(arrow);
+                    return true;
+                } else {
+                    return false;
+                }
+            case STAFF:
+                MagicWaterProjectile magicWaterProjectile = new MagicWaterProjectile(area, orientation, position.jump(orientation.toVector()), 5f, 5f);
+                if(area.canEnterAreaCells(magicWaterProjectile, frontCells)){
+                    area.registerActor(magicWaterProjectile);
+                    return true;
+                } else {
+                    return false;
+                }
+            case SWORD:
+                Sword sword = new Sword(area, orientation, position.jump(orientation.toVector()));
+                if(area.canEnterAreaCells(sword, frontCells)){
+                    area.registerActor(sword);
+                    return true;
+                } else {
+                    return false;
+                }
             default:
                 return false;
         }

@@ -14,6 +14,7 @@ import ch.epfl.cs107.play.game.rpg.actor.Door;
 import ch.epfl.cs107.play.game.rpg.actor.Player;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
@@ -27,7 +28,12 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     private int animation_duration;
     private Sprite[][] sprites;
     private Animation[] animations;
+    private Animation[] idleAnimations;
+    private Animation[] swordAnimations;
+    private Animation[] bowAnimations;
+    private Animation[] staffAnimations;
     private Animation currentAnimation;
+    private boolean usingItem;
 
     private ARPGPlayerHandler handler;
     private ARPGPlayerStatusGUI statusGUI;
@@ -48,10 +54,11 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
 
         inventory = new ARPGInventory(50);
         inventory.add(ARPGItem.BOMB, 3);
-        inventory.add(ARPGItem.BOW, 2);
+        inventory.add(ARPGItem.BOW, 1);
+        inventory.add(ARPGItem.SWORD, 10);
+        inventory.add(ARPGItem.STAFF,1);
+        inventory.add(ARPGItem.ARROW,10);
         inventory.add(ARPGItem.WINGS,1);
-        /*inventory.add(ARPGItem.SWORD, 10);
-        inventory.add(ARPGItem.STAFF,1);*/
         currentItem = ARPGItem.BOMB;
 
         hp = MAX_HP;
@@ -61,6 +68,20 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         handler = new ARPGPlayerHandler();
         statusGUI = new ARPGPlayerStatusGUI();
 
+        Sprite[][] idleSprites = RPGSprite.extractSprites("zelda/player", 4, 1, 2, this, 16, 32, new Orientation[] {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
+        idleAnimations = RPGSprite.createAnimations(ANIMATION_DURATION/2, idleSprites);
+
+        Sprite[][] swordSprites = RPGSprite.extractSprites("zelda/player.sword", 4, 2, 2, this, 32, 32, new Vector(-0.5f,0.f), new Orientation[] {Orientation.DOWN, Orientation.UP, Orientation.RIGHT, Orientation.LEFT});
+        swordAnimations = RPGSprite.createAnimations(ANIMATION_DURATION/2, swordSprites, false);
+
+        Sprite[][] bowSprites = RPGSprite.extractSprites("zelda/player.bow", 4, 2, 2, this, 32, 32, new Vector(-0.5f,0.f), new Orientation[] {Orientation.DOWN, Orientation.UP, Orientation.RIGHT, Orientation.LEFT});
+        bowAnimations = RPGSprite.createAnimations(ANIMATION_DURATION/2, bowSprites, false);
+
+        Sprite[][] staffSprites = RPGSprite.extractSprites("zelda/player.staff_water", 4, 2, 2, this, 32, 32, new Vector(-0.5f,0.f), new Orientation[] {Orientation.DOWN, Orientation.UP, Orientation.RIGHT, Orientation.LEFT});
+        staffAnimations = RPGSprite.createAnimations(ANIMATION_DURATION/2, staffSprites, false);
+
+        currentAnimation = idleAnimations[getOrientation().ordinal()];
+        usingItem = false;
         sprites = RPGSprite.extractSprites("zelda/player", 4, 1, 2, this, 16, 32, new Orientation[] {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
         animations = RPGSprite.createAnimations(DEFAULT_ANIMATION_DURATION/2, sprites);
         currentAnimation = animations[Orientation.DOWN.ordinal()];
@@ -75,28 +96,10 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         if (button.isDown()) {
             if (getOrientation() == orientation) {
                 move(animation_duration);
-                animate(orientation);
             } else if (!isDisplacementOccurs() && !orientationKey.isDown()) { //Prevents the player from orientating if the key which corresponds to its orientation is down
                 orientate(orientation);
-                animate(orientation);
+                currentAnimation = idleAnimations[orientation.ordinal()];
             }
-        }
-    }
-
-    private void animate(Orientation orientation) {
-        switch (orientation){
-            case UP:
-                currentAnimation = animations[0];
-                break;
-            case RIGHT:
-                currentAnimation = animations[1];
-                break;
-            case DOWN:
-                currentAnimation = animations[2];
-                break;
-            case LEFT:
-                currentAnimation = animations[3];
-                break;
         }
     }
 
@@ -111,6 +114,9 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
 
         if(TAB.isPressed()){
             currentItem = (ARPGItem) inventory.switchItem(currentItem);
+            if(currentItem == ARPGItem.ARROW){
+                currentItem = (ARPGItem) inventory.switchItem(currentItem);
+            }
         }
 
         if (SPACE.isDown() && currentItem == ARPGItem.WINGS) {
@@ -124,11 +130,25 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
             canFly = false;
         }
 
-        if(SPACE.isPressed() && possess(currentItem)){
+        if(SPACE.isPressed() && !isDisplacementOccurs)){
             if(currentItem.use(getOwnerArea(), getCurrentMainCellCoordinates(), getOrientation())){
-                if(currentItem == ARPGItem.BOMB){
-                    inventory.remove(currentItem, 1);
+                switch(currentItem){
+                    case BOMB:
+                        inventory.remove(currentItem, 1);
+                        break;
+                    case BOW:
+                        currentAnimation = bowAnimations[getOrientation().ordinal()];
+                        inventory.remove(ARPGItem.ARROW, 1);
+                        break;
+                    case SWORD:
+                        currentAnimation = swordAnimations[getOrientation().ordinal()];
+                        break;
+                    case STAFF:
+                        currentAnimation = staffAnimations[getOrientation().ordinal()];
+                        break;
                 }
+
+                usingItem = true;
 
                 if(!possess(currentItem)) {
                     currentItem = (ARPGItem) inventory.switchItem(currentItem);
@@ -228,13 +248,25 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
 
         inventoryHandler();
 
-        for(int i = 0; i < Orientation.values().length; i++) {
-            if (isDisplacementOccurs()) {
-                animations[i].update(deltaTime);
-            } else {
-                animations[i].reset();
+
+        if (isDisplacementOccurs()) {
+            idleAnimations[getOrientation().ordinal()].update(deltaTime);
+        } else {
+            for(int i = 0; i < idleAnimations.length; i++) {
+                idleAnimations[i].reset();
+            }
+
+            if(usingItem){
+                if(!currentAnimation.isCompleted()){
+                    currentAnimation.update(deltaTime);
+                } else {
+                    usingItem = false;
+                    currentAnimation.reset();
+                    currentAnimation = idleAnimations[getOrientation().ordinal()];
+                }
             }
         }
+
 
         super.update(deltaTime);
     }
@@ -259,11 +291,6 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
             } else {
                 setIsPassingADoor(door);
             }
-        }
-
-        @Override
-        public void interactWith(Grass grass) {
-            grass.cut();
         }
 
         @Override
