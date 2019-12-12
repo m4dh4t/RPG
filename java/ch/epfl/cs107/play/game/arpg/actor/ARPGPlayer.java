@@ -50,7 +50,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
 
         inventory = new ARPGInventory(50);
         inventory.add(ARPGItem.BOMB, 3);
-        inventory.add(ARPGItem.BOW, 2);
+        inventory.add(ARPGItem.BOW, 1);
         inventory.add(ARPGItem.SWORD, 10);
         inventory.add(ARPGItem.STAFF,1);
         inventory.add(ARPGItem.ARROW,10);
@@ -99,6 +99,9 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
 
         if(TAB.isPressed()){
             currentItem = (ARPGItem) inventory.switchItem(currentItem);
+            if(currentItem == ARPGItem.ARROW){
+                currentItem = (ARPGItem) inventory.switchItem(currentItem);
+            }
         }
 
         if(SPACE.isPressed() && !isDisplacementOccurs()){
