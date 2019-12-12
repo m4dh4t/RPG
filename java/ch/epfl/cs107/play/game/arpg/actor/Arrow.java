@@ -26,11 +26,11 @@ public class Arrow extends Projectile implements FlyableEntity{
      * @param area        (Area): Owner area. Not null
      * @param orientation (Orientation): Initial orientation of the entity. Not null
      * @param position    (Coordinate): Initial position of the entity. Not null
-     * @param moveSpeed
+     * @param moveDuration
      * @param maxTravel
      */
-    public Arrow(Area area, Orientation orientation, DiscreteCoordinates position, float moveSpeed, float maxTravel) {
-        super(area, orientation, position, moveSpeed, maxTravel);
+    public Arrow(Area area, Orientation orientation, DiscreteCoordinates position, float moveDuration, float maxTravel) {
+        super(area, orientation, position, moveDuration, maxTravel);
         handler = new ArrowHandler();
         hit = false;
         sprite = new RPGSprite("zelda/arrow", 1.f,1.f,this, new RegionOfInterest(orientation.ordinal()*32,0,32,32), Vector.ZERO, 1.f, 5);

@@ -21,9 +21,9 @@ public abstract class Projectile extends MovableAreaEntity implements Interactor
      * @param orientation (Orientation): Initial orientation of the entity. Not null
      * @param position    (Coordinate): Initial position of the entity. Not null
      */
-    public Projectile(Area area, Orientation orientation, DiscreteCoordinates position, float moveSpeed, float maxTravel) {
+    public Projectile(Area area, Orientation orientation, DiscreteCoordinates position, float moveDuration, float maxTravel) {
         super(area, orientation, position);
-        MOVE_DURATION = moveSpeed;
+        MOVE_DURATION = moveDuration;
         Vector maxVector = orientation.toVector().mul(maxTravel);
         MAX_TRAVEL = new DiscreteCoordinates((int) (position.x + maxVector.x), (int) (position.y + maxVector.y));
     }

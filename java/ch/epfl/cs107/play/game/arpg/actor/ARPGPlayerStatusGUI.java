@@ -104,7 +104,7 @@ public class ARPGPlayerStatusGUI implements Graphics {
                 y = digits[i] / 4;
             }
 
-            coinsDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/digits"), 1f, 1f, new RegionOfInterest(x * 16, y * 16, 16, 16), anchor.add(new Vector(1.4f+(i*0.7f), 0.55f)), 1, 2001);
+            coinsDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/digits"), 0.9f, 0.9f, new RegionOfInterest(x * 16, y * 16, 16, 16), anchor.add(new Vector(1.5f+(i*0.7f), 0.6f)), 1, 2001);
         }
     }
 }
