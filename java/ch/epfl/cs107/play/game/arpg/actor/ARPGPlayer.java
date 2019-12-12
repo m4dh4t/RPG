@@ -26,8 +26,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     private final static float MAX_HP = 10.f;
     private final static int DEFAULT_ANIMATION_DURATION = 8;
     private int animation_duration;
-    private Sprite[][] sprites;
-    private Animation[] animations;
+    private Sprite[][] idleSprites;
     private Animation[] idleAnimations;
     private Animation[] swordAnimations;
     private Animation[] bowAnimations;
@@ -68,23 +67,20 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         handler = new ARPGPlayerHandler();
         statusGUI = new ARPGPlayerStatusGUI();
 
-        Sprite[][] idleSprites = RPGSprite.extractSprites("zelda/player", 4, 1, 2, this, 16, 32, new Orientation[] {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
-        idleAnimations = RPGSprite.createAnimations(ANIMATION_DURATION/2, idleSprites);
+        idleSprites = RPGSprite.extractSprites("zelda/player", 4, 1, 2, this, 16, 32, new Orientation[] {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
+        idleAnimations = RPGSprite.createAnimations(DEFAULT_ANIMATION_DURATION/2, idleSprites);
 
         Sprite[][] swordSprites = RPGSprite.extractSprites("zelda/player.sword", 4, 2, 2, this, 32, 32, new Vector(-0.5f,0.f), new Orientation[] {Orientation.DOWN, Orientation.UP, Orientation.RIGHT, Orientation.LEFT});
-        swordAnimations = RPGSprite.createAnimations(ANIMATION_DURATION/2, swordSprites, false);
+        swordAnimations = RPGSprite.createAnimations(DEFAULT_ANIMATION_DURATION/2, swordSprites, false);
 
         Sprite[][] bowSprites = RPGSprite.extractSprites("zelda/player.bow", 4, 2, 2, this, 32, 32, new Vector(-0.5f,0.f), new Orientation[] {Orientation.DOWN, Orientation.UP, Orientation.RIGHT, Orientation.LEFT});
-        bowAnimations = RPGSprite.createAnimations(ANIMATION_DURATION/2, bowSprites, false);
+        bowAnimations = RPGSprite.createAnimations(DEFAULT_ANIMATION_DURATION/2, bowSprites, false);
 
         Sprite[][] staffSprites = RPGSprite.extractSprites("zelda/player.staff_water", 4, 2, 2, this, 32, 32, new Vector(-0.5f,0.f), new Orientation[] {Orientation.DOWN, Orientation.UP, Orientation.RIGHT, Orientation.LEFT});
-        staffAnimations = RPGSprite.createAnimations(ANIMATION_DURATION/2, staffSprites, false);
+        staffAnimations = RPGSprite.createAnimations(DEFAULT_ANIMATION_DURATION/2, staffSprites, false);
 
         currentAnimation = idleAnimations[getOrientation().ordinal()];
         usingItem = false;
-        sprites = RPGSprite.extractSprites("zelda/player", 4, 1, 2, this, 16, 32, new Orientation[] {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
-        animations = RPGSprite.createAnimations(DEFAULT_ANIMATION_DURATION/2, sprites);
-        currentAnimation = animations[Orientation.DOWN.ordinal()];
 
         resetMotion();
     }
@@ -119,18 +115,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
             }
         }
 
-        if (SPACE.isDown() && currentItem == ARPGItem.WINGS) {
-            canFly = true;
-            currentAnimation = new Animation(animation_duration, sprites[getOrientation().ordinal()]); //Calling this method at each update will stuck the animation
-            currentAnimation.setFrame(1); //Setting the frame to 1 will make the player look like he's flying (with an arm in front of him and not standing still, which we would have with position 0 by default)
-        } else {
-            if (canFly) {
-                currentAnimation.setFrame(0); //This handles the case where the player stops pressing SPACE but doesn't move. Without this condition he would still have his arm in front of him.
-            }
-            canFly = false;
-        }
 
-        if(SPACE.isPressed() && !isDisplacementOccurs)){
+        if(SPACE.isPressed() && !isDisplacementOccurs()){
             if(currentItem.use(getOwnerArea(), getCurrentMainCellCoordinates(), getOrientation())){
                 switch(currentItem){
                     case BOMB:
@@ -154,6 +140,17 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
                     currentItem = (ARPGItem) inventory.switchItem(currentItem);
                 }
             }
+        }
+
+        if (currentItem == ARPGItem.WINGS && SPACE.isDown()) {
+            canFly = true;
+            currentAnimation = new Animation(animation_duration, idleSprites[getOrientation().ordinal()]); //Calling this method at each update will stuck the animation
+            currentAnimation.setFrame(1); //Setting the frame to 1 will make the player look like he's flying (with an arm in front of him and not standing still, which we would have with position 0 by default)
+        } else {
+            if (canFly) {
+                currentAnimation.reset(); //This handles the case where the player stops pressing SPACE but doesn't move. Without this condition he would still have his arm in front of him.
+            }
+            canFly = false;
         }
     }
 
@@ -232,12 +229,12 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         if (keyboard.get(Keyboard.Q).isDown()) { //Checks if Q is pressed to allow the player to sprint
             animation_duration = DEFAULT_ANIMATION_DURATION/2;
             for (int i = 0; i < Orientation.values().length; ++i) {
-                animations[i].setSpeedFactor(2);
+                idleAnimations[i].setSpeedFactor(2);
             }
         } else {
             animation_duration = DEFAULT_ANIMATION_DURATION;
             for (int i = 0; i < Orientation.values().length; ++i) {
-                animations[i].setSpeedFactor(1);
+                idleAnimations[i].setSpeedFactor(1);
             }
         }
 
@@ -260,6 +257,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
                 if(!currentAnimation.isCompleted()){
                     currentAnimation.update(deltaTime);
                 } else {
+                    System.out.println("queue");
                     usingItem = false;
                     currentAnimation.reset();
                     currentAnimation = idleAnimations[getOrientation().ordinal()];
@@ -309,11 +307,6 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         public void interactWith(CastleKey castleKey) {
             castleKey.collect();
             inventory.add(ARPGItem.CASTLEKEY, 1);
-        }
-
-        @Override
-        public void interactWith(Orb orb) {
-            orb.hit();
         }
 
         @Override
