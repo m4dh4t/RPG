@@ -38,6 +38,10 @@ public abstract class Projectile extends MovableAreaEntity implements Interactor
 
         move((int)MOVE_DURATION);
 
+        if(!isDisplacementOccurs()){
+            getOwnerArea().unregisterActor(this);
+        }
+
         super.update(deltaTime);
     }
 
