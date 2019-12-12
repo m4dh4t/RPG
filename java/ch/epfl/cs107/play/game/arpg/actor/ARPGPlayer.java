@@ -47,8 +47,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
         inventory = new ARPGInventory(50);
         inventory.add(ARPGItem.BOMB, 3);
         inventory.add(ARPGItem.BOW, 2);
-        inventory.add(ARPGItem.SWORD, 10);
-        inventory.add(ARPGItem.STAFF,1);
+        /*inventory.add(ARPGItem.SWORD, 10);
+        inventory.add(ARPGItem.STAFF,1);*/
         currentItem = ARPGItem.BOMB;
 
         hp = MAX_HP;
@@ -267,6 +267,11 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
         @Override
         public void interactWith(Orb orb) {
             orb.hit();
+        }
+
+        @Override
+        public void interactWith(Chest chest) {
+            chest.open(inventory);
         }
     }
 }

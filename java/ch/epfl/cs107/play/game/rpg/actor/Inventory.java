@@ -45,6 +45,10 @@ public class Inventory {
         return items.containsKey(item);
     }
 
+    public int howMany(InventoryItem item) {
+        return items.getOrDefault(item, 0);
+    }
+
     public InventoryItem switchItem(InventoryItem currentItem) {
         InventoryItem[] array = items.keySet().toArray(new InventoryItem[0]);
 
