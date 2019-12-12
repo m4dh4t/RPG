@@ -32,7 +32,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     private Animation[] bowAnimations;
     private Animation[] staffAnimations;
     private Animation currentAnimation;
-    private boolean usingItem;
+    private boolean animateAction;
 
     private ARPGPlayerHandler handler;
     private ARPGPlayerStatusGUI statusGUI;
@@ -80,7 +80,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         staffAnimations = RPGSprite.createAnimations(DEFAULT_ANIMATION_DURATION/2, staffSprites, false);
 
         currentAnimation = idleAnimations[getOrientation().ordinal()];
-        usingItem = false;
+        animateAction = false;
 
         resetMotion();
     }
@@ -89,7 +89,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         Keyboard keyboard = getOwnerArea().getKeyboard();
         Button orientationKey = keyboard.get(Orientation.getCode(getOrientation()));
 
-        if (button.isDown()) {
+        if (button.isDown() && !animateAction) {
             if (getOrientation() == orientation) {
                 move(animation_duration);
             } else if (!isDisplacementOccurs() && !orientationKey.isDown()) { //Prevents the player from orientating if the key which corresponds to its orientation is down
@@ -115,7 +115,6 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
             }
         }
 
-
         if(SPACE.isPressed() && !isDisplacementOccurs()){
             if(currentItem.use(getOwnerArea(), getCurrentMainCellCoordinates(), getOrientation())){
                 switch(currentItem){
@@ -123,18 +122,22 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
                         inventory.remove(currentItem, 1);
                         break;
                     case BOW:
+                        animateAction = true;
                         currentAnimation = bowAnimations[getOrientation().ordinal()];
-                        inventory.remove(ARPGItem.ARROW, 1);
+                        if(possess(ARPGItem.ARROW)){
+                            ARPGItem.ARROW.use(getOwnerArea(), getCurrentMainCellCoordinates(), getOrientation());
+                            inventory.remove(ARPGItem.ARROW, 1);
+                        }
                         break;
                     case SWORD:
+                        animateAction = true;
                         currentAnimation = swordAnimations[getOrientation().ordinal()];
                         break;
                     case STAFF:
+                        animateAction = true;
                         currentAnimation = staffAnimations[getOrientation().ordinal()];
                         break;
                 }
-
-                usingItem = true;
 
                 if(!possess(currentItem)) {
                     currentItem = (ARPGItem) inventory.switchItem(currentItem);
@@ -253,12 +256,11 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
                 idleAnimations[i].reset();
             }
 
-            if(usingItem){
+            if(animateAction){
                 if(!currentAnimation.isCompleted()){
                     currentAnimation.update(deltaTime);
                 } else {
-                    System.out.println("queue");
-                    usingItem = false;
+                    animateAction = false;
                     currentAnimation.reset();
                     currentAnimation = idleAnimations[getOrientation().ordinal()];
                 }
