@@ -41,9 +41,9 @@ public class Chest extends AreaEntity {
         opened = false;
         inventory = new ARPGInventory(0);
         inventory.add(ARPGItem.STAFF, 1);
-        inventory.add(ARPGItem.ARROW, 2);
+        inventory.add(ARPGItem.ARROW, 1);
         inventory.add(ARPGItem.CASTLEKEY, 3);
-        inventory.add(ARPGItem.BOW,1);
+        inventory.add(ARPGItem.BOW,10);
 
         Sprite[] sprites = new Sprite[4];
 
@@ -65,15 +65,23 @@ public class Chest extends AreaEntity {
         for (int i = 0; i < inventory.getItems().length; ++i) {
             ARPGItem item = (ARPGItem) inventory.getItems()[i];
 
-            message += "a";
+            if (inventory.getQuantity(item) == 1) {
 
-            if (isVowel(item.getName().charAt(0))) {
-                message += "n ";
+                message += "a";
+
+                if (isVowel(item.getName().charAt(0))) {
+                    message += "n ";
+                } else {
+                    message += " ";
+                }
+
             } else {
-                message += " ";
+                message += inventory.getQuantity(item) + " ";
             }
 
             message += item.getName();
+
+            message += inventory.getQuantity(item) > 1 ? "s" : "";
 
             if (i == inventory.getItems().length - 1) { //Checks if we are at the last item or not to know if we need to put a final stop
                 message += ".";
@@ -85,8 +93,8 @@ public class Chest extends AreaEntity {
                 }
             }
 
-            otherInventory.add(item, inventory.howMany(item));
-            inventory.remove(item, inventory.howMany(item));
+            otherInventory.add(item, inventory.getQuantity(item));
+            inventory.remove(item, inventory.getQuantity(item));
 
             --i;
         }

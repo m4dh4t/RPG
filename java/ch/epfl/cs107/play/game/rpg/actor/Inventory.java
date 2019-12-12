@@ -49,7 +49,7 @@ public class Inventory {
         return items.keySet().toArray(new InventoryItem[0]);
     }
 
-    public int howMany(InventoryItem item) {
+    public int getQuantity(InventoryItem item) {
         return items.getOrDefault(item, 0);
     }
 
