@@ -21,10 +21,11 @@ import ch.epfl.cs107.play.window.Keyboard;
 import java.util.Collections;
 import java.util.List;
 
-public class ARPGPlayer extends Player implements Inventory.Holder {
+public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntity {
     private final static float MAX_HP = 10.f;
     private final static int DEFAULT_ANIMATION_DURATION = 8;
     private int animation_duration;
+    private Sprite[][] sprites;
     private Animation[] animations;
     private Animation currentAnimation;
 
@@ -32,6 +33,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
     private ARPGPlayerStatusGUI statusGUI;
 
     private float hp;
+    private boolean canFly;
     private ARPGInventory inventory;
     private ARPGItem currentItem;
 
@@ -47,17 +49,19 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
         inventory = new ARPGInventory(50);
         inventory.add(ARPGItem.BOMB, 3);
         inventory.add(ARPGItem.BOW, 2);
+        inventory.add(ARPGItem.WINGS,1);
         /*inventory.add(ARPGItem.SWORD, 10);
         inventory.add(ARPGItem.STAFF,1);*/
         currentItem = ARPGItem.BOMB;
 
         hp = MAX_HP;
+        canFly = false;
         animation_duration = DEFAULT_ANIMATION_DURATION;
 
         handler = new ARPGPlayerHandler();
         statusGUI = new ARPGPlayerStatusGUI();
 
-        Sprite[][] sprites = RPGSprite.extractSprites("zelda/player", 4, 1, 2, this, 16, 32, new Orientation[] {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
+        sprites = RPGSprite.extractSprites("zelda/player", 4, 1, 2, this, 16, 32, new Orientation[] {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
         animations = RPGSprite.createAnimations(DEFAULT_ANIMATION_DURATION/2, sprites);
         currentAnimation = animations[Orientation.DOWN.ordinal()];
 
@@ -96,12 +100,28 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
         }
     }
 
+    @Override
+    public boolean canFly() {
+        return canFly;
+    }
+
     private void inventoryHandler(){
         final Button TAB = getOwnerArea().getKeyboard().get(Keyboard.TAB);
         final Button SPACE = getOwnerArea().getKeyboard().get(Keyboard.SPACE);
 
         if(TAB.isPressed()){
             currentItem = (ARPGItem) inventory.switchItem(currentItem);
+        }
+
+        if (SPACE.isDown() && currentItem == ARPGItem.WINGS) {
+            canFly = true;
+            currentAnimation = new Animation(animation_duration, sprites[getOrientation().ordinal()]); //Calling this method at each update will stuck the animation
+            currentAnimation.setFrame(1); //Setting the frame to 1 will make the player look like he's flying (with an arm in front of him and not standing still, which we would have with position 0 by default)
+        } else {
+            if (canFly) {
+                currentAnimation.setFrame(0); //This handles the case where the player stops pressing SPACE but doesn't move. Without this condition he would still have his arm in front of him.
+            }
+            canFly = false;
         }
 
         if(SPACE.isPressed() && possess(currentItem)){

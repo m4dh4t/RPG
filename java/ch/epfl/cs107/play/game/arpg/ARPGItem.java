@@ -15,7 +15,8 @@ public enum ARPGItem implements InventoryItem {
     STAFF("Staff", 2.5f, 50, "zelda/staff_water.icon"),
     BOW("Bow", 1.5f, 20, "zelda/bow.icon"),
     BOMB("Bomb", 15.f, 30, "zelda/bomb"),
-    CASTLEKEY("Castle Key", 0.1f, 100, "zelda/key");
+    CASTLEKEY("Castle Key", 0.1f, 100, "zelda/key"),
+    WINGS("Wings", 10.f, 150, "wings");
 
     private String name;
     private float weight;
@@ -60,6 +61,8 @@ public enum ARPGItem implements InventoryItem {
                 } else {
                     return false;
                 }
+            case WINGS:
+
             default:
                 return false;
         }
