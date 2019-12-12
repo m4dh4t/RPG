@@ -89,7 +89,7 @@ public class ARPGPlayerStatusGUI implements Graphics {
         }
 
         //BACKGROUND
-        coinsDisplay[number.length()] = new ImageGraphics(ResourcePath.getSprite("zelda/coinsDisplay"), 3f, 1.5f, new RegionOfInterest(0, 0, 64, 32), anchor.add(new Vector(0, 0)), 1, 2000);
+        coinsDisplay[number.length()] = new ImageGraphics(ResourcePath.getSprite("zelda/coinsDisplay"), 4f, 2f, new RegionOfInterest(0, 0, 64, 32), anchor.add(new Vector(0, 0)), 1, 2000);
 
         //DIGITS
         for(int i = 0; i < digits.length; i++){
@@ -104,7 +104,7 @@ public class ARPGPlayerStatusGUI implements Graphics {
                 y = digits[i] / 4;
             }
 
-            coinsDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/digits"), 0.75f, 0.75f, new RegionOfInterest(x * 16, y * 16, 16, 16), anchor.add(new Vector(1.1f+(i*0.5f), 0.4f)), 1, 2001);
+            coinsDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/digits"), 1f, 1f, new RegionOfInterest(x * 16, y * 16, 16, 16), anchor.add(new Vector(1.4f+(i*0.7f), 0.55f)), 1, 2001);
         }
     }
 }
