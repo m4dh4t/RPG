@@ -30,7 +30,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
     private Animation[] bowAnimations;
     private Animation[] staffAnimations;
     private Animation currentAnimation;
-    private boolean usingItem;
+    private boolean animateAction;
 
     private ARPGPlayerHandler handler;
     private ARPGPlayerStatusGUI statusGUI;
@@ -74,7 +74,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
         staffAnimations = RPGSprite.createAnimations(ANIMATION_DURATION/2, staffSprites, false);
 
         currentAnimation = idleAnimations[getOrientation().ordinal()];
-        usingItem = false;
+        animateAction = false;
 
         resetMotion();
     }
@@ -111,18 +111,19 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
                         inventory.remove(currentItem, 1);
                         break;
                     case BOW:
+                        animateAction = true;
                         currentAnimation = bowAnimations[getOrientation().ordinal()];
                         inventory.remove(ARPGItem.ARROW, 1);
                         break;
                     case SWORD:
+                        animateAction = true;
                         currentAnimation = swordAnimations[getOrientation().ordinal()];
                         break;
                     case STAFF:
+                        animateAction = true;
                         currentAnimation = staffAnimations[getOrientation().ordinal()];
                         break;
                 }
-
-                usingItem = true;
 
                 if(!possess(currentItem)) {
                     currentItem = (ARPGItem) inventory.switchItem(currentItem);
@@ -218,11 +219,11 @@ public class ARPGPlayer extends Player implements Inventory.Holder {
                 idleAnimations[i].reset();
             }
 
-            if(usingItem){
+            if(animateAction){
                 if(!currentAnimation.isCompleted()){
                     currentAnimation.update(deltaTime);
                 } else {
-                    usingItem = false;
+                    animateAction = false;
                     currentAnimation.reset();
                     currentAnimation = idleAnimations[getOrientation().ordinal()];
                 }
