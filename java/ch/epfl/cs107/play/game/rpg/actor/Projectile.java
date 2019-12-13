@@ -32,19 +32,11 @@ public abstract class Projectile extends MovableAreaEntity implements Interactor
     public void update(float deltaTime) {
         DiscreteCoordinates position = new DiscreteCoordinates((int) getPosition().x, (int) getPosition().y);
 
-        if(position.equals(MAX_TRAVEL)){
-            getOwnerArea().unregisterActor(this);
-        }
-
-        if (getOwnerArea().canEnterAreaCells(this, Collections.singletonList(position.jump(getOrientation().toVector())))) { //Cell in front of the projectile
+        if (!position.equals(MAX_TRAVEL) && getOwnerArea().canEnterAreaCells(this, Collections.singletonList(position.jump(getOrientation().toVector())))) { //Checks if it hasn't reached its destination and if it can enter the cell in front of it
             move((int) MOVE_DURATION);
         } else {
             getOwnerArea().unregisterActor(this);
         }
-
-        /*if(!isDisplacementOccurs()){
-            getOwnerArea().unregisterActor(this);
-        }*/
 
         super.update(deltaTime);
     }

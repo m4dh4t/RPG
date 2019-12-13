@@ -175,6 +175,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         } else {
             if (canFly) {
                 currentAnimation.reset(); //This handles the case where the player stops pressing SPACE but doesn't move. Without this condition he would still have his arm in front of him.
+                currentAnimation = idleAnimations[getOrientation().ordinal()]; //Without this, the player wouldn't animate in the direction in which he was last flying.
             }
             canFly = false;
         }
