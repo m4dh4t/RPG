@@ -26,7 +26,6 @@ public class Bomb extends AreaEntity implements Interactor {
 
     private float timer;
     private boolean exploded;
-    private boolean wantsInteraction;
 
     /**
      * Default AreaEntity constructor
@@ -39,7 +38,6 @@ public class Bomb extends AreaEntity implements Interactor {
 
         this.timer = timer;
         exploded = false;
-        wantsInteraction = false;
         handler = new BombHandler();
 
         sprite = new RPGSprite("zelda/bomb", 1, 1, this, new RegionOfInterest(0, 0, 16, 16));
@@ -51,7 +49,6 @@ public class Bomb extends AreaEntity implements Interactor {
 
     public void explode() {
         exploded = true;
-        wantsInteraction = true;
     }
 
     @Override
@@ -103,12 +100,12 @@ public class Bomb extends AreaEntity implements Interactor {
 
     @Override
     public boolean wantsCellInteraction() {
-        return wantsInteraction;
+        return exploded;
     }
 
     @Override
     public boolean wantsViewInteraction() {
-        return wantsInteraction;
+        return exploded;
     }
 
     @Override
@@ -124,7 +121,6 @@ public class Bomb extends AreaEntity implements Interactor {
                 explode();
             }
         } else {
-            wantsInteraction = false;
             animation.update(deltaTime);
         }
     }
