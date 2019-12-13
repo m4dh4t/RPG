@@ -95,6 +95,13 @@ public class Animation implements Updatable, Graphics{
             this.currentFrame = frameNumber;
         }
     }
+
+    /**
+     * Return the frame number
+     */
+    public int getFrame() {
+        return currentFrame;
+    }
     
     /**
      * Reset this animation by setting the current frame to the first of the sequence

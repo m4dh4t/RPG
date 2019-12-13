@@ -22,7 +22,11 @@ import java.util.List;
 public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntity, InvincibleEntity {
     private final static float MAX_HP = 10.f;
     private final static int DEFAULT_ANIMATION_DURATION = 8;
+    private final static int BOW_ANIMATION_DURATION = 3;
+    private final static int SWORD_ANIMATION_DURATION = 1;
+    private final static int STAFF_ANIMATION_DURATION = 2;
     private final static float BLINK_DURATION = 0.1f;
+    private final static float COOLDOWN = 0.75f;
 
     private int animation_duration;
     private Sprite[][] idleSprites;
@@ -40,7 +44,9 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
 
     private ARPGInventory inventory;
     private ARPGItem currentItem;
+    private float actionTimer;
 
+    private boolean shootArrow;
     private boolean canFly;
     private boolean invincible;
     private float invincibleTimeLeft;
@@ -82,16 +88,18 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         idleAnimations = RPGSprite.createAnimations(DEFAULT_ANIMATION_DURATION/2, idleSprites);
 
         Sprite[][] swordSprites = RPGSprite.extractSprites("zelda/player.sword", 4, 2, 2, this, 32, 32, new Vector(-0.5f,0.f), new Orientation[] {Orientation.DOWN, Orientation.UP, Orientation.RIGHT, Orientation.LEFT});
-        swordAnimations = RPGSprite.createAnimations(DEFAULT_ANIMATION_DURATION/2, swordSprites, false);
+        swordAnimations = RPGSprite.createAnimations(SWORD_ANIMATION_DURATION, swordSprites, false);
 
         Sprite[][] bowSprites = RPGSprite.extractSprites("zelda/player.bow", 4, 2, 2, this, 32, 32, new Vector(-0.5f,0.f), new Orientation[] {Orientation.DOWN, Orientation.UP, Orientation.RIGHT, Orientation.LEFT});
-        bowAnimations = RPGSprite.createAnimations(DEFAULT_ANIMATION_DURATION/2, bowSprites, false);
+        bowAnimations = RPGSprite.createAnimations(BOW_ANIMATION_DURATION, bowSprites, false);
 
         Sprite[][] staffSprites = RPGSprite.extractSprites("zelda/player.staff_water", 4, 2, 2, this, 32, 32, new Vector(-0.5f,0.f), new Orientation[] {Orientation.DOWN, Orientation.UP, Orientation.RIGHT, Orientation.LEFT});
-        staffAnimations = RPGSprite.createAnimations(DEFAULT_ANIMATION_DURATION/2, staffSprites, false);
+        staffAnimations = RPGSprite.createAnimations(STAFF_ANIMATION_DURATION, staffSprites, false);
 
         currentAnimation = idleAnimations[getOrientation().ordinal()];
         animateAction = false;
+        actionTimer = 2.f;
+        shootArrow = false;
 
         resetMotion();
     }
@@ -132,17 +140,17 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         }
 
         if(SPACE.isPressed() && !isDisplacementOccurs()){
-            if(currentItem.use(getOwnerArea(), getCurrentMainCellCoordinates(), getOrientation())){
+            if(currentItem.use(getOwnerArea(), getOrientation(), getCurrentMainCellCoordinates())){
                 switch(currentItem){
                     case BOMB:
                         inventory.remove(currentItem, 1);
                         break;
                     case BOW:
-                        animateAction = true;
-                        currentAnimation = bowAnimations[getOrientation().ordinal()];
-                        if(possess(ARPGItem.ARROW)){
-                            ARPGItem.ARROW.use(getOwnerArea(), getCurrentMainCellCoordinates(), getOrientation());
-                            inventory.remove(ARPGItem.ARROW, 1);
+                        if(actionTimer >= COOLDOWN) {
+                            animateAction = true;
+                            currentAnimation = bowAnimations[getOrientation().ordinal()];
+                            shootArrow = true;
+                            actionTimer = 0.f;
                         }
                         break;
                     case SWORD:
@@ -286,6 +294,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         moveOrientate(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
 
         inventoryHandler();
+        actionTimer += deltaTime;
 
         if (isDisplacementOccurs()) {
             idleAnimations[getOrientation().ordinal()].update(deltaTime);
@@ -298,10 +307,19 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
                 if (!currentAnimation.isCompleted()) {
                     currentAnimation.update(deltaTime);
                 } else {
-                    animateAction = false;
-                    currentAnimation.reset();
-                    currentAnimation = idleAnimations[getOrientation().ordinal()];
+                        animateAction = false;
+                        currentAnimation.reset();
+                        currentAnimation = idleAnimations[getOrientation().ordinal()];
                 }
+            }
+
+            if(shootArrow && currentAnimation.isCompleted()){
+                if (possess(ARPGItem.ARROW)) {
+                    if (ARPGItem.ARROW.use(getOwnerArea(), getOrientation(), getCurrentMainCellCoordinates())) {
+                        inventory.remove(ARPGItem.ARROW, 1);
+                    }
+                }
+                shootArrow = false;
             }
         }
 
