@@ -1,4 +1,4 @@
-package ch.epfl.cs107.play.game.arpg.actor;
+package ch.epfl.cs107.play.game.rpg.actor;
 
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 

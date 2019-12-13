@@ -13,10 +13,12 @@ import ch.epfl.cs107.play.window.Canvas;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class Monster extends MovableAreaEntity implements Interactor {
+public abstract class Monster extends MovableAreaEntity implements Interactor, InvincibleEntity {
     private final static int DEAD_ANIMATION_DURATION = 6;
     private final static int ALIVE_ANIMATION_DURATION = 8;
     private final static float MAX_INACTIVE_DURATION = 2.f;
+    private final static float BLINK_DURATION = 0.1f;
+
     private float hp;
     private boolean dead;
     private boolean inactive;
@@ -29,6 +31,11 @@ public abstract class Monster extends MovableAreaEntity implements Interactor {
     private Animation deadAnimation;
     private boolean forceAnimation;
 
+    private boolean invincible;
+    private float invincibleTimeLeft;
+    private boolean showAnimations; //used to make the sprite blink when the player is invincible
+    private float blinkTimeLeft;
+
     /**
      * Monster constructor
      *
@@ -40,10 +47,17 @@ public abstract class Monster extends MovableAreaEntity implements Interactor {
         super(area, orientation, position);
         hp = hpmax;
         dead = false;
+
         inactive = false;
         inactiveTimeLeft = 0;
+
+        invincible = false;
+        invincibleTimeLeft = INVICIBILITY_DURATION;
+        blinkTimeLeft = BLINK_DURATION;
+        showAnimations = true;
+
         this.vulnerabilities = vulnerabilities;
-        forceAnimation = false;
+        forceAnimation = false; //See update(float deltaTime) to understand what this attribute is used for
 
         Sprite[][] aliveSprites = RPGSprite.extractSprites(spriteName, nbFrames, 2.f,2.f, this, 32, 32, new Vector(-0.5f, 0.f),orientations);
         animationsAlive = RPGSprite.createAnimations(ALIVE_ANIMATION_DURATION/2, aliveSprites);
@@ -71,11 +85,20 @@ public abstract class Monster extends MovableAreaEntity implements Interactor {
     }
 
     public void weaken(float damage, Vulnerability vulnerability) {
-        if (vulnerabilities.contains(vulnerability)) {
+        if (!isInvincible() && vulnerabilities.contains(vulnerability)) {
             hp -= damage;
+            invincible = true;
         }
     }
 
+    @Override
+    public boolean isInvincible() {
+        return invincible;
+    }
+
+    protected void die() {
+        dead = true;
+    }
     protected boolean isDead() {
         return dead;
     }
@@ -84,16 +107,14 @@ public abstract class Monster extends MovableAreaEntity implements Interactor {
     protected void setInactive(boolean bool) { inactive = bool; }
     protected void setInactiveTimeLeft(float time) { inactiveTimeLeft = time; }
 
-    protected void die() {
-        dead = true;
-    }
-
     @Override
     public void draw(Canvas canvas) {
         if (!dead) {
-            currentAnimationAlive.draw(canvas);
+            if (showAnimations) { //Used for blink
+                currentAnimationAlive.draw(canvas);
+            }
         } else {
-            deadAnimation.draw(canvas);
+            deadAnimation.draw(canvas); // We don't want to check if we need to show the animations here because we don't want the death animation to blink
         }
     }
 
@@ -169,6 +190,22 @@ public abstract class Monster extends MovableAreaEntity implements Interactor {
 
     @Override
     public void update(float deltaTime) {
+        if (isInvincible()) {
+            invincibleTimeLeft -= deltaTime;
+            blinkTimeLeft -= deltaTime;
+
+            if (blinkTimeLeft <= 0) {
+                showAnimations = !showAnimations; //Blink
+                blinkTimeLeft = BLINK_DURATION; //resets blinkTimeLeft
+            }
+
+            if (invincibleTimeLeft <= 0) {
+                invincible = false; //not invincible anymore
+                invincibleTimeLeft = INVICIBILITY_DURATION; //resets time left
+                showAnimations = true; //Make sure the player is not invisible at the end of the blink
+            }
+        }
+
         inactiveTimeLeft -= deltaTime;
 
         if (hp <= 0) {
