@@ -8,11 +8,8 @@ import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.ARPGItem;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
-import ch.epfl.cs107.play.game.rpg.actor.Inventory;
+import ch.epfl.cs107.play.game.rpg.actor.*;
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
-import ch.epfl.cs107.play.game.rpg.actor.Door;
-import ch.epfl.cs107.play.game.rpg.actor.Player;
-import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Button;
@@ -22,9 +19,11 @@ import ch.epfl.cs107.play.window.Keyboard;
 import java.util.Collections;
 import java.util.List;
 
-public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntity {
+public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntity, InvincibleEntity {
     private final static float MAX_HP = 10.f;
     private final static int DEFAULT_ANIMATION_DURATION = 8;
+    private final static float BLINK_DURATION = 0.1f;
+
     private int animation_duration;
     private Sprite[][] idleSprites;
     private Animation[] idleAnimations;
@@ -38,9 +37,15 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     private ARPGPlayerStatusGUI statusGUI;
 
     private float hp;
-    private boolean canFly;
+
     private ARPGInventory inventory;
     private ARPGItem currentItem;
+
+    private boolean canFly;
+    private boolean invincible;
+    private float invincibleTimeLeft;
+    private boolean showAnimations; //used to make the sprite blink when the player is invincible
+    private float blinkTimeLeft;
 
     /**
      * Default Player constructor
@@ -61,7 +66,13 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         currentItem = ARPGItem.BOMB;
 
         hp = MAX_HP;
+
         canFly = false;
+        invincible = false;
+        invincibleTimeLeft = INVICIBILITY_DURATION;
+        blinkTimeLeft = BLINK_DURATION;
+        showAnimations = true;
+
         animation_duration = DEFAULT_ANIMATION_DURATION;
 
         handler = new ARPGPlayerHandler();
@@ -102,6 +113,11 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     @Override
     public boolean canFly() {
         return canFly;
+    }
+
+    @Override
+    public boolean isInvincible() {
+        return invincible;
     }
 
     private void inventoryHandler(){
@@ -214,20 +230,41 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     }
 
     public void weaken(float hit) {
-        hp -= hit;
-        if (hp < 0) {
-            hp = 0;
+        if (!isInvincible()) {
+            hp -= hit;
+            invincible = true;
+            if (hp < 0) {
+                hp = 0;
+            }
         }
     }
 
     @Override
     public void draw(Canvas canvas) {
-        currentAnimation.draw(canvas);
+        if (showAnimations) { //Used for blink
+            currentAnimation.draw(canvas);
+        }
         statusGUI.drawGUI(canvas, hp, currentItem, inventory.getMoney());
     }
 
     @Override
     public void update(float deltaTime) {
+        if (isInvincible()) {
+            invincibleTimeLeft -= deltaTime;
+            blinkTimeLeft -= deltaTime;
+
+            if (blinkTimeLeft <= 0) {
+                showAnimations = !showAnimations; //Blink
+                blinkTimeLeft = BLINK_DURATION; //resets blinkTimeLeft
+            }
+
+            if (invincibleTimeLeft <= 0) {
+                invincible = false; //not invincible anymore
+                invincibleTimeLeft = INVICIBILITY_DURATION; //resets time left
+                showAnimations = true; //Make sure the player is not invisible at the end of the blink
+            }
+        }
+
         Keyboard keyboard = getOwnerArea().getKeyboard();
         if (keyboard.get(Keyboard.Q).isDown()) { //Checks if Q is pressed to allow the player to sprint
             animation_duration = DEFAULT_ANIMATION_DURATION/2;
@@ -248,16 +285,15 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
 
         inventoryHandler();
 
-
         if (isDisplacementOccurs()) {
             idleAnimations[getOrientation().ordinal()].update(deltaTime);
         } else {
-            for(int i = 0; i < idleAnimations.length; i++) {
+            for (int i = 0; i < idleAnimations.length; i++) {
                 idleAnimations[i].reset();
             }
 
-            if(animateAction){
-                if(!currentAnimation.isCompleted()){
+            if (animateAction) {
+                if (!currentAnimation.isCompleted()) {
                     currentAnimation.update(deltaTime);
                 } else {
                     animateAction = false;

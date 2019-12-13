@@ -6,6 +6,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
+import ch.epfl.cs107.play.game.rpg.actor.Monster;
 import ch.epfl.cs107.play.game.rpg.actor.Projectile;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -71,6 +72,11 @@ public class Arrow extends Projectile {
     }
 
     private class ArrowHandler implements ARPGInteractionVisitor {
+        @Override
+        public void interactWith(Monster monster) {
+            monster.weaken(1.f, Monster.Vulnerability.PHYSICAL);
+        }
+
         @Override
         public void interactWith(Grass grass) {
             if (grass.isBurnt()) {

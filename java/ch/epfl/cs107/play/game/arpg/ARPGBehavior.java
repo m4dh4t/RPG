@@ -3,7 +3,7 @@ package ch.epfl.cs107.play.game.arpg;
 import ch.epfl.cs107.play.game.areagame.AreaBehavior;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
-import ch.epfl.cs107.play.game.arpg.actor.FlyableEntity;
+import ch.epfl.cs107.play.game.rpg.actor.FlyableEntity;
 import ch.epfl.cs107.play.window.Window;
 
 public class ARPGBehavior extends AreaBehavior {
