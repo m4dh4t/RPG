@@ -118,18 +118,6 @@ public abstract class Monster extends MovableAreaEntity implements Interactor, I
         }
     }
 
-    protected void animate(Orientation orientation) {
-        if(orientation == Orientation.UP){
-            currentAnimationAlive = animationsAlive[0];
-        } else if(orientation == Orientation.RIGHT){
-            currentAnimationAlive = animationsAlive[1];
-        } else if(orientation == Orientation.DOWN){
-            currentAnimationAlive = animationsAlive[2];
-        } else if(orientation == Orientation.LEFT){
-            currentAnimationAlive = animationsAlive[3];
-        }
-    }
-
     @Override
     public List<DiscreteCoordinates> getCurrentCells() {
         return Collections.singletonList(getCurrentMainCellCoordinates());
@@ -164,24 +152,20 @@ public abstract class Monster extends MovableAreaEntity implements Interactor, I
                 switch (RandomGenerator.getInstance().nextInt(4)) {
                     case 0:
                         orientate(Orientation.LEFT);
-                        animate(Orientation.LEFT);
                         break;
                     case 1:
                         orientate(Orientation.UP);
-                        animate(Orientation.UP);
                         break;
                     case 2:
                         orientate(Orientation.RIGHT);
-                        animate(Orientation.RIGHT);
                         break;
                     case 3:
                         orientate(Orientation.DOWN);
-                        animate(Orientation.DOWN);
                         break;
                 }
             }
+            currentAnimationAlive = animationsAlive[getOrientation().ordinal()];
             move(ALIVE_ANIMATION_DURATION);
-            animate(getOrientation());
         } else if (wantsInactionPossibility) { //The flameSkull doesn't want an inaction time but the darkLord and the logMonster want it
             inactive = true;
             inactiveTimeLeft = RandomGenerator.getInstance().nextFloat() * MAX_INACTIVE_DURATION;
@@ -217,10 +201,8 @@ public abstract class Monster extends MovableAreaEntity implements Interactor, I
         }
 
         if (!dead) {
-            if (forceAnimation || isDisplacementOccurs()) { //forceAnimation is a way to force the current animation to update even if the monster does not move. Useful in LogMonster.java and DarkLord.java
+            if (forceAnimation || isDisplacementOccurs()) {
                 currentAnimationAlive.update(deltaTime);
-            } else {
-                currentAnimationAlive.reset();
             }
         } else {
             if (deadAnimation.isCompleted()) {

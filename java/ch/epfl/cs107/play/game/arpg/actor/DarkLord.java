@@ -83,35 +83,36 @@ public class DarkLord extends Monster {
     @Override
     public void update(float deltaTime) {
         if (!isDead()) {
-            cycle -= deltaTime;
-            remainingTPCooldown -= deltaTime;
+            if (!(currentState instanceof DarkLordCastingTP) && !(currentState instanceof DarkLordTP)) {
+                cycle -= deltaTime;
+                remainingTPCooldown -= deltaTime;
 
-            if (remainingTPCooldown <= 0) {
-                remainingTPCooldown = 0;
-            }
-
-            if (cycle <= 0) {
-                if (RandomGenerator.getInstance().nextDouble() > CHOOSE_SPELL_NUMBER) {
-                    //FIRE SPELL
-                    for (int i = 0; i < Orientation.values().length; ++i) {
-                        Orientation orientation = Orientation.values()[RandomGenerator.getInstance().nextInt(Orientation.values().length)]; //Chooses a random orientation
-                        DiscreteCoordinates frontCell = getCurrentMainCellCoordinates().jump(orientation.toVector());
-                        FireSpell spell = new FireSpell(getOwnerArea(), orientation, frontCell, FIRE_SPELL_FORCE);
-
-                        if (getOwnerArea().canEnterAreaCells(spell, Collections.singletonList(frontCell))) {
-                            orientate(orientation);
-                        }
-                    }
-
-                    currentState = new DarkLordAttacking();
-                } else {
-                    //FIRE SKULL
-                    currentState = new DarkLordCastingSpell();
+                if (remainingTPCooldown <= 0) {
+                    remainingTPCooldown = 0;
                 }
 
-                cycle = MIN_SPELL_WAIT_DURATION + RandomGenerator.getInstance().nextFloat() * (MAX_SPELL_WAIT_DURATION - MIN_SPELL_WAIT_DURATION);
-            }
+                if (cycle <= 0) {
+                    if (RandomGenerator.getInstance().nextDouble() > CHOOSE_SPELL_NUMBER) {
+                        //FIRE SPELL
+                        for (int i = 0; i < Orientation.values().length; ++i) {
+                            Orientation orientation = Orientation.values()[RandomGenerator.getInstance().nextInt(Orientation.values().length)]; //Chooses a random orientation
+                            DiscreteCoordinates frontCell = getCurrentMainCellCoordinates().jump(orientation.toVector());
+                            FireSpell spell = new FireSpell(getOwnerArea(), orientation, frontCell, FIRE_SPELL_FORCE);
 
+                            if (getOwnerArea().canEnterAreaCells(spell, Collections.singletonList(frontCell))) {
+                                orientate(orientation);
+                            }
+                        }
+
+                        currentState = new DarkLordAttacking();
+                    } else {
+                        //FIRE SKULL
+                        currentState = new DarkLordCastingSpell();
+                    }
+
+                    cycle = MIN_SPELL_WAIT_DURATION + RandomGenerator.getInstance().nextFloat() * (MAX_SPELL_WAIT_DURATION - MIN_SPELL_WAIT_DURATION);
+                }
+            }
             currentState.update(deltaTime);
         }
 
@@ -121,7 +122,7 @@ public class DarkLord extends Monster {
     private class DarkLordHandler implements ARPGInteractionVisitor {
         @Override
         public void interactWith(ARPGPlayer player) {
-            if (!(currentState instanceof DarkLordTP)) {
+            if (!(currentState instanceof DarkLordCastingTP) && !(currentState instanceof DarkLordTP) && remainingTPCooldown == 0) {
                 currentState = new DarkLordCastingTP();
             }
         }
@@ -129,18 +130,20 @@ public class DarkLord extends Monster {
 
     private abstract class DarkLordState {
 
-        DarkLordState(String spriteName) {
+        DarkLordState(String spriteName, boolean repeat) {
             Sprite[][] sprites = RPGSprite.extractSprites(spriteName, 3, 2.f, 2.f, DarkLord.this, 32, 32, new Vector(-0.5f, 0), new Orientation[] {Orientation.UP, Orientation.LEFT, Orientation.DOWN, Orientation.RIGHT});
-            Animation[] animations = RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites);
+            Animation[] animations = RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites, repeat);
             setAnimations(animations, getOrientation());
+        }
+
+        DarkLordState(String spriteName) {
+            this(spriteName, true);
         }
 
         public abstract void update(float deltaTime);
     }
 
     private class DarkLordIdle extends DarkLordState {
-        private static final double PROBABILITY_TO_CHANGE_DIRECTION = 0.25;
-        private static final double PROBABILITY_TO_GO_INACTIVE = 0.05;
         private final static float MAX_INACTIVE_DURATION = 1.5f; //in seconds
 
         private boolean inactive;
@@ -150,6 +153,7 @@ public class DarkLord extends Monster {
             super("zelda/darkLord");
             inactive = true;
             inactiveTimeLeft = RandomGenerator.getInstance().nextFloat() * MAX_INACTIVE_DURATION;
+            setForceAnimation(false);
         }
 
         @Override
@@ -167,40 +171,60 @@ public class DarkLord extends Monster {
     }
 
     private class DarkLordAttacking extends DarkLordState {
+        private boolean attacked;
+
         DarkLordAttacking() {
-            super("zelda/darkLord.spell");
+            super("zelda/darkLord.spell", false);
+            setForceAnimation(true);
+            attacked = false;
         }
 
         @Override
         public void update(float deltaTime) {
-            DiscreteCoordinates frontCell = getCurrentMainCellCoordinates().jump(getOrientation().toVector());
-            FireSpell spell = new FireSpell(getOwnerArea(), getOrientation(), frontCell, FIRE_SPELL_FORCE);
-            getOwnerArea().registerActor(spell);
-            currentState = new DarkLordIdle();
+            if (!attacked) {
+                DiscreteCoordinates frontCell = getCurrentMainCellCoordinates().jump(getOrientation().toVector());
+                FireSpell spell = new FireSpell(getOwnerArea(), getOrientation(), frontCell, FIRE_SPELL_FORCE);
+                getOwnerArea().registerActor(spell);
+            }
+
+            if (isAnimationCompleted()) {
+                currentState = new DarkLordIdle();
+            }
         }
     }
 
     private class DarkLordCastingSpell extends DarkLordState {
+        private boolean casted;
+
         DarkLordCastingSpell() {
-            super("zelda/darkLord.spell");
+            super("zelda/darkLord.spell", false);
+            setForceAnimation(true);
+            casted = false;
         }
 
         @Override
         public void update(float deltaTime) {
-            FlameSkull skull = new FlameSkull(getOwnerArea(), getOrientation(), getCurrentMainCellCoordinates());
-            getOwnerArea().registerActor(skull);
-            currentState = new DarkLordIdle();
+            if (!casted) {
+                FlameSkull skull = new FlameSkull(getOwnerArea(), getOrientation(), getCurrentMainCellCoordinates());
+                getOwnerArea().registerActor(skull);
+                casted = true;
+            }
+
+            if (isAnimationCompleted()) {
+                currentState = new DarkLordIdle();
+            }
         }
     }
 
     private class DarkLordCastingTP extends DarkLordState {
         DarkLordCastingTP() {
-            super("zelda/darkLord.spell");
+            super("zelda/darkLord.spell", false);
+            setForceAnimation(true);
         }
 
         @Override
         public void update(float deltaTime) {
-            if (!isDisplacementOccurs()) {
+            if (!isDisplacementOccurs() && isAnimationCompleted()) {
                 currentState = new DarkLordTP();
             }
         }
@@ -211,31 +235,30 @@ public class DarkLord extends Monster {
 
         DarkLordTP() {
             super("zelda/darkLord");
+            setForceAnimation(false);
         }
 
         @Override
         public void update(float deltaTime) {
-            if (remainingTPCooldown == 0) {
-                final int MAX_TRIES = 4;
-                int tries = 0;
-                boolean success = false;
+            final int MAX_TRIES = 4;
+            int tries = 0;
+            boolean success = false;
 
-                while (!success && tries < MAX_TRIES) {
-                    int x = getCurrentMainCellCoordinates().x - TELEPORTATION_RADIUS + RandomGenerator.getInstance().nextInt(2 * TELEPORTATION_RADIUS + 1);
-                    int y = getCurrentMainCellCoordinates().y - TELEPORTATION_RADIUS + RandomGenerator.getInstance().nextInt(2 * TELEPORTATION_RADIUS + 1);
-                    DiscreteCoordinates coordinates = new DiscreteCoordinates(x, y);
+            while (!success && tries < MAX_TRIES) {
+                int x = getCurrentMainCellCoordinates().x - TELEPORTATION_RADIUS + RandomGenerator.getInstance().nextInt(2 * TELEPORTATION_RADIUS + 1);
+                int y = getCurrentMainCellCoordinates().y - TELEPORTATION_RADIUS + RandomGenerator.getInstance().nextInt(2 * TELEPORTATION_RADIUS + 1);
+                DiscreteCoordinates coordinates = new DiscreteCoordinates(x, y);
 
-                    success = getOwnerArea().canEnterAreaCells(DarkLord.this, Collections.singletonList(coordinates));
+                success = getOwnerArea().canEnterAreaCells(DarkLord.this, Collections.singletonList(coordinates));
 
-                    if (success) {
-                        getOwnerArea().leaveAreaCells(DarkLord.this, getCurrentCells());
-                        setCurrentPosition(coordinates.toVector());
-                    }
-
-                    ++tries;
+                if (success) {
+                    getOwnerArea().leaveAreaCells(DarkLord.this, getCurrentCells());
+                    setCurrentPosition(coordinates.toVector());
                 }
-                remainingTPCooldown = TELEPORTATION_COOLDOWN;
+
+                ++tries;
             }
+            remainingTPCooldown = TELEPORTATION_COOLDOWN;
 
             currentState = new DarkLordIdle();
         }

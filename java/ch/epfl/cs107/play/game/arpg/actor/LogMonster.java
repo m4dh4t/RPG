@@ -117,8 +117,6 @@ public class LogMonster extends Monster {
     }
 
     private class LogMonsterIdle extends LogMonsterState {
-        private static final double PROBABILITY_TO_CHANGE_DIRECTION = 0.1;
-        private static final double PROBABILITY_TO_GO_INACTIVE = 0.05;
 
         LogMonsterIdle() {
             super("zelda/logMonster");
@@ -184,7 +182,6 @@ public class LogMonster extends Monster {
         public void update(float deltaTime) {
             if (isAnimationCompleted()) {
                 currentState = new LogMonsterIdle();
-                setForceAnimation(false); //To prevent the LogMonster to animate when not moving (See Monster.java)
             }
         }
     }

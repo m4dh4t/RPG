@@ -232,6 +232,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
 
     public void weaken(float hit) {
         if (!isInvincible()) {
+            System.out.println("hit");
             hp -= hit;
             invincible = true;
             if (hp < 0) {
