@@ -6,6 +6,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
+import ch.epfl.cs107.play.game.rpg.actor.Monster;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RandomGenerator;
@@ -46,7 +47,7 @@ public class DarkLord extends Monster {
     }
 
     @Override
-    void spawnCollectables() {
+    protected void spawnCollectables() {
         CastleKey key = new CastleKey(getOwnerArea(), new DiscreteCoordinates((int) getPosition().x, (int) getPosition().y));
         getOwnerArea().registerActor(key);
     }
@@ -160,33 +161,7 @@ public class DarkLord extends Monster {
             }
 
             if (!inactive) {
-                if (RandomGenerator.getInstance().nextDouble() >= PROBABILITY_TO_GO_INACTIVE) {
-                    if (RandomGenerator.getInstance().nextDouble() < PROBABILITY_TO_CHANGE_DIRECTION) {
-                        switch (RandomGenerator.getInstance().nextInt(4)) {
-                            case 0:
-                                orientate(Orientation.LEFT);
-                                animate(Orientation.LEFT);
-                                break;
-                            case 1:
-                                orientate(Orientation.UP);
-                                animate(Orientation.UP);
-                                break;
-                            case 2:
-                                orientate(Orientation.RIGHT);
-                                animate(Orientation.RIGHT);
-                                break;
-                            case 3:
-                                orientate(Orientation.DOWN);
-                                animate(Orientation.DOWN);
-                                break;
-                        }
-                    }
-                    move(ANIMATION_DURATION);
-                    animate(getOrientation());
-                } else {
-                    inactive = true;
-                    inactiveTimeLeft = RandomGenerator.getInstance().nextFloat() * MAX_INACTIVE_DURATION;
-                }
+                randomMove(true);
             }
         }
     }
@@ -253,6 +228,7 @@ public class DarkLord extends Monster {
                     success = getOwnerArea().canEnterAreaCells(DarkLord.this, Collections.singletonList(coordinates));
 
                     if (success) {
+                        getOwnerArea().leaveAreaCells(DarkLord.this, getCurrentCells());
                         setCurrentPosition(coordinates.toVector());
                     }
 

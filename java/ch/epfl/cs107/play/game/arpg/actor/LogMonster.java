@@ -6,6 +6,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
+import ch.epfl.cs107.play.game.rpg.actor.Monster;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RandomGenerator;
@@ -18,14 +19,11 @@ import java.util.List;
 
 public class LogMonster extends Monster {
     private static final int ANIMATION_DURATION = getAnimationDuration();
-    private final static float MAX_INACTIVE_DURATION = 2.f; //in seconds
     private final static float MIN_SLEEPING_DURATION = 1.f; //in seconds
     private final static float MAX_SLEEPING_DURATION = 3.f; //in seconds
     private final static float MAXHP = 3.f;
 
-    private float inactiveTimeLeft;
     private LogMonsterState currentState;
-    private boolean inactive;
 
     private LogMonsterHandler handler;
 
@@ -39,13 +37,11 @@ public class LogMonster extends Monster {
     public LogMonster(Area area, Orientation orientation, DiscreteCoordinates position) {
         super(area, orientation, position, MAXHP, new ArrayList<>(Arrays.asList(Vulnerability.PHYSICAL, Vulnerability.FIRE)), "zelda/logMonster", 4, new Orientation[] {Orientation.DOWN, Orientation.UP, Orientation.RIGHT, Orientation.LEFT});
         currentState = new LogMonsterIdle();;
-        inactive = false;
         handler = new LogMonsterHandler();
-        inactiveTimeLeft = 0;
     }
 
     @Override
-    void spawnCollectables() {
+    protected void spawnCollectables() {
         Coin coin = new Coin(getOwnerArea(), new DiscreteCoordinates((int)getPosition().x, (int)getPosition().y));
         getOwnerArea().registerActor(coin);
     }
@@ -67,18 +63,10 @@ public class LogMonster extends Monster {
 
     @Override
     public void update(float deltaTime) {
-        if (!isDead()) {
-            inactiveTimeLeft -= deltaTime;
-
-            if (inactiveTimeLeft <= 0) {
-                inactive = false;
-            }
-
-            if (!inactive) {
-                currentState.update(deltaTime);
-            }
-        }
         super.update(deltaTime);
+        if (!isDead() && !isInactive()) {
+            currentState.update(deltaTime);
+        }
     }
 
     @Override
@@ -138,33 +126,7 @@ public class LogMonster extends Monster {
 
         @Override
         public void update(float deltaTime) {
-            if (RandomGenerator.getInstance().nextDouble() >= PROBABILITY_TO_GO_INACTIVE) {
-                if (RandomGenerator.getInstance().nextDouble() < PROBABILITY_TO_CHANGE_DIRECTION) {
-                    switch (RandomGenerator.getInstance().nextInt(4)) {
-                        case 0:
-                            orientate(Orientation.LEFT);
-                            animate(Orientation.LEFT);
-                            break;
-                        case 1:
-                            orientate(Orientation.UP);
-                            animate(Orientation.UP);
-                            break;
-                        case 2:
-                            orientate(Orientation.RIGHT);
-                            animate(Orientation.RIGHT);
-                            break;
-                        case 3:
-                            orientate(Orientation.DOWN);
-                            animate(Orientation.DOWN);
-                            break;
-                    }
-                }
-                move(ANIMATION_DURATION);
-                animate(getOrientation());
-            } else {
-                inactive = true;
-                inactiveTimeLeft = RandomGenerator.getInstance().nextFloat() * MAX_INACTIVE_DURATION;
-            }
+            randomMove(true);
         }
     }
 
@@ -195,8 +157,8 @@ public class LogMonster extends Monster {
 
         @Override
         public void update(float deltaTime) {
-            inactive = true;
-            inactiveTimeLeft = MIN_SLEEPING_DURATION + RandomGenerator.getInstance().nextFloat() * (MAX_SLEEPING_DURATION - MIN_SLEEPING_DURATION);
+            setInactive(true);
+            setInactiveTimeLeft(MIN_SLEEPING_DURATION + RandomGenerator.getInstance().nextFloat() * (MAX_SLEEPING_DURATION - MIN_SLEEPING_DURATION));
             currentState = new LogMonsterSleeping();
         }
     }
@@ -209,6 +171,7 @@ public class LogMonster extends Monster {
         @Override
         public void update(float deltaTime) {
             currentState = new LogMonsterWakingUp();
+            setForceAnimation(true); //See Monster.java to properly understand this call. Without it, the logMonster won't be able to wake up because it won't move
         }
     }
 
@@ -221,6 +184,7 @@ public class LogMonster extends Monster {
         public void update(float deltaTime) {
             if (isAnimationCompleted()) {
                 currentState = new LogMonsterIdle();
+                setForceAnimation(false); //To prevent the LogMonster to animate when not moving (See Monster.java)
             }
         }
     }
