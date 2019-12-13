@@ -5,6 +5,7 @@ import ch.epfl.cs107.play.game.areagame.actor.AreaEntity;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
+import ch.epfl.cs107.play.game.rpg.actor.TriggerableEntity;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
@@ -13,9 +14,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Bridge extends AreaEntity {
+public class Bridge extends TriggerableEntity {
     private Sprite sprite;
-    private boolean triggered;
 
     /**
      * Bridge constructor
@@ -27,18 +27,13 @@ public class Bridge extends AreaEntity {
         super(area, Orientation.DOWN, position);
 
         sprite = new Sprite("zelda/bridge", 4.f, 3.f, this, null, new Vector(0.f,-1.f), 1.f, -11);
-        triggered = false;
     }
 
     @Override
     public void draw(Canvas canvas) {
-        if(triggered){
+        if(isTriggered()){
             sprite.draw(canvas);
         }
-    }
-
-    public void trigger(){
-        triggered = true;
     }
 
     @Override
@@ -48,7 +43,7 @@ public class Bridge extends AreaEntity {
 
     @Override
     public boolean takeCellSpace() {
-        return !triggered;
+        return !isTriggered();
     }
 
     @Override
