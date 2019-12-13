@@ -13,6 +13,7 @@ import java.util.List;
 
 public class Sword extends Weapon {
     private SwordHandler handler;
+    private boolean hit;
 
     /**
      * Sword constructor
@@ -24,11 +25,19 @@ public class Sword extends Weapon {
     public Sword(Area area, Orientation orientation, DiscreteCoordinates position) {
         super(area, orientation, position);
         handler = new SwordHandler();
+        hit = false;
     }
 
     @Override
     public void draw(Canvas canvas) {
 
+    }
+
+    @Override
+    public void update(float deltaTime) {
+        if(hit){
+            getOwnerArea().unregisterActor(this);
+        }
     }
 
     @Override
@@ -39,6 +48,7 @@ public class Sword extends Weapon {
     @Override
     public void interactWith(Interactable other) {
         other.acceptInteraction(handler);
+        hit = true;
     }
 
     private class SwordHandler implements ARPGInteractionVisitor {
