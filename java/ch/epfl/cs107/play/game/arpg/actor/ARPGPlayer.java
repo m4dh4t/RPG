@@ -43,6 +43,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     private ARPGItem currentItem;
     private float actionTimer;
 
+    private boolean shootArrow;
     private boolean canFly;
     private boolean invincible;
     private float invincibleTimeLeft;
@@ -95,6 +96,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         currentAnimation = idleAnimations[getOrientation().ordinal()];
         animateAction = false;
         actionTimer = 2.f;
+        shootArrow = false;
 
         resetMotion();
     }
@@ -144,11 +146,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
                         if(actionTimer >= COOLDOWN) {
                             animateAction = true;
                             currentAnimation = bowAnimations[getOrientation().ordinal()];
-                            if (possess(ARPGItem.ARROW)) {
-                                if (ARPGItem.ARROW.use(getOwnerArea(), getOrientation(), getCurrentMainCellCoordinates())) {
-                                    inventory.remove(ARPGItem.ARROW, 1);
-                                }
-                            }
+                            shootArrow = true;
                             actionTimer = 0.f;
                         }
                         break;
@@ -305,10 +303,19 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
                 if (!currentAnimation.isCompleted()) {
                     currentAnimation.update(deltaTime);
                 } else {
-                    animateAction = false;
-                    currentAnimation.reset();
-                    currentAnimation = idleAnimations[getOrientation().ordinal()];
+                        animateAction = false;
+                        currentAnimation.reset();
+                        currentAnimation = idleAnimations[getOrientation().ordinal()];
                 }
+            }
+
+            if(shootArrow && currentAnimation.isCompleted()){
+                if (possess(ARPGItem.ARROW)) {
+                    if (ARPGItem.ARROW.use(getOwnerArea(), getOrientation(), getCurrentMainCellCoordinates())) {
+                        inventory.remove(ARPGItem.ARROW, 1);
+                    }
+                }
+                shootArrow = false;
             }
         }
 
