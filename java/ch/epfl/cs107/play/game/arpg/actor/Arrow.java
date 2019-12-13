@@ -65,6 +65,11 @@ public class Arrow extends Projectile {
         other.acceptInteraction(handler);
     }
 
+    @Override
+    public boolean wantsViewInteraction() {
+        return true;
+    }
+
     private class ArrowHandler implements ARPGInteractionVisitor {
         @Override
         public void interactWith(Grass grass) {

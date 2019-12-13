@@ -70,9 +70,4 @@ public abstract class Projectile extends MovableAreaEntity implements Interactor
     public boolean wantsCellInteraction() {
         return true;
     }
-
-    @Override
-    public boolean wantsViewInteraction() {
-        return true;
-    }
 }

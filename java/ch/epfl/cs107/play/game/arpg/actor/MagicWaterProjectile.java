@@ -34,7 +34,7 @@ public class MagicWaterProjectile extends Projectile {
         handler = new MagicWaterProjectileHandler();
         hit = false;
 
-        Sprite[] sprites = RPGSprite.extractSprites("zelda/magicWaterProjectile",7,1.f,1.f,this,16,16);
+        Sprite[] sprites = RPGSprite.extractSprites("zelda/magicWaterProjectile",4,1.f,1.f,this,16,16);
         animation = new Animation(ANIMATION_DURATION/2, sprites, true);
     }
 
@@ -65,6 +65,11 @@ public class MagicWaterProjectile extends Projectile {
     @Override
     public void interactWith(Interactable other) {
         other.acceptInteraction(handler);
+    }
+
+    @Override
+    public boolean wantsViewInteraction() {
+        return false;
     }
 
     private class MagicWaterProjectileHandler implements ARPGInteractionVisitor {
