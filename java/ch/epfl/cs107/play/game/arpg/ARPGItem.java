@@ -2,10 +2,7 @@ package ch.epfl.cs107.play.game.arpg;
 
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
-import ch.epfl.cs107.play.game.arpg.actor.Arrow;
-import ch.epfl.cs107.play.game.arpg.actor.Bomb;
-import ch.epfl.cs107.play.game.arpg.actor.MagicWaterProjectile;
-import ch.epfl.cs107.play.game.arpg.actor.Sword;
+import ch.epfl.cs107.play.game.arpg.actor.*;
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
@@ -53,7 +50,7 @@ public enum ARPGItem implements InventoryItem {
         return spriteName;
     }
 
-    public boolean use(Area area, DiscreteCoordinates position, Orientation orientation){
+    public boolean use(Area area, Orientation orientation, DiscreteCoordinates position){
         List<DiscreteCoordinates> frontCells = Collections.singletonList(position.jump(orientation.toVector()));
 
         switch (this){

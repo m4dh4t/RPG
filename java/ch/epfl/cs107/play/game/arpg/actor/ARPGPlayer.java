@@ -23,6 +23,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     private final static float MAX_HP = 10.f;
     private final static int DEFAULT_ANIMATION_DURATION = 8;
     private final static float BLINK_DURATION = 0.1f;
+    private final static float COOLDOWN = 0.75f;
 
     private int animation_duration;
     private Sprite[][] idleSprites;
@@ -40,6 +41,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
 
     private ARPGInventory inventory;
     private ARPGItem currentItem;
+    private float actionTimer;
 
     private boolean canFly;
     private boolean invincible;
@@ -92,6 +94,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
 
         currentAnimation = idleAnimations[getOrientation().ordinal()];
         animateAction = false;
+        actionTimer = 2.f;
 
         resetMotion();
     }
@@ -132,17 +135,21 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         }
 
         if(SPACE.isPressed() && !isDisplacementOccurs()){
-            if(currentItem.use(getOwnerArea(), getCurrentMainCellCoordinates(), getOrientation())){
+            if(currentItem.use(getOwnerArea(), getOrientation(), getCurrentMainCellCoordinates())){
                 switch(currentItem){
                     case BOMB:
                         inventory.remove(currentItem, 1);
                         break;
                     case BOW:
-                        animateAction = true;
-                        currentAnimation = bowAnimations[getOrientation().ordinal()];
-                        if(possess(ARPGItem.ARROW)){
-                            ARPGItem.ARROW.use(getOwnerArea(), getCurrentMainCellCoordinates(), getOrientation());
-                            inventory.remove(ARPGItem.ARROW, 1);
+                        if(actionTimer >= COOLDOWN) {
+                            animateAction = true;
+                            currentAnimation = bowAnimations[getOrientation().ordinal()];
+                            if (possess(ARPGItem.ARROW)) {
+                                if (ARPGItem.ARROW.use(getOwnerArea(), getOrientation(), getCurrentMainCellCoordinates())) {
+                                    inventory.remove(ARPGItem.ARROW, 1);
+                                }
+                            }
+                            actionTimer = 0.f;
                         }
                         break;
                     case SWORD:
@@ -284,6 +291,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         moveOrientate(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
 
         inventoryHandler();
+        actionTimer += deltaTime;
 
         if (isDisplacementOccurs()) {
             idleAnimations[getOrientation().ordinal()].update(deltaTime);
