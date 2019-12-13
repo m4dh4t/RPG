@@ -201,7 +201,7 @@ public abstract class Monster extends MovableAreaEntity implements Interactor, I
         }
 
         if (!dead) {
-            if (forceAnimation || isDisplacementOccurs()) {
+            if (forceAnimation || isDisplacementOccurs()) { //forceAnimation is a way to force the current animation to update even if the monster does not move. Useful in LogMonster.java and DarkLord.java
                 currentAnimationAlive.update(deltaTime);
             }
         } else {
