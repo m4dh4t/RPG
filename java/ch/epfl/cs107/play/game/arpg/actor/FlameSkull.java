@@ -4,6 +4,7 @@ import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
+import ch.epfl.cs107.play.game.rpg.actor.Monster;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RandomGenerator;
 
@@ -13,7 +14,6 @@ import java.util.List;
 
 public class FlameSkull extends Monster implements FlyableEntity {
     private final static int ANIMATION_DURATION = getAnimationDuration();
-    private final static double PROBABILITY_TO_CHANGE_DIRECTION = 0.1;
     private final static int MIN_LIFE_TIME = 3;
     private final static int MAX_LIFE_TIME = 12;
     private final static float MAXHP = 0.5f;
@@ -55,7 +55,7 @@ public class FlameSkull extends Monster implements FlyableEntity {
     }
 
     @Override
-    void spawnCollectables() {
+    protected void spawnCollectables() {
 
     }
 
@@ -74,22 +74,7 @@ public class FlameSkull extends Monster implements FlyableEntity {
     @Override
     public void update(float deltaTime) {
         if (!isDead()) {
-            if (RandomGenerator.getInstance().nextDouble() < PROBABILITY_TO_CHANGE_DIRECTION) {
-                switch (RandomGenerator.getInstance().nextInt(4)) {
-                    case 0:
-                        move(Orientation.LEFT);
-                        break;
-                    case 1:
-                        move(Orientation.UP);
-                        break;
-                    case 2:
-                        move(Orientation.RIGHT);
-                        break;
-                    case 3:
-                        move(Orientation.DOWN);
-                        break;
-                }
-            }
+            randomMove(false);
             lifeTime -= deltaTime;
 
             if (lifeTime <= 0) {

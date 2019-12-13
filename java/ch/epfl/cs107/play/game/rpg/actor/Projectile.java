@@ -37,11 +37,15 @@ public abstract class Projectile extends MovableAreaEntity implements Interactor
             getOwnerArea().unregisterActor(this);
         }
 
-        move((int)MOVE_DURATION);
-
-        if(!isDisplacementOccurs()){
+        if (getOwnerArea().canEnterAreaCells(this, Collections.singletonList(position.jump(getOrientation().toVector())))) { //Cell in front of the projectile
+            move((int) MOVE_DURATION);
+        } else {
             getOwnerArea().unregisterActor(this);
         }
+
+        /*if(!isDisplacementOccurs()){
+            getOwnerArea().unregisterActor(this);
+        }*/
 
         super.update(deltaTime);
     }
