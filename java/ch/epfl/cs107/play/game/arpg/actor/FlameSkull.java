@@ -65,13 +65,6 @@ public class FlameSkull extends Monster implements FlyableEntity {
         other.acceptInteraction(handler);
     }
 
-    private void move(Orientation orientation) {
-        orientate(orientation);
-        move(ANIMATION_DURATION);
-        animate(orientation);
-
-    }
-
     @Override
     public void update(float deltaTime) {
         if (!isDead()) {
@@ -81,8 +74,6 @@ public class FlameSkull extends Monster implements FlyableEntity {
             if (lifeTime <= 0) {
                 die();
             }
-
-
         }
 
         super.update(deltaTime);
