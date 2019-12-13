@@ -1,10 +1,7 @@
 package ch.epfl.cs107.play.game.arpg.actor;
 
 import ch.epfl.cs107.play.game.areagame.Area;
-import ch.epfl.cs107.play.game.areagame.actor.Animation;
-import ch.epfl.cs107.play.game.areagame.actor.MovableAreaEntity;
-import ch.epfl.cs107.play.game.areagame.actor.Orientation;
-import ch.epfl.cs107.play.game.areagame.actor.Sprite;
+import ch.epfl.cs107.play.game.areagame.actor.*;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
@@ -16,7 +13,7 @@ import java.util.List;
 
 public class Orb extends MovableAreaEntity {
     private final static int ANIMATION_DURATION = 3;
-    private final static DiscreteCoordinates BRIDGE_COORDINATES = new DiscreteCoordinates(15,10);
+    private AreaEntity triggeredEntity;
     private Animation animation;
     /**
      * Orb constructor
@@ -24,17 +21,21 @@ public class Orb extends MovableAreaEntity {
      * @param area        (Area): Owner area. Not null
      * @param position    (Coordinate): Initial position of the entity. Not null
      */
-    public Orb(Area area, DiscreteCoordinates position) {
+    public Orb(Area area, DiscreteCoordinates position, AreaEntity triggeredEntity) {
         super(area, Orientation.DOWN, position);
 
         Sprite[] sprites = RPGSprite.extractSprites("zelda/orb", 6, 1.f, 1.f, this, 64, 32, 32);
         animation = new Animation(ANIMATION_DURATION, sprites);
+        this.triggeredEntity = triggeredEntity;
+        getOwnerArea().registerActor(triggeredEntity);
     }
 
     public void hit() {
         Sprite[] sprites = RPGSprite.extractSprites("zelda/orb", 6, 1.f, 1.f, this, 32, 32, 32);
         animation = new Animation(ANIMATION_DURATION, sprites);
-        getOwnerArea().registerActor(new Bridge(getOwnerArea(), BRIDGE_COORDINATES));
+        if(triggeredEntity instanceof Bridge){
+            ((Bridge) triggeredEntity).trigger();
+        }
     }
 
     @Override

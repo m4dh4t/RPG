@@ -15,6 +15,8 @@ import java.util.List;
 
 public class Bridge extends AreaEntity {
     private Sprite sprite;
+    private boolean triggered;
+
     /**
      * Bridge constructor
      *
@@ -25,21 +27,28 @@ public class Bridge extends AreaEntity {
         super(area, Orientation.DOWN, position);
 
         sprite = new Sprite("zelda/bridge", 4.f, 3.f, this, null, new Vector(0.f,-1.f), 1.f, -11);
+        triggered = false;
     }
 
     @Override
     public void draw(Canvas canvas) {
-        sprite.draw(canvas);
+        if(triggered){
+            sprite.draw(canvas);
+        }
+    }
+
+    public void trigger(){
+        triggered = true;
     }
 
     @Override
     public List<DiscreteCoordinates> getCurrentCells() {
-        return new ArrayList<>(Arrays.asList(getCurrentMainCellCoordinates(), getCurrentMainCellCoordinates().jump(1,0), getCurrentMainCellCoordinates().jump(2,0)));
+        return new ArrayList<>(Arrays.asList(getCurrentMainCellCoordinates().jump(1,0), getCurrentMainCellCoordinates().jump(2,0)));
     }
 
     @Override
     public boolean takeCellSpace() {
-        return false;
+        return !triggered;
     }
 
     @Override

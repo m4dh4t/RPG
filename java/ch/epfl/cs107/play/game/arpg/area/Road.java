@@ -3,6 +3,7 @@ package ch.epfl.cs107.play.game.arpg.area;
 import ch.epfl.cs107.play.game.areagame.actor.Background;
 import ch.epfl.cs107.play.game.areagame.actor.Foreground;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
+import ch.epfl.cs107.play.game.arpg.ARPGBehavior;
 import ch.epfl.cs107.play.game.arpg.actor.*;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -21,7 +22,7 @@ public class Road extends ARPGArea {
         registerActors(Grass.grassZone(this, 5,7,6,11));
         registerActor(new Bomb(this,new DiscreteCoordinates(6,10), 2.5f));
         registerActor(new Waterfall(this, new DiscreteCoordinates(15,4)));
-        registerActor(new Orb(this, new DiscreteCoordinates(19, 8)));
+        registerActor(new Orb(this, new DiscreteCoordinates(19, 8), new Bridge(this, new DiscreteCoordinates(15,10))));
     }
 
     @Override
