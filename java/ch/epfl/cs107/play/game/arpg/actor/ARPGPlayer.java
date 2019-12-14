@@ -34,6 +34,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     private Animation[] swordAnimations;
     private Animation[] bowAnimations;
     private Animation[] staffAnimations;
+    private Animation[] flyAnimations;
     private Animation currentAnimation;
     private boolean animateAction;
 
@@ -97,6 +98,9 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         Sprite[][] staffSprites = RPGSprite.extractSprites("zelda/player.staff_water", 4, 2, 2, this, 32, 32, new Vector(-0.5f,0.f), new Orientation[] {Orientation.DOWN, Orientation.UP, Orientation.RIGHT, Orientation.LEFT});
         staffAnimations = RPGSprite.createAnimations(STAFF_ANIMATION_DURATION, staffSprites, false);
 
+        Sprite[][] flySprites = RPGSprite.extractSprites("zelda/player.fly", 4, 1,2,this,16,32, new Orientation[] {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
+        flyAnimations = RPGSprite.createAnimations(DEFAULT_ANIMATION_DURATION, flySprites);
+
         currentAnimation = idleAnimations[getOrientation().ordinal()];
         animateAction = false;
         actionTimer = 2.f;
@@ -114,7 +118,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
                 move(animation_duration);
             } else if (!isDisplacementOccurs() && !orientationKey.isDown()) { //Prevents the player from orientating if the key which corresponds to its orientation is down
                 orientate(orientation);
-                currentAnimation = idleAnimations[orientation.ordinal()];
+                currentAnimation = canFly ? flyAnimations[orientation.ordinal()] : idleAnimations[orientation.ordinal()];
             }
         }
     }
@@ -171,14 +175,12 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         }
 
         if (currentItem == ARPGItem.WINGS && SPACE.isDown()) {
-            canFly = true;
-            currentAnimation = new Animation(animation_duration, idleSprites[getOrientation().ordinal()]); //Calling this method at each update will stuck the animation
-            currentAnimation.setFrame(1); //Setting the frame to 1 will make the player look like he's flying (with an arm in front of him and not standing still, which we would have with position 0 by default)
-        } else {
-            if (canFly) {
-                currentAnimation.reset(); //This handles the case where the player stops pressing SPACE but doesn't move. Without this condition he would still have his arm in front of him.
-                currentAnimation = idleAnimations[getOrientation().ordinal()]; //Without this, the player wouldn't animate in the direction in which he was last flying.
+            if (!canFly) {
+                currentAnimation = flyAnimations[getOrientation().ordinal()]; //Sets the animation for the current orientation. Make sure it doesn't fly yet so that the animation is not stuck.
             }
+            canFly = true;
+        } else {
+            currentAnimation = idleAnimations[getOrientation().ordinal()];
             canFly = false;
         }
     }
@@ -279,12 +281,24 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         if (keyboard.get(Keyboard.Q).isDown()) { //Checks if Q is pressed to allow the player to sprint
             animation_duration = DEFAULT_ANIMATION_DURATION/2;
             for (int i = 0; i < Orientation.values().length; ++i) {
-                idleAnimations[i].setSpeedFactor(2);
+                if (canFly) {
+                    if (isDisplacementOccurs()) {
+                        flyAnimations[i].setSpeedFactor(2); //We make sure the player is moving to speed up its animation speed so that it does not speed up when not moving
+                    } else {
+                        flyAnimations[i].setSpeedFactor(1);
+                    }
+                } else {
+                    idleAnimations[i].setSpeedFactor(2);
+                }
             }
         } else {
             animation_duration = DEFAULT_ANIMATION_DURATION;
             for (int i = 0; i < Orientation.values().length; ++i) {
-                idleAnimations[i].setSpeedFactor(1);
+                if (canFly) {
+                    flyAnimations[i].setSpeedFactor(1);
+                } else {
+                    idleAnimations[i].setSpeedFactor(1);
+                }
             }
         }
 
@@ -297,8 +311,16 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         actionTimer += deltaTime;
 
         if (isDisplacementOccurs()) {
-            idleAnimations[getOrientation().ordinal()].update(deltaTime);
+            if (canFly) {
+                flyAnimations[getOrientation().ordinal()].update(deltaTime);
+            } else {
+                idleAnimations[getOrientation().ordinal()].update(deltaTime);
+            }
         } else {
+            if (canFly) {
+                flyAnimations[getOrientation().ordinal()].update(deltaTime); //Still want to update the animation if the player is flying even if he does not move
+            }
+
             for (int i = 0; i < idleAnimations.length; i++) {
                 idleAnimations[i].reset();
             }
@@ -370,6 +392,14 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         @Override
         public void interactWith(Chest chest) {
             chest.open(inventory);
+        }
+
+        @Override
+        public void interactWith(Shop shop, Orientation orientation) {
+            boolean condition = (getOrientation().ordinal() + (Orientation.values().length)/2) % Orientation.values().length == orientation.ordinal(); //We want that the shopper and the player face at each other so they need to have opposite orientations
+            if (condition) {
+                shop.buy();
+            }
         }
     }
 }

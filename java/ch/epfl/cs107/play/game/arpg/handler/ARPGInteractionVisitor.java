@@ -1,5 +1,6 @@
 package ch.epfl.cs107.play.game.arpg.handler;
 
+import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.arpg.ARPGBehavior;
 import ch.epfl.cs107.play.game.arpg.actor.*;
 import ch.epfl.cs107.play.game.rpg.actor.Monster;
@@ -47,6 +48,10 @@ public interface ARPGInteractionVisitor extends RPGInteractionVisitor {
     }
 
     default void interactWith(Chest chest) {
+        //by default the interaction is empty
+    }
+
+    default void interactWith(Shop shop, Orientation orientation) { //We need an orientation to make sure the shop can be interacted with in its orientation (See ARPGPlayer.java and Shop.java)
         //by default the interaction is empty
     }
 }

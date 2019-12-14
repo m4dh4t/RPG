@@ -139,7 +139,7 @@ public class Chest extends AreaEntity {
 
     @Override
     public void draw(Canvas canvas) {
-        if (!skip && dialog != null) {
+        if (!skip && dialog != null) { //Checks if dialog is not null to prevent a NullPointerException when we enter in the area because dialog is not initialized in the constructor
             dialog.draw(canvas);
         }
 
