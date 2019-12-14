@@ -12,6 +12,7 @@ import ch.epfl.cs107.play.game.rpg.actor.Dialog;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.math.Vector;
+import ch.epfl.cs107.play.signal.logic.Logic;
 import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
@@ -28,6 +29,7 @@ public class Chest extends AreaEntity {
 
     private boolean skip;
     private boolean open;
+    private Logic signal;
 
     private ARPGInventory inventory;
     /**
@@ -40,6 +42,8 @@ public class Chest extends AreaEntity {
         super(area, Orientation.DOWN, position);
         skip = false;
         open = false;
+        signal = Logic.FALSE;
+
         inventory = new ARPGInventory(0);
         inventory.add(ARPGItem.STAFF, 1);
         inventory.add(ARPGItem.ARROW, 1);
@@ -61,53 +65,64 @@ public class Chest extends AreaEntity {
 
     public void open(ARPGInventory otherInventory) {
         skip = false; //If someone wants to open the chest, it will automatically show something (even if the chest is already open)
-        if (!open) {
-            String message = "You just got : ";
-            for (int i = 0; i < inventory.getItems().length; ++i) {
-                ARPGItem item = (ARPGItem) inventory.getItems()[i];
+        checkKey(otherInventory); //Checks if the player has a chest key
 
-                if (inventory.getQuantity(item) == 1) {
+        if (signal.isOn()) {
+            if (!open) {
+                String message = "You just got : ";
+                for (int i = 0; i < inventory.getItems().length; ++i) {
+                    ARPGItem item = (ARPGItem) inventory.getItems()[i];
 
-                    message += "a";
+                    if (inventory.getQuantity(item) == 1) {
 
-                    if (isVowel(item.getName().charAt(0))) { //Checks if the first letter of the item is a vowel (to choose between "a" and "an")
-                        message += "n ";
+                        message += "a";
+
+                        if (isVowel(item.getName().charAt(0))) { //Checks if the first letter of the item is a vowel (to choose between "a" and "an")
+                            message += "n ";
+                        } else {
+                            message += " ";
+                        }
+
                     } else {
-                        message += " ";
+                        message += inventory.getQuantity(item) + " ";
                     }
 
-                } else {
-                    message += inventory.getQuantity(item) + " ";
-                }
+                    message += item.getName();
 
-                message += item.getName();
+                    message += inventory.getQuantity(item) > 1 ? "s" : ""; //Plural
 
-                message += inventory.getQuantity(item) > 1 ? "s" : ""; //Plural
-
-                if (i == inventory.getItems().length - 1) { //Checks if we are at the last item or not to know if we need to put a final stop
-                    message += ".";
-                } else {
-                    if (i == inventory.getItems().length - 2) { //Checks if we are at the next-to-last to know if we need to put a comma or "and" before the last item
-                        message += " and ";
+                    if (i == inventory.getItems().length - 1) { //Checks if we are at the last item or not to know if we need to put a final stop
+                        message += ".";
                     } else {
-                        message += ", ";
+                        if (i == inventory.getItems().length - 2) { //Checks if we are at the next-to-last to know if we need to put a comma or "and" before the last item
+                            message += " and ";
+                        } else {
+                            message += ", ";
+                        }
                     }
-                }
 
-                otherInventory.add(item, inventory.getQuantity(item));
-                inventory.remove(item, inventory.getQuantity(item));
+                    otherInventory.add(item, inventory.getQuantity(item));
+                    inventory.remove(item, inventory.getQuantity(item));
 
-                --i; /*Needed because inventory.getItems().length will decrease as the loops goes (because we remove items from inventory)
+                    --i; /*Needed because inventory.getItems().length will decrease as the loops goes (because we remove items from inventory)
                 So, in fact, we are not incrementing i ever (it always stays at 0) but the number of items decreases by 1
                 at each iteration of the loop*/
+                }
+
+                dialog = new Dialog(message, "zelda/dialog", getOwnerArea());
+                open = true;
+            } else {
+                dialog = new Dialog("This chest is already open !", "zelda/dialog", getOwnerArea());
             }
-
-            dialog = new Dialog(message, "zelda/dialog", getOwnerArea());
         } else {
-            dialog = new Dialog ("This chest is already open !", "zelda/dialog", getOwnerArea());
+            dialog = new Dialog("This chest is locked !", "zelda/dialog", getOwnerArea());
         }
+    }
 
-        open = true;
+    public void checkKey(ARPGInventory inventory) {
+        if (inventory.isInInventory(ARPGItem.CHESTKEY)) {
+            signal = Logic.TRUE;
+        }
     }
 
     public boolean isVowel(char c) {
@@ -124,11 +139,11 @@ public class Chest extends AreaEntity {
 
     @Override
     public void draw(Canvas canvas) {
-        if (open) {
-            if (!skip) {
-                dialog.draw(canvas);
-            }
+        if (!skip && dialog != null) {
+            dialog.draw(canvas);
+        }
 
+        if (open) {
             if (animation.isCompleted()) {
                 spriteOpen.draw(canvas);
             } else {
