@@ -54,7 +54,7 @@ public class Orb extends MovableAreaEntity {
 
     @Override
     public boolean isCellInteractable() {
-        return false;
+        return true;
     }
 
     @Override
