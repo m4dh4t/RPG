@@ -251,4 +251,30 @@ public class RPGSprite extends Sprite {
 		}
 		return sprites;
 	}
+
+	/**
+	 * Extracts from an image the sprites corresponding to a given orientation
+	 * the returned array has 4 entry, each one of which represents a sprite
+	 * which will be used in an animation. This method extracts the sprites
+	 * vertically instead of horizontally
+	 * @param name (String): the name of the image
+	 * @param nbFrames (int): number of frames
+	 * @param width (int): actual image width, before transformation
+	 * @param height (int): actual image height, before transformation
+	 * @param parent (Positionable): parent of this, not null
+	 * @param regionWidth (int): width of frame (number of pixels in the image)
+	 * @param regionHeight (int): height of frame (number of pixels in the image)
+	 *
+	 *
+	 * @return an array of 4 Sprite
+	 * This method is used in LogMonster.java
+	 */
+	public static Sprite[] extractVerticalSprites(String name, int nbFrames, float width, float height, Positionable parent, int regionWidth, int regionHeight, Vector anchor) {
+		Sprite[] sprites = new Sprite[nbFrames];
+
+		for(int i = 0; i < nbFrames; i++){
+			sprites[i] = new RPGSprite(name, width, height, parent, new RegionOfInterest(0, i * regionHeight, regionWidth, regionHeight), anchor);
+		}
+		return sprites;
+	}
 }

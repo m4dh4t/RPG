@@ -14,6 +14,8 @@ public abstract class Projectile extends MovableAreaEntity implements Interactor
     private final float MOVE_DURATION;
     private final DiscreteCoordinates MAX_TRAVEL;
 
+    private boolean stop;
+
     /**
      * Projectile constructor
      *
@@ -26,19 +28,24 @@ public abstract class Projectile extends MovableAreaEntity implements Interactor
         MOVE_DURATION = moveDuration;
         Vector maxVector = orientation.toVector().mul(maxTravel);
         MAX_TRAVEL = new DiscreteCoordinates((int) (position.x + maxVector.x), (int) (position.y + maxVector.y));
+        stop = false;
     }
 
     @Override
     public void update(float deltaTime) {
         DiscreteCoordinates position = new DiscreteCoordinates((int) getPosition().x, (int) getPosition().y);
 
-        if (!position.equals(MAX_TRAVEL) && getOwnerArea().canEnterAreaCells(this, Collections.singletonList(position.jump(getOrientation().toVector())))) { //Checks if it hasn't reached its destination and if it can enter the cell in front of it
+        if (!stop && !position.equals(MAX_TRAVEL)){// && getOwnerArea().canEnterAreaCells(this, Collections.singletonList(position.jump(getOrientation().toVector())))) { //Checks if it hasn't reached its destination and if it can enter the cell in front of it
             move((int) MOVE_DURATION);
         } else {
             getOwnerArea().unregisterActor(this);
         }
 
         super.update(deltaTime);
+    }
+
+    protected void setStop(boolean b) {
+        stop = b;
     }
 
     @Override

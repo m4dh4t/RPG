@@ -19,7 +19,6 @@ public class MagicWaterProjectile extends Projectile {
     private static int ANIMATION_DURATION = 4;
     private MagicWaterProjectileHandler handler;
     private Animation animation;
-    private boolean hit;
 
     /**
      * MagicWaterProjectile constructor
@@ -33,7 +32,6 @@ public class MagicWaterProjectile extends Projectile {
     public MagicWaterProjectile(Area area, Orientation orientation, DiscreteCoordinates position, float moveDuration, float maxTravel) {
         super(area, orientation, position, moveDuration, maxTravel);
         handler = new MagicWaterProjectileHandler();
-        hit = false;
 
         Sprite[] sprites = RPGSprite.extractSprites("zelda/magicWaterProjectile",4,1.f,1.f,this,16,16);
         animation = new Animation(ANIMATION_DURATION/2, sprites, true);
@@ -47,9 +45,6 @@ public class MagicWaterProjectile extends Projectile {
     @Override
     public void update(float deltaTime) {
         animation.update(deltaTime);
-        if(hit){
-            getOwnerArea().unregisterActor(this);
-        }
         super.update(deltaTime);
     }
 
@@ -77,7 +72,7 @@ public class MagicWaterProjectile extends Projectile {
         @Override
         public void interactWith(Monster monster) {
             monster.weaken(1.f, Monster.Vulnerability.MAGIC);
-            hit = true;
+            setStop(true);
         }
 
         @Override
