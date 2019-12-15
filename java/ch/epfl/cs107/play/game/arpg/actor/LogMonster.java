@@ -36,7 +36,7 @@ public class LogMonster extends Monster {
      */
     public LogMonster(Area area, Orientation orientation, DiscreteCoordinates position) {
         super(area, orientation, position, MAXHP, new ArrayList<>(Arrays.asList(Vulnerability.PHYSICAL, Vulnerability.FIRE)), "zelda/logMonster", 4, new Orientation[] {Orientation.DOWN, Orientation.UP, Orientation.RIGHT, Orientation.LEFT});
-        currentState = new LogMonsterIdle();;
+        currentState = new LogMonsterIdle();
         handler = new LogMonsterHandler();
     }
 
@@ -80,6 +80,7 @@ public class LogMonster extends Monster {
             if (currentState instanceof LogMonsterAttacking) {
                 player.weaken(2);
             } else {
+                move(ANIMATION_DURATION); //Starts to move to prevent the logMonster to fall asleep if he wakes up seeing the player (he would not move so he would instantly fall asleep)
                 currentState = new LogMonsterAttacking(); //If not attacking, switches to mode "attack"
             }
         }
@@ -94,10 +95,11 @@ public class LogMonster extends Monster {
             setAnimations(animations, getOrientation());
         }
 
-        LogMonsterState(String spriteName, boolean repeat) { //Constructor for Sleeping and Waking Up
-            Sprite[][] sprites = RPGSprite.extractSprites(spriteName, 1, 2.f, 2.f, LogMonster.this, 32, 32, new Vector(-0.5f,0.f), new Orientation[] {Orientation.UP, Orientation.RIGHT, Orientation.DOWN, Orientation.LEFT});
+        LogMonsterState(String spriteName, boolean repeat, boolean sleeping) { //Constructor for Sleeping and Waking Up
+            Sprite[] sprites = RPGSprite.extractVerticalSprites(spriteName, sleeping ? 4 : 3, 2.f, 2.f, LogMonster.this, 32, 32, new Vector(-0.5f,0.f));
+            Sprite[][] spritesUsed = {sprites, sprites, sprites, sprites}; //Same sprites for the 4 different orientations possible
 
-            Animation[] animations = RPGSprite.createAnimations(ANIMATION_DURATION, sprites, repeat);
+            Animation[] animations = RPGSprite.createAnimations(2 * ANIMATION_DURATION, spritesUsed, repeat);
             setAnimations(animations, Orientation.UP);
         }
 
@@ -120,6 +122,7 @@ public class LogMonster extends Monster {
 
         LogMonsterIdle() {
             super("zelda/logMonster");
+            setForceAnimation(false);
         }
 
         @Override
@@ -163,26 +166,26 @@ public class LogMonster extends Monster {
 
     private class LogMonsterSleeping extends LogMonsterState {
         LogMonsterSleeping() {
-            super("zelda/logMonster.sleeping", true);
+            super("zelda/logMonster.sleeping", true, true);
+            setForceAnimation(true);
         }
 
         @Override
         public void update(float deltaTime) {
             currentState = new LogMonsterWakingUp();
-            setForceAnimation(true); //See Monster.java to properly understand this call. Without it, the logMonster won't be able to wake up because it won't move
         }
     }
 
     private class LogMonsterWakingUp extends LogMonsterState {
         LogMonsterWakingUp() {
-            super("zelda/logMonster.wakingUp", false);
+            super("zelda/logMonster.wakingUp", false, false);
+            setForceAnimation(true); //See Monster.java to properly understand this call. Without it, the logMonster won't be able to wake up because it won't move
         }
 
         @Override
         public void update(float deltaTime) {
             if (isAnimationCompleted()) {
                 currentState = new LogMonsterIdle();
-                setForceAnimation(false);
             }
         }
     }

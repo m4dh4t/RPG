@@ -144,7 +144,7 @@ public abstract class Monster extends MovableAreaEntity implements Interactor, I
     }
 
     protected void randomMove(boolean wantsInactionPossibility) {
-        final double PROBABILITY_TO_CHANGE_DIRECTION = 0.25;
+        final double PROBABILITY_TO_CHANGE_DIRECTION = 0.2;
         final double PROBABILITY_TO_GO_INACTIVE = 0.05;
 
         if (RandomGenerator.getInstance().nextDouble() >= PROBABILITY_TO_GO_INACTIVE) {
@@ -203,6 +203,10 @@ public abstract class Monster extends MovableAreaEntity implements Interactor, I
         if (!dead) {
             if (forceAnimation || isDisplacementOccurs()) { //forceAnimation is a way to force the current animation to update even if the monster does not move. Useful in LogMonster.java and DarkLord.java
                 currentAnimationAlive.update(deltaTime);
+            } else {
+                for (int i = 0; i < Orientation.values().length; ++i) {
+                    animationsAlive[i].reset();
+                }
             }
         } else {
             if (deadAnimation.isCompleted()) {

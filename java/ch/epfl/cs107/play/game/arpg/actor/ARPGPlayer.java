@@ -64,7 +64,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         super(area, Orientation.DOWN, coordinates);
 
         inventory = new ARPGInventory(50, 100);
-        inventory.add(ARPGItem.BOMB, 6);
+        inventory.add(ARPGItem.BOMB, 3);
         inventory.add(ARPGItem.SWORD, 1);
         currentItem = ARPGItem.SWORD;
 
@@ -234,7 +234,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         return (hp <= 0.f);
     }
 
-    public void strengthen(float hp) {
+    private void strengthen(float hp) {
         this.hp += hp;
         if (this.hp > MAX_HP) {
             this.hp = MAX_HP;
