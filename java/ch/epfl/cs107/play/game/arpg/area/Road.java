@@ -20,9 +20,9 @@ public class Road extends ARPGArea {
         registerActor(new Door("zelda/RoadCastle", new DiscreteCoordinates(9,1), Logic.TRUE, this, Orientation.UP, new DiscreteCoordinates(9,19), new DiscreteCoordinates(10,19)));
         registerActor(new Door("zelda/RoadTemple", new DiscreteCoordinates(1,4), Logic.TRUE, this, Orientation.RIGHT, new DiscreteCoordinates(19,9), new DiscreteCoordinates(19,10), new DiscreteCoordinates(19,11)));
         registerActors(Grass.grassZone(this, 5,7,6,11));
-        registerActor(new Bomb(this,new DiscreteCoordinates(6,10), 2.5f));
         registerActor(new Waterfall(this, new DiscreteCoordinates(15,4)));
         registerActor(new Orb(this, new DiscreteCoordinates(19, 8), new Bridge(this, new DiscreteCoordinates(15,10))));
+        registerActor(new LogMonster(this, Orientation.UP, new DiscreteCoordinates(10, 6)));
     }
 
     @Override

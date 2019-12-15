@@ -65,8 +65,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
 
         inventory = new ARPGInventory(50, 100);
         inventory.add(ARPGItem.BOMB, 6);
-        //inventory.add(ARPGItem.SWORD, 1);
-        inventory.add(ARPGItem.CHESTKEY, 1);
+        inventory.add(ARPGItem.SWORD, 1);
         currentItem = ARPGItem.SWORD;
 
         hp = MAX_HP;

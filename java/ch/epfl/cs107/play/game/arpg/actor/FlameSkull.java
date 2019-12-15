@@ -87,7 +87,7 @@ public class FlameSkull extends Monster implements FlyableEntity {
 
         @Override
         public void interactWith(ARPGPlayer player) {
-            player.weaken(1.f);
+            player.weaken(2.f);
         }
 
         @Override
