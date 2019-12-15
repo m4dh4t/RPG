@@ -10,6 +10,10 @@ import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.signal.logic.Logic;
 import ch.epfl.cs107.play.window.Canvas;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class CastleDoor extends Door {
     private Sprite sprite;
 
@@ -41,6 +45,17 @@ public class CastleDoor extends Door {
     public void open(){
         setSignal(Logic.TRUE);
         sprite = new RPGSprite("zelda/castleDoor.open", 2.f,2.f,this, new RegionOfInterest(0,0,32,32));
+    }
+
+    @Override
+    public List<DiscreteCoordinates> getCurrentCells() {
+        ArrayList<DiscreteCoordinates> list = new ArrayList<>(super.getCurrentCells());
+        /*In addition to the main cells of the door, we also want the two cells above it to be
+        uncrossable when the door is closed. This prevents the flame skulls to fly there or
+        the dark lord to teleport there.
+         */
+        list.addAll(Arrays.asList(super.getCurrentCells().get(0).jump(0,1), super.getCurrentCells().get(1).jump(0,1)));
+        return list;
     }
 
     @Override
