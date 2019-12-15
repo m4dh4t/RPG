@@ -89,17 +89,21 @@ public class LogMonster extends Monster {
     private abstract class LogMonsterState {
         private final static int FIELD_OF_VIEW_DISTANCE = 8;
 
-        LogMonsterState(String spriteName) { //Constructor for Idle, Attacking and Falling Asleep
+        LogMonsterState(String spriteName, int duration) { //Constructor for Attacking
             Sprite[][] sprites = RPGSprite.extractSprites(spriteName, 4, 2.f, 2.f, LogMonster.this, 32, 32, new Vector(-0.5f, 0.f), new Orientation[] {Orientation.DOWN, Orientation.UP, Orientation.RIGHT, Orientation.LEFT});
-            Animation[] animations = RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites);
+            Animation[] animations = RPGSprite.createAnimations(duration, sprites);
             setAnimations(animations, getOrientation());
+        }
+
+        LogMonsterState(String spriteName) { //Constructor for Idle and Falling Asleep
+            this(spriteName, ANIMATION_DURATION);
         }
 
         LogMonsterState(String spriteName, boolean repeat, boolean sleeping) { //Constructor for Sleeping and Waking Up
             Sprite[] sprites = RPGSprite.extractVerticalSprites(spriteName, sleeping ? 4 : 3, 2.f, 2.f, LogMonster.this, 32, 32, new Vector(-0.5f,0.f));
             Sprite[][] spritesUsed = {sprites, sprites, sprites, sprites}; //Same sprites for the 4 different orientations possible
 
-            Animation[] animations = RPGSprite.createAnimations(2 * ANIMATION_DURATION, spritesUsed, repeat);
+            Animation[] animations = RPGSprite.createAnimations(ANIMATION_DURATION, spritesUsed, repeat);
             setAnimations(animations, Orientation.UP);
         }
 
@@ -133,7 +137,7 @@ public class LogMonster extends Monster {
 
     private class LogMonsterAttacking extends LogMonsterState {
         LogMonsterAttacking() {
-            super("zelda/logMonster");
+            super("zelda/logMonster", ANIMATION_DURATION/4);
         }
 
         @Override
@@ -144,7 +148,7 @@ public class LogMonster extends Monster {
         @Override
         public void update(float deltaTime) {
             if (isDisplacementOccurs()) {
-                move(ANIMATION_DURATION);
+                move(ANIMATION_DURATION/2);
             } else {
                 currentState = new LogMonsterFallingAsleep();
             }
