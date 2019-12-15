@@ -63,7 +63,6 @@ public class Shop extends AreaEntity {
         inventory = new ARPGInventory(0,500);
         inventory.add(ARPGItem.ARROW, 15);
         inventory.add(ARPGItem.BOMB, 5);
-        inventory.add(ARPGItem.STAFF, 1);
         inventory.add(ARPGItem.BOW, 1);
         inventory.add(ARPGItem.SWORD, 1);
         inventory.add(ARPGItem.WINGS, 1);

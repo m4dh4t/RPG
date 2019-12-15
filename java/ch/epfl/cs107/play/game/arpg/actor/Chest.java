@@ -49,11 +49,11 @@ public class Chest extends AreaEntity {
         inventory = new ARPGInventory(0,150);
         inventory.add(ARPGItem.STAFF, 1);
         inventory.add(ARPGItem.ARROW, 20);
-        inventory.add(ARPGItem.CASTLEKEY, 1);
+        inventory.add(ARPGItem.WINGS, 1);
 
         Sprite[] sprites = new Sprite[4];
 
-        sprites[0] = new Sprite("chest", 2.f, 2.f, this, new RegionOfInterest(0, 192, 48, 48), new Vector(-0.5f, 0.f), 1.f, -15);;
+        sprites[0] = new Sprite("chest", 2.f, 2.f, this, new RegionOfInterest(0, 192, 48, 48), new Vector(-0.5f, 0.f), 1.f, -15);
         sprites[1] = new Sprite("chest", 2.f, 2.f, this, new RegionOfInterest(0, 240, 48, 48), new Vector(-0.5f, 0.f), 1.f, -15);
         sprites[2] = new Sprite("chest", 2.f, 2.f, this, new RegionOfInterest(0, 288, 48, 48), new Vector(-0.5f, 0.f), 1.f, -15);
         sprites[3] = new Sprite("chest", 2.f, 2.f, this, new RegionOfInterest(0, 336, 48, 48), new Vector(-0.5f, 0.f), 1.f, -15);
@@ -145,7 +145,7 @@ public class Chest extends AreaEntity {
         }
         for (int i = 0; i < inventoryToDisplay.length; ++i) {
             ARPGItem item = (ARPGItem) inventoryToDisplay[i];
-            if (inventory.getQuantity(item) == 1) {
+            if (item != ARPGItem.WINGS && inventory.getQuantity(item) == 1) { //We do not say "a Wings"
 
                 message += "a";
 

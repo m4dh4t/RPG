@@ -253,6 +253,7 @@ public class DarkLord extends Monster {
 
                 if (success) {
                     getOwnerArea().leaveAreaCells(DarkLord.this, getCurrentCells());
+                    getOwnerArea().enterAreaCells(DarkLord.this, Collections.singletonList(coordinates));
                     setCurrentPosition(coordinates.toVector());
                 }
 
