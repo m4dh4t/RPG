@@ -400,5 +400,10 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
                 shop.shop(inventory);
             }
         }
+
+        @Override
+        public void interactWith(King king) {
+            king.save();
+        }
     }
 }

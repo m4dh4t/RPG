@@ -54,4 +54,8 @@ public interface ARPGInteractionVisitor extends RPGInteractionVisitor {
     default void interactWith(Shop shop, Orientation orientation) { //We need an orientation to make sure the shop can be interacted with in its orientation (See ARPGPlayer.java and Shop.java)
         //by default the interaction is empty
     }
+
+    default void interactWith(King king) {
+        //by default the interaction is empty
+    }
 }
