@@ -24,7 +24,7 @@ public class DarkLord extends Monster {
     private final static float MAX_SPELL_WAIT_DURATION = 5.f; //in seconds
     private final static double CHOOSE_SPELL_NUMBER = 0.3; //A random number between 0 and 1 will be chosen. If it is above this number, darkLord will attack and will cast a spell if below
     private static final int FIRE_SPELL_FORCE = 6;
-    private static final float TELEPORTATION_COOLDOWN = 2.f;
+    private static final float TELEPORTATION_COOLDOWN = 1.f;
 
     private DarkLordHandler handler;
 
