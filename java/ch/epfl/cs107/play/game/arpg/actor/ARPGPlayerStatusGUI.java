@@ -33,15 +33,15 @@ public class ARPGPlayerStatusGUI implements Graphics {
 
     @Override
     public void draw(Canvas canvas) {
-        for(int i = 0; i < gearDisplay.length; i++){
+        for(int i = 0; i < gearDisplay.length; ++i){
             gearDisplay[i].draw(canvas);
         }
 
-        for(int i = 0; i < heartDisplay.length; i++){
+        for(int i = 0; i < heartDisplay.length; ++i){
             heartDisplay[i].draw(canvas);
         }
 
-        for(int i = 0; i < coinsDisplay.length; i++){
+        for(int i = 0; i < coinsDisplay.length; ++i){
             coinsDisplay[i].draw(canvas);
         }
     }
@@ -67,7 +67,7 @@ public class ARPGPlayerStatusGUI implements Graphics {
         int fullHearts = (int)(hp / 2);
 
         //FULL HEARTS
-        for(int i = 0; i < fullHearts; i++){
+        for(int i = 0; i < fullHearts; ++i){
             heartDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(32, 0, 16, 16), anchor.add(new Vector(1.75f+i, height - 1.25f)), 1, 2000);
         }
 
@@ -75,12 +75,12 @@ public class ARPGPlayerStatusGUI implements Graphics {
         if(hp % 2 != 0){
             heartDisplay[fullHearts] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(16, 0, 16, 16), anchor.add(new Vector(1.75f+fullHearts, height - 1.25f)), 1, 2000);
             //EMPTY-HEARTS W/ OFFSET
-            for(int i = fullHearts+1; i < MAX_HEART; i++){
+            for(int i = fullHearts+1; i < MAX_HEART; ++i){
                 heartDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(0, 0, 16, 16), anchor.add(new Vector(1.75f+i, height - 1.25f)), 1, 2000);
             }
         } else {
             //EMPTY-HEARTS W/O OFFSET
-            for(int i = fullHearts; i < MAX_HEART; i++){
+            for(int i = fullHearts; i < MAX_HEART; ++i){
                 heartDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/heartDisplay"), 1f, 1f, new RegionOfInterest(0, 0, 16, 16), anchor.add(new Vector(1.75f+i, height - 1.25f)), 1, 2000);
             }
         }
@@ -91,15 +91,15 @@ public class ARPGPlayerStatusGUI implements Graphics {
         coinsDisplay = new ImageGraphics[1 + number.length()];
         int[] digits = new int[number.length()];
 
-        for(int i = 0; i < number.length(); i++){
-            digits[i] = number.charAt(i) - 48;
+        for(int i = 0; i < number.length(); ++i){
+            digits[i] = Character.getNumericValue(number.charAt(i));
         }
 
         //BACKGROUND
-        coinsDisplay[number.length()] = new ImageGraphics(ResourcePath.getSprite("zelda/coinsDisplay"), 4f, 2f, new RegionOfInterest(0, 0, 64, 32), anchor.add(new Vector(0, 0)), 1, 2000);
+        coinsDisplay[number.length()] = new ImageGraphics(ResourcePath.getSprite("zelda/coinsDisplay"), 4f, 2f, new RegionOfInterest(0, 0, 64, 32), anchor, 1, 2000);
 
         //DIGITS
-        for(int i = 0; i < digits.length; i++){
+        for(int i = 0; i < digits.length; ++i){
             int x;
             int y;
 
@@ -108,7 +108,7 @@ public class ARPGPlayerStatusGUI implements Graphics {
                 y = 2;
             } else {
                 x = (digits[i] - 1) % 4;
-                y = digits[i] / 4;
+                y = (digits[i] - 1) / 4;
             }
 
             coinsDisplay[i] = new ImageGraphics(ResourcePath.getSprite("zelda/digits"), 0.9f, 0.9f, new RegionOfInterest(x * 16, y * 16, 16, 16), anchor.add(new Vector(1.5f+(i*0.7f), 0.6f)), 1, 2001);

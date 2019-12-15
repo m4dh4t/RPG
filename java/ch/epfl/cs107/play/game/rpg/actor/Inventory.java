@@ -2,8 +2,8 @@ package ch.epfl.cs107.play.game.rpg.actor;
 
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class Inventory {
     private final float MAXWEIGHT;
@@ -12,7 +12,7 @@ public class Inventory {
 
     protected Inventory(float maxWeight) {
         MAXWEIGHT = maxWeight;
-        items = new HashMap<>();
+        items = new TreeMap<>();
     }
 
     protected boolean add(InventoryItem item, int quantity) {
@@ -33,6 +33,7 @@ public class Inventory {
         }
 
         items.replace(item, items.get(item) - quantity);
+        weight -= quantity * item.getWeight();
 
         if (items.get(item) == 0) {
             items.remove(item);
@@ -42,6 +43,9 @@ public class Inventory {
     }
 
     public boolean isInInventory(InventoryItem item) {
+        if (item == null) {
+            return false;
+        }
         return items.containsKey(item);
     }
 
@@ -54,21 +58,19 @@ public class Inventory {
     }
 
     public InventoryItem switchItem(InventoryItem currentItem) {
-        InventoryItem[] array = items.keySet().toArray(new InventoryItem[0]);
-
         if (items.isEmpty()) {
             return null;
         }
 
         int index = -1;
 
-        for (int i = 0; i < array.length; ++i) {
-            if (array[i].equals(currentItem)) {
+        for (int i = 0; i < getItems().length; ++i) {
+            if (getItems()[i].equals(currentItem)) {
                 index = i;
             }
         }
 
-        return array[(index + 1)%array.length];
+        return getItems()[(index + 1) % getItems().length];
     }
 
     public interface Holder {

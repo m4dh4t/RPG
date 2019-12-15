@@ -7,6 +7,7 @@ import ch.epfl.cs107.play.game.rpg.actor.FlyableEntity;
 import ch.epfl.cs107.play.window.Window;
 
 public class ARPGBehavior extends AreaBehavior {
+    private boolean canEnter;
 
     /**
      * AreaBehavior Constructor
@@ -16,6 +17,7 @@ public class ARPGBehavior extends AreaBehavior {
      */
     public ARPGBehavior(Window window, String name){
         super(window, name);
+        canEnter = true;
 
         for(int y = 0; y < getHeight(); y++){
             for(int x = 0; x < getWidth(); x++){
@@ -23,6 +25,10 @@ public class ARPGBehavior extends AreaBehavior {
                 setCell(x, y, new ARPGCell(x, y, color));
             }
         }
+    }
+
+    public void setCanEnter(boolean b) {
+        canEnter = b;
     }
 
     public enum ARPGCellType {
@@ -77,9 +83,9 @@ public class ARPGBehavior extends AreaBehavior {
         @Override
         protected boolean canEnter(Interactable entity) {
             if (entity instanceof FlyableEntity && ((FlyableEntity) entity).canFly()) { //Doesn't make a ClassCastException if entity isn't a FlyableEntity because it first checks if it is one
-                return type.isFlyable;
+                return canEnter && type.isFlyable;
             } else {
-                return type.isWalkable && (!hasNonTraversableContent() || !entity.takeCellSpace());
+                return canEnter && type.isWalkable && (!hasNonTraversableContent() || !entity.takeCellSpace());
             }
         }
 

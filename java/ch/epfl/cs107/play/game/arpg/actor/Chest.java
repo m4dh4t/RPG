@@ -8,6 +8,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.ARPGItem;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
+import ch.epfl.cs107.play.game.rpg.InventoryItem;
 import ch.epfl.cs107.play.game.rpg.actor.Dialog;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
@@ -17,6 +18,7 @@ import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,11 +46,10 @@ public class Chest extends AreaEntity {
         open = false;
         signal = Logic.FALSE;
 
-        inventory = new ARPGInventory(0);
+        inventory = new ARPGInventory(0,150);
         inventory.add(ARPGItem.STAFF, 1);
-        inventory.add(ARPGItem.ARROW, 1);
-        inventory.add(ARPGItem.CASTLEKEY, 3);
-        inventory.add(ARPGItem.BOW,10);
+        inventory.add(ARPGItem.ARROW, 20);
+        inventory.add(ARPGItem.CASTLEKEY, 1);
 
         Sprite[] sprites = new Sprite[4];
 
@@ -68,64 +69,118 @@ public class Chest extends AreaEntity {
         checkKey(otherInventory); //Checks if the player has a chest key
 
         if (signal.isOn()) {
-            if (!open) {
+            if (inventory.getItems().length != 0) {
+                ArrayList<InventoryItem> toBeTransferred = new ArrayList<>();
+                ArrayList<InventoryItem> toStayInChest = new ArrayList<>();
+
+                //We sort the inventory by weight here to make sure that the heaviest items are taken before the lightest ones
+                InventoryItem[] sortedInventory = sortedInventory();
+
+                for (int i = 0; i < sortedInventory.length; ++i) {
+                    InventoryItem item = sortedInventory[i];
+                    if (otherInventory.add(item, inventory.getQuantity(item))) {
+                        toBeTransferred.add(item);
+                    } else {
+                        toStayInChest.add(item);
+                    }
+                }
+
+                //Dialog
                 String message = "You just got : ";
-                for (int i = 0; i < inventory.getItems().length; ++i) {
-                    ARPGItem item = (ARPGItem) inventory.getItems()[i];
-
-                    if (inventory.getQuantity(item) == 1) {
-
-                        message += "a";
-
-                        if (isVowel(item.getName().charAt(0))) { //Checks if the first letter of the item is a vowel (to choose between "a" and "an")
-                            message += "n ";
-                        } else {
-                            message += " ";
-                        }
-
-                    } else {
-                        message += inventory.getQuantity(item) + " ";
-                    }
-
-                    message += item.getName();
-
-                    message += inventory.getQuantity(item) > 1 ? "s" : ""; //Plural
-
-                    if (i == inventory.getItems().length - 1) { //Checks if we are at the last item or not to know if we need to put a final stop
-                        message += ".";
-                    } else {
-                        if (i == inventory.getItems().length - 2) { //Checks if we are at the next-to-last to know if we need to put a comma or "and" before the last item
-                            message += " and ";
-                        } else {
-                            message += ", ";
-                        }
-                    }
-
-                    otherInventory.add(item, inventory.getQuantity(item));
-                    inventory.remove(item, inventory.getQuantity(item));
-
-                    --i; /*Needed because inventory.getItems().length will decrease as the loops goes (because we remove items from inventory)
-                So, in fact, we are not incrementing i ever (it always stays at 0) but the number of items decreases by 1
-                at each iteration of the loop*/
+                message += displayTrade(toBeTransferred.toArray(new InventoryItem[0]));
+                message += " There is still : ";
+                message += displayTrade(toStayInChest.toArray(new InventoryItem[0]));
+                if (toStayInChest.size() != 0) {
+                    message += " You are too heavy !";
                 }
 
                 dialog = new Dialog(message, "zelda/dialog", getOwnerArea());
                 open = true;
+
+                /*Removes everything that needs to be transferred from inventory
+                We cannot do this earlier (in the previous for loop) because in that
+                case, displayTrade would show that the player got 0 from each item
+                because they have all been removed.
+                 */
+                for (int i = 0; i < toBeTransferred.size(); ++i) {
+                    inventory.remove(toBeTransferred.get(i), inventory.getQuantity(toBeTransferred.get(i)));
+                }
             } else {
-                dialog = new Dialog("This chest is already open !", "zelda/dialog", getOwnerArea());
+                dialog = new Dialog("This chest is empty !", "zelda/dialog", getOwnerArea());
             }
         } else {
-            dialog = new Dialog("This chest is locked !", "zelda/dialog", getOwnerArea());
+            dialog = new Dialog("This chest is locked ! You need a chest key.", "zelda/dialog", getOwnerArea());
         }
     }
 
-    public void checkKey(ARPGInventory inventory) {
+    private void checkKey(ARPGInventory inventory) {
         if (inventory.isInInventory(ARPGItem.CHESTKEY)) {
             signal = Logic.TRUE;
         }
     }
 
-    public boolean isVowel(char c) {
+    private InventoryItem[] sortedInventory() {
+        //Selection sort on the weight of each item
+        InventoryItem[] array = inventory.getItems();
+        int min;
+        for (int i = 0; i < array.length - 1; ++i) {
+            min = i;
+            for (int j = i + 1; j < array.length; ++j) {
+                if (array[j].getWeight() > array[min].getWeight()) {
+                    min = j;
+                }
+            }
+            //Swap array[min] and array[i]
+            InventoryItem temp = array[min];
+            array[min] = array[i];
+            array[i] = temp;
+        }
+        return array;
+    }
+
+    private String displayTrade(InventoryItem[] inventoryToDisplay) {
+        String message = "";
+        if (inventoryToDisplay.length == 0) {
+            message = "nothing !";
+        }
+        for (int i = 0; i < inventoryToDisplay.length; ++i) {
+            ARPGItem item = (ARPGItem) inventoryToDisplay[i];
+            if (inventory.getQuantity(item) == 1) {
+
+                message += "a";
+
+                if (isVowel(item.getName().charAt(0))) { //Checks if the first letter of the item is a vowel (to choose between "a" and "an")
+                    message += "n ";
+                } else {
+                    message += " ";
+                }
+
+            } else {
+                message += inventory.getQuantity(item) + " ";
+            }
+
+            message += item.getName();
+
+            message += inventory.getQuantity(item) > 1 ? "s" : ""; //Plural
+
+            if (i == inventoryToDisplay.length - 1) { //Checks if we are at the last item or not to know if we need to put a final stop
+                message += ".";
+            } else {
+                if (i == inventoryToDisplay.length - 2) { //Checks if we are at the next-to-last to know if we need to put a comma or "and" before the last item
+                    message += " and ";
+                } else {
+                    message += ", ";
+                }
+            }
+            /*--i;*/ /*Needed because inventory.getItems().length will decrease as the loops goes (because we remove items from inventory)
+                    So, in fact, we are not incrementing i ever (it always stays at 0) but the number of items decreases by 1
+                    at each iteration of the loop*/
+
+        }
+        return message;
+    }
+
+    private boolean isVowel(char c) {
         switch (Character.toLowerCase(c)) {
             case 'a':
             case 'e':

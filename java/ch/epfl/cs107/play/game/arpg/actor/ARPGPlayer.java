@@ -63,15 +63,11 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     public ARPGPlayer(Area area, DiscreteCoordinates coordinates) {
         super(area, Orientation.DOWN, coordinates);
 
-        inventory = new ARPGInventory(50);
-        inventory.add(ARPGItem.BOMB, 3);
-        inventory.add(ARPGItem.BOW, 1);
-        inventory.add(ARPGItem.SWORD, 10);
-        inventory.add(ARPGItem.STAFF,1);
-        inventory.add(ARPGItem.ARROW,10);
-        inventory.add(ARPGItem.WINGS,1);
-        //inventory.add(ARPGItem.CHESTKEY,1);
-        currentItem = ARPGItem.BOMB;
+        inventory = new ARPGInventory(50, 100);
+        inventory.add(ARPGItem.BOMB, 6);
+        //inventory.add(ARPGItem.SWORD, 1);
+        inventory.add(ARPGItem.CHESTKEY, 1);
+        currentItem = ARPGItem.SWORD;
 
         hp = MAX_HP;
 
@@ -105,8 +101,6 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         animateAction = false;
         actionTimer = 2.f;
         shootArrow = false;
-
-        resetMotion();
     }
 
     private void moveOrientate(Orientation orientation, Button button) {
@@ -136,6 +130,14 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     private void inventoryHandler(){
         final Button TAB = getOwnerArea().getKeyboard().get(Keyboard.TAB);
         final Button SPACE = getOwnerArea().getKeyboard().get(Keyboard.SPACE);
+
+        /*If the player does not have any currentItem anymore we switch it (f. ex. if a player
+        uses his last bomb or if the constructor assigns as the player's current item an item
+        he does not possess by mistake)
+         */
+        if(!possess(currentItem)) {
+            currentItem = (ARPGItem) inventory.switchItem(currentItem);
+        }
 
         if(TAB.isPressed()){
             currentItem = (ARPGItem) inventory.switchItem(currentItem);
@@ -168,9 +170,6 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
                         break;
                 }
 
-                if(!possess(currentItem)) {
-                    currentItem = (ARPGItem) inventory.switchItem(currentItem);
-                }
             }
         }
 
@@ -180,7 +179,9 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
             }
             canFly = true;
         } else {
-            currentAnimation = idleAnimations[getOrientation().ordinal()];
+            if (canFly) {
+                currentAnimation = idleAnimations[getOrientation().ordinal()];
+            }
             canFly = false;
         }
     }
@@ -396,9 +397,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
 
         @Override
         public void interactWith(Shop shop, Orientation orientation) {
-            boolean condition = (getOrientation().ordinal() + (Orientation.values().length)/2) % Orientation.values().length == orientation.ordinal(); //We want that the shopper and the player face at each other so they need to have opposite orientations
-            if (condition) {
-                shop.buy();
+            if (getOrientation().opposite().equals(orientation)) {//We want that the shopper and the player face at each other so they need to have opposite orientations
+                shop.shop(inventory);
             }
         }
     }
