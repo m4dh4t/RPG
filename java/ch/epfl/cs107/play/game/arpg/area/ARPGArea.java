@@ -33,4 +33,8 @@ abstract public class ARPGArea extends Area {
     public float getCameraScaleFactor() {
         return ARPG.CAMERA_SCALE_FACTOR;
     }
+
+    public void setCanEnter(boolean b) {
+        behavior.setCanEnter(b);
+    }
 }

@@ -12,8 +12,8 @@ public class ARPG extends RPG {
     public final static float CAMERA_SCALE_FACTOR = 13.f;
 
     private ARPGPlayer player;
-    private final String startingArea = "zelda/Road";
-    private final DiscreteCoordinates startingPosition = new DiscreteCoordinates(10,9);
+    private final String startingArea = "zelda/Farm";
+    private final DiscreteCoordinates startingPosition = new DiscreteCoordinates(6,10);
 
     private void createAreas(){
         addArea(new Farm());

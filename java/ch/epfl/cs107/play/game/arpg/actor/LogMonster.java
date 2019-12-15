@@ -58,7 +58,7 @@ public class LogMonster extends Monster {
 
     @Override
     public boolean wantsViewInteraction() {
-        return currentState.getClass() == LogMonsterIdle.class || currentState.getClass() == LogMonsterAttacking.class;
+        return (currentState instanceof LogMonsterIdle) || (currentState instanceof LogMonsterAttacking);
     }
 
     @Override
@@ -140,7 +140,7 @@ public class LogMonster extends Monster {
 
         @Override
         public void update(float deltaTime) {
-            if (isDisplacementOccurs() || getOwnerArea().canEnterAreaCells(LogMonster.this, getFieldOfViewCells())) {
+            if (isDisplacementOccurs()) {
                 move(ANIMATION_DURATION);
             } else {
                 currentState = new LogMonsterFallingAsleep();
@@ -182,6 +182,7 @@ public class LogMonster extends Monster {
         public void update(float deltaTime) {
             if (isAnimationCompleted()) {
                 currentState = new LogMonsterIdle();
+                setForceAnimation(false);
             }
         }
     }

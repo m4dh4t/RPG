@@ -8,8 +8,8 @@ public class ARPGInventory extends Inventory {
     private int money;
     private int fortune;
 
-    public ARPGInventory(int startMoney) {
-        super(100);
+    public ARPGInventory(int startMoney, int maxWeight) {
+        super(maxWeight);
 
         if (startMoney <= MAXMONEY) {
             money = startMoney;
@@ -23,7 +23,7 @@ public class ARPGInventory extends Inventory {
     @Override
     protected boolean add(InventoryItem item, int quantity) {
         if (super.add(item,quantity)) {
-            fortune += quantity * item.getWeight();
+            fortune += quantity * item.getPrice();
             return true;
         } else {
             return false;
@@ -33,7 +33,7 @@ public class ARPGInventory extends Inventory {
     @Override
     protected boolean remove(InventoryItem item, int quantity) {
         if (super.remove(item, quantity)) {
-            fortune -= quantity * item.getWeight();
+            fortune -= quantity * item.getPrice();
             return true;
         } else {
             return false;
@@ -47,6 +47,15 @@ public class ARPGInventory extends Inventory {
         if (this.money > MAXMONEY) {
             fortune -= this.money + MAXMONEY;
             this.money = MAXMONEY;
+        }
+    }
+
+    protected boolean removeMoney(int money) {
+        if (money > this.money) {
+            return false;
+        } else {
+            addMoney(-money);
+            return true;
         }
     }
 

@@ -95,17 +95,17 @@ public enum Orientation {
      * @return The code of the orientation given
      */
     public static int getCode(Orientation orientation) {
-        if (orientation == Orientation.LEFT) {
-            return 37;
-        } else if (orientation == Orientation.UP) {
-            return 38;
-        } else if (orientation == Orientation.RIGHT) {
-            return 39;
-        } else if (orientation == Orientation.DOWN) {
-            return 40;
-        } else {
-            return -1;
+        switch (orientation) {
+            case LEFT:
+                return 37;
+            case UP:
+                return 38;
+            case RIGHT:
+                return 39;
+            case DOWN:
+                return 40;
+            default:
+                return -1;
         }
-
     }
 }
