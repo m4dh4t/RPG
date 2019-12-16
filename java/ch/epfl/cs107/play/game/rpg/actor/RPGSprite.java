@@ -192,7 +192,7 @@ public class RPGSprite extends Sprite {
 	 *
 	 *
 	 * @return an array of 4 Sprite
-	 * This method is used in Coin.java, Firespell.java, Grass.java, Heart.java, Waterfall.java
+	 * This method is used in Coin.java, FireSpell.java, Grass.java, Heart.java, MagicWaterProjectile.java, Waterfall.java
 	 */
 	public static Sprite[] extractSprites(String name, int nbFrames, float width, float height, Positionable parent, int regionWidth, int regionHeight){
 		return extractSprites(name, nbFrames, width, height, parent, 0, regionWidth, regionHeight);

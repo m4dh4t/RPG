@@ -84,24 +84,6 @@ public class Animation implements Updatable, Graphics{
     		sprite.setHeight(height);
     	}
     }
-
-    /**
-     * Sets the frame to the desired number.
-     * @param frameNumber The number of the frame we want
-     * This method is used in ARPGPlayer.java for letting him fly
-     */
-    public void setFrame(int frameNumber) {
-        if (frameNumber >= 0 && frameNumber < frames.length) {
-            this.currentFrame = frameNumber;
-        }
-    }
-
-    /**
-     * Return the frame number
-     */
-    public int getFrame() {
-        return currentFrame;
-    }
     
     /**
      * Reset this animation by setting the current frame to the first of the sequence
