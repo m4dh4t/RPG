@@ -40,60 +40,101 @@ RPGSprite.java :
 	This method is basically the same as the third one except it extracts
 	the sprites vertically and not horizontally.
 
+_________________________________❄_EXTENSIONS_❄_______________________________
+
+The new features added to the game are :
+	- Animated Waterfall in Road
+	- The player can fly if you have wings
+	- The player can sprint (or fly faster) by pressing Q
+	- Two new areas : RoadTemple and Temple
+	- By hitting the orb with an orb you can spawn a bridge
+	- Chest in Temple
+	- Entities can be invincible
+	- Shop in Village
 
 __________________________❄_NEW_CLASSES_AND_INTERFACES_❄______________________
 
-TriggerableEntity.java :
-	Abstract class representing an area entity that can be triggered (and can
-	have different behaviors depending on if it has actually been triggered).
-	We added this method to generalize the Bridge class (described just below)
-	to an entity that can be triggered. It is not an actor specific to an ARPG
-	game and thus, is in the RPG package.
+You will find below each new class that we created. A brief description of the
+class is given if it is part of an extension.
 
-Bridge.java :
-	Concrete realization of TriggerableEntity.java that modelizes the bridge
-	found in Road that can be crossed only if the orb has been hit. It is an
-	actor specific to an ARPG game and thus, is in the ARPG package.
 
-Orb.java :
-	Class representing the orb that can be hit and if so, trigger the bridge,
-	letting you cross the river in Road. It is an actor specfic to an ARPG game
-	and thus, is in the ARPG package.
+In arpg :
+	- ARPG.java
+	- ARPGBehavior.java
+	- ARPGItem.java
 
-Chest.java :
-	Class representing the chest found in Temple that can be opened to receive
-	items. It is an actor specific to an ARPG game and thus, is in the ARPG
-	package.
+In arpg/actor :
+	- ARPGInventory.java
+	- ARPGPlayer.java
+	- ARPGPlayerStatusGUI.java
+	- Arrow.java
+	- Bomb.java
+	- Bridge.java :
+		Concrete realization of TriggerableEntity.java that modelizes the
+		bridge found in Road that can be crossed only if the orb has been
+		hit.
+	- CastleDoor.java
+	- CastleKey.java
+	- Chest.java :
+		Class representing the chest found in Temple that can be opened
+		to receive items.
+	- Coin.java
+	- DarkLord.java
+	- FireSpell.java
+	- FlameSkull.java
+	- Grass.java
+	- Heart.java
+	- King.java :
+		Class representing the king found in Castle which can be talked to
+		to finish the game.
+	- LogMonster.java
+	- MagicWaterProjectile.java
+	- Orb.java :
+		Class representing the orb that can be hit and if so, trigger the
+		bridge, letting you cross the river in Road.
+	- Shop.java :
+		Class representing the shop found in Village where the player can
+		buy items.
+	- Sword.java
+	- Waterfall.java :
+		Class representing a waterfall. We created this class to modelize
+		the waterfall in Road.
 
-King.java :
-	Class representing the king found in Castle.java which can be talked to. It
-	is an actor specific to an ARPG game and thus, is in the ARPG package.
+In arpg/area :
+	- ARPGArea.java
+	- Castle.java
+	- Farm.java
+	- Road.java
+	- RoadCastle.java
+	- RoadTemple.java
+	- Temple.java
+	- Village.java
 
-Shop.java :
-	Class representing the shop found in Village where the player can buy items.
-	It is an actor specific to an ARPG game and thus, is in the ARPG package.
+In arpg/handler :
+	- ARPGInteractionVisitor.java
 
-Weapon.java :
-	Abstract class representing a weapon. A weapon can be registered on a cell
-	and will want a cell interaction. It is not an actor specific to an ARPG
-	game and thus, is in the RPG package.
+In rpg :
+	- InventoryItem.java
+	- RPG.java
 
-Sword.java :
-	Concrete realization of Weapon.java. As soon as the sword hit something, it
-	unregisters itself. It is an actor specific to an ARPG game and thus, is in
-	the ARPG package.
-
-Waterfall.java :
-	Class representing a waterfall. We created this class to modelize the
-	waterfall in Road. It is an actor specific to an ARPG game and thus, is in
-	the ARPG package.
-
-InvincibleEntity.java :
-	Interface representing an entity that can be invincible. Each subclasses
-	will have to redefine the method isInvincible() to know when they are
-	invincible. It is not an acotr specific to an ARPG game and thus, is in
-	the RPG package.
-
+In rpg/actor :
+	- CollectableAreaEntity.java
+	- FlyableEntity.java
+	- Inventory.java
+	- InvincibleEntity.java :
+		Interface representing an entity that can be invincible. Each
+		subclasses will have to redefine the method isInvincible() to
+		know when they are invincible.
+	- Monster.java
+	- Projectile.java
+	- TriggerableEntity.java :
+		Abstract class representing an area entity that can be triggered
+		(and can have different behaviors depending on if it has actually
+		been triggered). We added this method to generalize the Bridge
+		class to an entity that can be triggered.		
+	- Weapon.java :
+		Abstract class representing a weapon. A weapon can be registered
+		on a cell and will want a cell interaction.
 
 _____________________________❄_CHOICES_OF_PACKAGES_❄__________________________
 
@@ -102,7 +143,8 @@ not specific to an ARPG game has been put in the rpg or rpg/actor package. An
 inventory item is not considered to be an actor because it does not update over
 time and has been put in the rpg package. Every other non-ARPG class is in
 rpg/actor. For the same reason, ARPGItem is in the arpg package and every other
-class is in arpg/actor.
+class is in arpg/actor except the areas and the ARPG handler which have been
+put in their packages respectively.
 
 
 ________________________❄_DIFFERENCES_WITH_THE_INSTRUCTIONS_❄__________________
