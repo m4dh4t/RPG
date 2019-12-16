@@ -1,0 +1,114 @@
+﻿______________________❄_CHANGES_MADE_TO_DEFAULT_FILES_❄____________________
+
+Orientation.java :
+	- getCode(Orientation orientation), used in ARPGPlayer :
+	We added this method because we were having a bug letting the player
+	orientate when it would not be natural to do so. If the player was
+	facing a wall and holding down the key in the wall direction (f. ex.
+	the left arrow when facing a wall to the left) and pressed another
+	arrow key (f.ex. up) he would orientate to that direction without
+	moving. By adding this method, it is now impossible to do so, you
+	are stuck in the direction of the wall and you cannot orientate.
+
+RPGSprite.java :
+	Every method added in RPGSprite.java is used to facilitate the
+	animations.
+	- extractSprites(String name, int nbFrames, float width, float height, 
+	Positionable parent, int regionWidth, int regionHeight), used in
+	Coin.java, FireSpell.java, Grass.java, Heart.java, MagicWaterProjectile.java,
+	Waterfall.java :
+	This method is useful when the entity linked to the sprites does not
+	have a specific orientation (or at least, the sprite does not change
+	even if the orientation does). Each of the classes that use this
+	method have their orientation independent of the sprites.
+
+	- extractSprites(String name, int nbFrames, float width, float height,
+	Positionable parent, int heightOfRegion, int regionWidth, int regionHeight),
+	used in Orb.java :
+	This method is useful if the sprites we want is not at the top of the
+	image. It allows us to choose the height of the region.
+
+	- extractSprites(String name, int nbFrames, float width, float height,
+	Positionable parent, int regionWidth, int regionHeight, Vector anchor),
+	used in Bomb.java, Monster.java :
+	This method is basically the same as the first one except we can add
+	an anchor attribute.
+
+	- extractVerticalSprites(String name, int nbFrames, float width,
+	float height, Positionable parent, int regionWidth, int regionHeight,
+	Vector anchor), used in LogMonster.java :
+	This method is basically the same as the third one except it extracts
+	the sprites vertically and not horizontally.
+
+
+__________________________❄_NEW_CLASSES_AND_INTERFACES_❄______________________
+
+TriggerableEntity.java :
+	Abstract class representing an area entity that can be triggered (and can
+	have different behaviors depending on if it has actually been triggered).
+	We added this method to generalize the Bridge class (described just below)
+	to an entity that can be triggered. It is not an actor specific to an ARPG
+	game and thus, is in the RPG package.
+
+Bridge.java :
+	Concrete realization of TriggerableEntity.java that modelizes the bridge
+	found in Road that can be crossed only if the orb has been hit. It is an
+	actor specific to an ARPG game and thus, is in the ARPG package.
+
+Orb.java :
+	Class representing the orb that can be hit and if so, trigger the bridge,
+	letting you cross the river in Road. It is an actor specfic to an ARPG game
+	and thus, is in the ARPG package.
+
+Chest.java :
+	Class representing the chest found in Temple that can be opened to receive
+	items. It is an actor specific to an ARPG game and thus, is in the ARPG
+	package.
+
+King.java :
+	Class representing the king found in Castle.java which can be talked to. It
+	is an actor specific to an ARPG game and thus, is in the ARPG package.
+
+Shop.java :
+	Class representing the shop found in Village where the player can buy items.
+	It is an actor specific to an ARPG game and thus, is in the ARPG package.
+
+Weapon.java :
+	Abstract class representing a weapon. A weapon can be registered on a cell
+	and will want a cell interaction. It is not an actor specific to an ARPG
+	game and thus, is in the RPG package.
+
+Sword.java :
+	Concrete realization of Weapon.java. As soon as the sword hit something, it
+	unregisters itself. It is an actor specific to an ARPG game and thus, is in
+	the ARPG package.
+
+Waterfall.java :
+	Class representing a waterfall. We created this class to modelize the
+	waterfall in Road. It is an actor specific to an ARPG game and thus, is in
+	the ARPG package.
+
+InvincibleEntity.java :
+	Interface representing an entity that can be invincible. Each subclasses
+	will have to redefine the method isInvincible() to know when they are
+	invincible. It is not an acotr specific to an ARPG game and thus, is in
+	the RPG package.
+
+
+_____________________________❄_CHOICES_OF_PACKAGES_❄__________________________
+
+Most of our classes have been put in the arpg/actor package. Each class that is
+not specific to an ARPG game has been put in the rpg or rpg/actor package. An
+inventory item is not considered to be an actor because it does not update over
+time and has been put in the rpg package. Every other non-ARPG class is in
+rpg/actor. For the same reason, ARPGItem is in the arpg package and every other
+class is in arpg/actor.
+
+
+________________________❄_DIFFERENCES_WITH_THE_INSTRUCTIONS_❄__________________
+
+We did everything as the guideline told us to do except for the health system.
+Instead of representing each health point with a heart, we represented each
+health point with a half-heart, that means that a heart represents two health
+points. No difference is seen in-game, but we can manipulate integers instead
+of floats in our code as a half-heart is 1 health point instead of 1/2.
