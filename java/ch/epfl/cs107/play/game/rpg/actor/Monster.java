@@ -29,6 +29,15 @@ public abstract class Monster extends MovableAreaEntity implements Interactor, I
     private Animation[] animationsAlive;
     private Animation currentAnimationAlive;
     private Animation deadAnimation;
+
+    /*
+    forceAnimation has been created because by default, if a monster does not
+    move we do not want its animations to update because we want it to stay
+    still if he does not move. But in certain cases (f. ex. when the LogMonster
+    is sleeping or waking up) we want the animation to update even if the
+    monster is standing still. That is why we created this attribute and
+    the method associated setForceAnimation(boolean bool) to set it as we want.
+     */
     private boolean forceAnimation;
 
     private boolean invincible;
@@ -57,7 +66,7 @@ public abstract class Monster extends MovableAreaEntity implements Interactor, I
         showAnimations = true;
 
         this.vulnerabilities = vulnerabilities;
-        forceAnimation = false; //See update(float deltaTime) to understand what this attribute is used for
+        forceAnimation = false;
 
         Sprite[][] aliveSprites = RPGSprite.extractSprites(spriteName, nbFrames, 2.f,2.f, this, 32, 32, new Vector(-0.5f, 0.f),orientations);
         animationsAlive = RPGSprite.createAnimations(ALIVE_ANIMATION_DURATION/2, aliveSprites);
@@ -166,7 +175,7 @@ public abstract class Monster extends MovableAreaEntity implements Interactor, I
             }
             currentAnimationAlive = animationsAlive[getOrientation().ordinal()];
             move(ALIVE_ANIMATION_DURATION);
-        } else if (wantsInactionPossibility) { //The flameSkull doesn't want an inaction time but the darkLord and the logMonster want it
+        } else if (wantsInactionPossibility) { //The flameSkull does not want an inaction time but the darkLord and the logMonster want it
             inactive = true;
             inactiveTimeLeft = RandomGenerator.getInstance().nextFloat() * MAX_INACTIVE_DURATION;
         }
