@@ -14,6 +14,7 @@ public abstract class Projectile extends MovableAreaEntity implements Interactor
     private final float MOVE_DURATION;
     private final DiscreteCoordinates MAX_TRAVEL;
 
+    //Attribute to know if the projectile needs to stop or not
     private boolean stop;
 
     /**
@@ -35,7 +36,8 @@ public abstract class Projectile extends MovableAreaEntity implements Interactor
     public void update(float deltaTime) {
         DiscreteCoordinates position = new DiscreteCoordinates((int) getPosition().x, (int) getPosition().y);
 
-        if (!stop && !position.equals(MAX_TRAVEL) && getOwnerArea().canEnterAreaCells(this, Collections.singletonList(position.jump(getOrientation().toVector())))) { //Checks if it hasn't reached its destination and if it can enter the cell in front of it
+        //Checks if it hasn't reached its destination, if it can enter the cell in front of it and if it must not stop
+        if (!stop && !position.equals(MAX_TRAVEL) && getOwnerArea().canEnterAreaCells(this, Collections.singletonList(position.jump(getOrientation().toVector())))) {
             move((int) MOVE_DURATION);
         } else {
             getOwnerArea().unregisterActor(this);
@@ -44,6 +46,9 @@ public abstract class Projectile extends MovableAreaEntity implements Interactor
         super.update(deltaTime);
     }
 
+    /**
+     * Sets the variable stop to true to make the projectile disappear (see update).
+     */
     protected void stop() {
         stop = true;
     }

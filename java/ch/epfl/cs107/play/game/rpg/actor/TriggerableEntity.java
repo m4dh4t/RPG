@@ -20,10 +20,17 @@ public abstract class TriggerableEntity extends AreaEntity {
         triggered = false;
     }
 
+    /**
+     * A triggerable entity can be triggered with this method
+     */
     public void trigger(){
         triggered = true;
     }
 
+    /**
+     * Returns if the entity is triggered
+     * @return (boolean): if the entity is triggered
+     */
     public boolean isTriggered() {
         return triggered;
     }

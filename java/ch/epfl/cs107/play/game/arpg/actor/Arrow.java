@@ -56,6 +56,9 @@ public class Arrow extends Projectile {
         other.acceptInteraction(handler);
     }
 
+    /*We wanted the arrow to have view interactions so that the arrow disappears just before the cell it interacts with
+     and not when it is on the cell. (its field of view is the cell just in front of it)
+     */
     @Override
     public boolean wantsViewInteraction() {
         return true;

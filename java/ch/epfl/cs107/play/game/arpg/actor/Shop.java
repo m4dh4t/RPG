@@ -35,7 +35,7 @@ public class Shop extends AreaEntity {
     private final InventoryItem[] STARTING_INVENTORY;
     /*STARTING_INVENTORY is not an ARPGInventory because if it was, initializing it to inventory
     (STARTING_INVENTORY = inventory) would have not been useful because the changes made to inventory
-    would also be seen from STARTING_INVENTORY. The reason why we have this variable is explained in
+    would also be seen from STARTING_INVENTORY. The reason why we have this attribute is explained in
     drawInventory(Canvas canvas).
     */
     private Sprite sellerSprite;
@@ -46,7 +46,7 @@ public class Shop extends AreaEntity {
 
     //SELECTED SLOT ATTRIBUTES
     private int[] selectedSlot; //The selected slot is coded as an array of length 2 which has 2 coordinates :
-    //A row and a column to define the current slot.
+    //A row and a column to define the current slot (like a matrix representation).
     private Animation selectedAnimation;
     private Vector selectedAnchor;
     private ARPGItem selectedItem;
