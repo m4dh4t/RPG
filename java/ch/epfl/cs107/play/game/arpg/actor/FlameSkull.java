@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class FlameSkull extends Monster implements FlyableEntity {
-    private final static int ANIMATION_DURATION = getAnimationDuration();
     private final static int MIN_LIFE_TIME = 3;
     private final static int MAX_LIFE_TIME = 12;
     private final static float MAXHP = 0.5f;

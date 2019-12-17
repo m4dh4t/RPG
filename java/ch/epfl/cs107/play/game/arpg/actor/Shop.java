@@ -35,20 +35,25 @@ public class Shop extends AreaEntity {
     private final InventoryItem[] STARTING_INVENTORY;
     /*STARTING_INVENTORY is not an ARPGInventory because if it was, initializing it to inventory
     (STARTING_INVENTORY = inventory) would have not been useful because the changes made to inventory
-    would also be seen from STARTING_INVENTORY
+    would also be seen from STARTING_INVENTORY. The reason why we have this variable is explained in
+    drawInventory(Canvas canvas).
     */
     private Sprite sellerSprite;
 
+    //INVENTORIES
     private ARPGInventory inventory;
     private ARPGInventory customerInventory;
 
-    private boolean openInventory;
-    private int[] selectedSlot;
+    //SELECTED SLOT ATTRIBUTES
+    private int[] selectedSlot; //The selected slot is coded as an array of length 2 which has 2 coordinates :
+    //A row and a column to define the current slot.
     private Animation selectedAnimation;
     private Vector selectedAnchor;
     private ARPGItem selectedItem;
 
+    //BOOLEANS FOR DIALOGS
     private boolean showWelcomeDialog;
+    private boolean openInventory;
     private boolean showGoodbyeDialog;
 
     /**
@@ -68,42 +73,63 @@ public class Shop extends AreaEntity {
         inventory.add(ARPGItem.WINGS, 1);
         inventory.add(ARPGItem.CHESTKEY,1);
         STARTING_INVENTORY = inventory.getItems();
+        /*In our conception, STARTING_INVENTORY will not be affected by the changes made to inventory
+        because assigning it now to inventory.getItems() assigns it to the initial items array of
+        inventory. If we change inventory, the changes will not be automatically displayed in this
+        array that we just assigned to STARTING_INVENTORY.
+         */
 
-        openInventory = false;
-        selectedSlot = new int[]{0,0};
-        selectedItem = (ARPGItem) inventory.getItems()[0];
 
-        showWelcomeDialog = false;
-        showGoodbyeDialog = false;
         WELCOME_DIALOG = new Dialog("Welcome to our shop !", "zelda/dialog", area);
         GOODBYE_DIALOG = new Dialog("Enjoy your day !", "zelda/dialog", area);
+        showWelcomeDialog = false;
+        openInventory = false;
+        showGoodbyeDialog = false;
 
         ArrayList<Orientation> orientations = new ArrayList<>(Arrays.asList(Orientation.UP, Orientation.RIGHT, Orientation.DOWN, Orientation.LEFT));
         sellerSprite = new Sprite("zelda/character", 1, 2, this, new RegionOfInterest(0, orientations.indexOf(orientation) * 32, 16,32));
 
-        Sprite[] selectedSprites = new Sprite[2];
+        selectedSlot = new int[]{0,0};
+        selectedItem = (ARPGItem) inventory.getItems()[0];
         selectedAnchor = new Vector(-6,-1);
+        Sprite[] selectedSprites = new Sprite[2];
         selectedSprites[0] = new Sprite("zelda/inventory.selector",2.5f,2.5f,this, new RegionOfInterest(0,0,64,64), selectedAnchor,1.f,3001);
         selectedSprites[1] = new Sprite("zelda/inventory.selector",2.5f,2.5f,this, new RegionOfInterest(64,0,64,64), selectedAnchor,1.f,3001);
         //Did not use RPGSprite.extractSprites(...) here because we need the depth argument
         selectedAnimation = new Animation(SELECTED_ANIMATION_DURATION, selectedSprites);
     }
 
+    /**
+     * Method used from the player to shop.
+     * @param inventory (ARPGInventory): Stocks the customer inventory to a variable to make changes to it.
+     */
     public void shop(ARPGInventory inventory) {
-        if (!showWelcomeDialog && !openInventory && !showGoodbyeDialog) { //Prevents the case where the player interacts with the shop but he is already shopping
+        //This condition prevents the case where the player interacts with the shop but he is already shopping
+        if (!showWelcomeDialog && !openInventory && !showGoodbyeDialog) {
             showWelcomeDialog = true;
+            customerInventory = inventory;
+            //By assigning directly the inventory to our variable and not a copy of it, we can modify the customer
+            //inventory in another method (which is buy(ARPGItem item)).
         }
-
-        customerInventory = inventory;
     }
 
-    private void buy(ARPGItem item) {
+    /**
+     * Used to buy an item from the shop.
+     * @param item (ARPGItem): The item the customer wants to buy.
+     */
+    private void buy(ARPGItem item) { //ARPGItem and not InventoryItem because we want its price.
+        //Checks if the item is not null because the player would want to buy an empty slot but that does not make
+        //sense.
         if (item != null && customerInventory.removeMoney(item.getPrice())) {
             inventory.remove(item, 1);
             customerInventory.add(item, 1);
         }
     }
 
+    /**
+     * Method used to draw the entire inventory of the shop.
+     * @param canvas (Canvas): Needed to draw.
+     */
     private void drawInventory(Canvas canvas) {
         Vector anchor = canvas.getTransform().getOrigin();
         Vector backgroundAnchor = anchor.sub(new Vector(canvas.getScaledWidth()/2, canvas.getScaledHeight()/2 - 2));
@@ -129,9 +155,11 @@ public class Shop extends AreaEntity {
                     slotSprite.draw(canvas);
                 }
 
+                //We use the STARTING_INVENTORY and not the inventory so that when the customer buys an item,
+                //The other items do not shift to the left but it makes a "hole" in the slots instead.
                 int index = i * 4 + j;
                 ARPGItem item = index < STARTING_INVENTORY.length ? (ARPGItem) STARTING_INVENTORY[index] : null;
-                if (inventory.isInInventory(item)) {
+                if (inventory.isInInventory(item)) { //We still need to make sure that the item is in the actual inventory of the shop
                     //ITEMS
                     RegionOfInterest roi = item == ARPGItem.BOMB ? new RegionOfInterest(0,0,16,16) : null;
                     ImageGraphics itemSprite = new ImageGraphics(ResourcePath.getSprite(item.getSpriteName()),  1.f, 1.f, roi, itemsAnchor.add(0.75f + j * 3,  1 + i * (-3)), 1.f, 3001);
@@ -146,7 +174,7 @@ public class Shop extends AreaEntity {
         }
 
         //PRICE
-        if (selectedItem != null) {
+        if (selectedItem != null) { //Checks if it is not null, to draw nothing if the player is selecting an empty slot
             String number = Integer.toString(selectedItem.getPrice());
             int[] digits = new int[number.length()];
 
@@ -225,7 +253,6 @@ public class Shop extends AreaEntity {
             if (selectedSlot[0] != 1) { //If we are already at the maximum row, we do not want the selectedSlot to move
                 selectedAnchor = selectedAnchor.add(0, -3);
                 selectedAnimation.setAnchor(selectedAnchor);
-
             }
             selectedSlot[0] = Math.min(selectedSlot[0] + 1, 1); //Has only two rows
         } else if (RIGHT.isPressed()) { //Max column case
@@ -250,7 +277,9 @@ public class Shop extends AreaEntity {
 
         int index = selectedSlot[0] * 4 + selectedSlot[1];
         ARPGItem item = index < STARTING_INVENTORY.length ? (ARPGItem) STARTING_INVENTORY[index] : null;
-        if (inventory.isInInventory(item)) { //Prevents ArrayIndexOutOfBoundsException when selecting an empty slot
+        //If the item is not in the inventory, we put it null. The price display will check if it is not-null and
+        //buy(ARPGItem item) too.
+        if (inventory.isInInventory(item)) {
             selectedItem = (ARPGItem) STARTING_INVENTORY[4 * selectedSlot[0] + selectedSlot[1]];
         } else {
             selectedItem = null;
@@ -272,16 +301,16 @@ public class Shop extends AreaEntity {
             if (showWelcomeDialog) {
                 showWelcomeDialog = false;
                 openInventory = true;
-                ((ARPGArea) getOwnerArea()).setCanEnter(false);
+                ((ARPGArea) getOwnerArea()).setCanEnter(false); //We restrict the player's movements
             } else if (showGoodbyeDialog) {
                 showGoodbyeDialog = false;
-                ((ARPGArea) getOwnerArea()).setCanEnter(true);
+                ((ARPGArea) getOwnerArea()).setCanEnter(true); //We give back the player its movements
             } else if (openInventory) {
                 buy(selectedItem);
             }
         }
 
-        if (openInventory && W.isPressed()) {
+        if (openInventory && W.isPressed()) { //Leave shop
             openInventory = false;
             showGoodbyeDialog = true;
         }
