@@ -27,7 +27,7 @@ public class MagicWaterProjectile extends Projectile {
      * @param orientation (Orientation): Initial orientation of the entity. Not null
      * @param position    (Coordinate): Initial position of the entity. Not null
      * @param moveDuration (float): move speed of the arrow
-     * @param maxTravel (float): max distance before the arrow disappears
+     * @param maxTravel (float): max distance before the magic water projectile disappears
      */
     public MagicWaterProjectile(Area area, Orientation orientation, DiscreteCoordinates position, float moveDuration, float maxTravel) {
         super(area, orientation, position, moveDuration, maxTravel);
