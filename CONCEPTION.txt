@@ -10,6 +10,12 @@ Orientation.java :
 	moving. By adding this method, it is now impossible to do so, you
 	are stuck in the direction of the wall and you cannot orientate.
 
+Area.java :
+	- registerActors(Actor[] a), used in Road.java :
+	This method is useful if we want to register a lot of actors at once.
+	We used it in Road.java to spawn a full region of grass at once,
+	combined with the static method grassZone in Grass.
+
 RPGSprite.java :
 	Every method added in RPGSprite.java is used to facilitate the
 	animations.
