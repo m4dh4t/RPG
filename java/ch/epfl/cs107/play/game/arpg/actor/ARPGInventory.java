@@ -20,6 +20,12 @@ public class ARPGInventory extends Inventory {
         }
     }
 
+    /**
+     * This method adds the given item a number of times, also given, in the inventory.
+     * @param item (InventoryItem): The item to add
+     * @param quantity (int): The quantity we need to add
+     * @return (boolean): If the adding has happened or not.
+     */
     @Override
     protected boolean add(InventoryItem item, int quantity) {
         if (super.add(item,quantity)) {
@@ -30,6 +36,12 @@ public class ARPGInventory extends Inventory {
         }
     }
 
+    /**
+     * This method removes the given item a number of times, also given, from the inventory.
+     * @param item (InventoryItem): The item to remove
+     * @param quantity (int): The quantity we need to remove
+     * @return (boolean): If the removing has happened or not.
+     */
     @Override
     protected boolean remove(InventoryItem item, int quantity) {
         if (super.remove(item, quantity)) {
@@ -40,6 +52,10 @@ public class ARPGInventory extends Inventory {
         }
     }
 
+    /**
+     * This method adds the given amount of money in the inventory
+     * @param money (int): The amount of money to add
+     */
     protected void addMoney(int money) {
         this.money += money;
         fortune += money;
@@ -50,6 +66,10 @@ public class ARPGInventory extends Inventory {
         }
     }
 
+    /**
+     * This method removes the given amount of money from the inventory
+     * @param money (int): The amount of money to remove
+     */
     protected boolean removeMoney(int money) {
         if (money > this.money) {
             return false;
