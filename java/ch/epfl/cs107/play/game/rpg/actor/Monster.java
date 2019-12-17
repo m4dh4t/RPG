@@ -4,7 +4,6 @@ import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.*;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
-import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RandomGenerator;
 import ch.epfl.cs107.play.math.Vector;
@@ -76,19 +75,19 @@ public abstract class Monster extends MovableAreaEntity implements Interactor, I
         deadAnimation = new Animation(DEAD_ANIMATION_DURATION/2, deadSprites, false);
     }
 
-    public static int getAnimationDuration() {return ALIVE_ANIMATION_DURATION;}
+    protected static int getAnimationDuration() {return ALIVE_ANIMATION_DURATION;}
 
-    public boolean isAnimationCompleted() {
+    protected boolean isAnimationCompleted() {
         return currentAnimationAlive.isCompleted();
     }
 
-    public void setForceAnimation(boolean bool) { forceAnimation = bool; }
+    protected void setForceAnimation(boolean bool) { forceAnimation = bool; }
 
     public List<Vulnerability> getVulnerabilities() {
         return vulnerabilities;
     }
 
-    public void setAnimations(Animation[] animations, Orientation orientation) {
+    protected void setAnimations(Animation[] animations, Orientation orientation) {
         animationsAlive = animations;
         currentAnimationAlive = animationsAlive[orientation.ordinal()];
     }

@@ -6,7 +6,6 @@ import ch.epfl.cs107.play.game.arpg.actor.*;
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

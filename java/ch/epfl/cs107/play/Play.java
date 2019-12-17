@@ -1,16 +1,11 @@
 package ch.epfl.cs107.play;
 
 import ch.epfl.cs107.play.game.Game;
-import ch.epfl.cs107.play.game.areagame.Area;
-import ch.epfl.cs107.play.game.areagame.AreaGame;
 import ch.epfl.cs107.play.game.arpg.ARPG;
-import ch.epfl.cs107.play.game.tutos.Tuto1;
-import ch.epfl.cs107.play.game.tutos.Tuto2;
 import ch.epfl.cs107.play.io.DefaultFileSystem;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.io.ResourceFileSystem;
 import ch.epfl.cs107.play.io.XMLTexts;
-import ch.epfl.cs107.play.recorder.RecordReplayer;
 import ch.epfl.cs107.play.window.Window;
 import ch.epfl.cs107.play.window.swing.SwingWindow;
 

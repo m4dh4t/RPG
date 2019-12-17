@@ -29,7 +29,6 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     private final static float COOLDOWN = 0.75f;
 
     private int animation_duration;
-    private Sprite[][] idleSprites;
     private Animation[] idleAnimations;
     private Animation[] swordAnimations;
     private Animation[] bowAnimations;
@@ -81,7 +80,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         handler = new ARPGPlayerHandler();
         statusGUI = new ARPGPlayerStatusGUI();
 
-        idleSprites = RPGSprite.extractSprites("zelda/player", 4, 1, 2, this, 16, 32, new Orientation[] {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
+        Sprite[][] idleSprites = RPGSprite.extractSprites("zelda/player", 4, 1, 2, this, 16, 32, new Orientation[]{Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
         idleAnimations = RPGSprite.createAnimations(DEFAULT_ANIMATION_DURATION/2, idleSprites);
 
         Sprite[][] swordSprites = RPGSprite.extractSprites("zelda/player.sword", 4, 2, 2, this, 32, 32, new Vector(-0.5f,0.f), new Orientation[] {Orientation.DOWN, Orientation.UP, Orientation.RIGHT, Orientation.LEFT});
