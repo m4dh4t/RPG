@@ -24,8 +24,8 @@ import java.util.List;
 
 public class Chest extends AreaEntity {
     private final static int ANIMATION_DURATION = 2;
-    private Sprite spriteClosed;
     private Sprite spriteOpen;
+    private Sprite spriteClosed;
     private Animation animation;
     private Dialog dialog;
 
@@ -34,6 +34,7 @@ public class Chest extends AreaEntity {
     private Logic signal;
 
     private ARPGInventory inventory;
+
     /**
      * Chest constructor
      *
@@ -42,7 +43,7 @@ public class Chest extends AreaEntity {
      */
     public Chest(Area area, DiscreteCoordinates position) {
         super(area, Orientation.DOWN, position);
-        skip = false;
+        skip = true;
         open = false;
         signal = Logic.FALSE;
 
@@ -58,8 +59,9 @@ public class Chest extends AreaEntity {
         sprites[2] = new Sprite("chest", 2.f, 2.f, this, new RegionOfInterest(0, 288, 48, 48), new Vector(-0.5f, 0.f), 1.f, -15);
         sprites[3] = new Sprite("chest", 2.f, 2.f, this, new RegionOfInterest(0, 336, 48, 48), new Vector(-0.5f, 0.f), 1.f, -15);
 
-        spriteClosed = sprites[0];
+        //Select the sprites when open and closed
         spriteOpen = sprites[3];
+        spriteClosed = sprites[0];
 
         animation = new Animation(ANIMATION_DURATION, sprites, false);
     }
@@ -172,10 +174,6 @@ public class Chest extends AreaEntity {
                     message += ", ";
                 }
             }
-            /*--i;*/ /*Needed because inventory.getItems().length will decrease as the loops goes (because we remove items from inventory)
-                    So, in fact, we are not incrementing i ever (it always stays at 0) but the number of items decreases by 1
-                    at each iteration of the loop*/
-
         }
         return message;
     }
@@ -187,14 +185,16 @@ public class Chest extends AreaEntity {
             case 'i':
             case 'o':
             case 'u':
-            case 'y': return true;
-            default: return false;
+            case 'y':
+                return true;
+            default:
+                return false;
         }
     }
 
     @Override
     public void draw(Canvas canvas) {
-        if (!skip && dialog != null) { //Checks if dialog is not null to prevent a NullPointerException when we enter in the area because dialog is not initialized in the constructor
+        if (!skip) {
             dialog.draw(canvas);
         }
 
@@ -240,8 +240,8 @@ public class Chest extends AreaEntity {
             animation.update(deltaTime);
         }
 
-        Button enterButton = getOwnerArea().getKeyboard().get(Keyboard.ENTER);
-        if (enterButton.isPressed()) { //if Enter is pressed, the message disappears
+        Button ENTER = getOwnerArea().getKeyboard().get(Keyboard.ENTER);
+        if (ENTER.isPressed()) { //if Enter is pressed, the message disappears
             skip = true;
         }
     }

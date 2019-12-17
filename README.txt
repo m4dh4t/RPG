@@ -19,6 +19,15 @@ _______________________________❄_CONTROLS_❄_______________________________
 		W :	while shopping, makes you leave
 
 
+__________________________❄_ADDITIONAL_CONTROLS_❄__________________________
+
+In RoadCastle.java, you have additional controls, as the instructions mention.
+
+		L :	spawn a Log Monster
+		S :	spawn a Flame Skull
+		B :	spawn a Bomb
+
+
 _________________________________❄_WINGS_❄_________________________________
 
 

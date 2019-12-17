@@ -50,6 +50,15 @@ public class Grass extends AreaEntity implements Interactor {
         currentAnimation = cutAnimation;
     }
 
+    /**
+     * This method is useful if we want to create a zone of grass, like in Road.
+     * @param area (Area): The area in which the grassZone will be implemented.
+     * @param xBegin (int): The x-coordinate where the zone begins.
+     * @param xEnd (int): The x-coordinate where the zone ends.
+     * @param yBegin (int): The y-coordinate where the zone begins.
+     * @param yEnd (int): The y-coordinate where the zone ends.
+     * @return (Grass[]): An array of grass to be registered.
+     */
     public static Grass[] grassZone(Area area, int xBegin, int xEnd, int yBegin, int yEnd){
         Grass[] grasses = new Grass[(xEnd-xBegin+1)*(yEnd-yBegin+1)];
         int grassesIndex = 0;
@@ -83,6 +92,7 @@ public class Grass extends AreaEntity implements Interactor {
         return null;
     }
 
+    //The grass will burn the player if he steps on it
     @Override
     public boolean wantsCellInteraction() {
         return burnt;
@@ -118,18 +128,30 @@ public class Grass extends AreaEntity implements Interactor {
         ((ARPGInteractionVisitor)v).interactWith(this);
     }
 
+    /**
+     * cut() can be called to cut the grass and possibly drop an item.
+     */
     public void cut() {
         currentAnimation = cutAnimation;
+        //Checks if the grass is cut to prevent the player to spam cutting the grass while it is in the cut
+        //animation to maximize his chances to drop an item.
         if (!cut) {
             dropItem();
         }
         cut = true;
     }
 
+    /**
+     * Returns if the grass is cut.
+     * @return (boolean): If the grass is cut.
+     */
     public boolean isCut() {
         return cut;
     }
 
+    /**
+     * Method to drop an item.
+     */
     private void dropItem(){
         double randomDouble = RandomGenerator.getInstance().nextDouble();
 
@@ -143,15 +165,25 @@ public class Grass extends AreaEntity implements Interactor {
         }
     }
 
+    /**
+     * burn() can be called to burn the grass.
+     */
     public void burn() {
         currentAnimation = burnAnimation;
         burnt = true;
     }
 
+    /**
+     * Returns if the grass is burnt.
+     * @return (boolean): If the grass is burnt.
+     */
     public boolean isBurnt() {
         return burnt;
     }
 
+    /**
+     * Method to extinguish the grass if burning.
+     */
     public void extinguish() {
         if (isBurnt()) { //Cannot be extinguished if not burnt
             getOwnerArea().unregisterActor(this);

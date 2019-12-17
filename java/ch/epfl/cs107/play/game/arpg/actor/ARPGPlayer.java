@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntity, InvincibleEntity {
+    //CONSTANTS
     private final static float MAX_HP = 10.f;
     private final static int DEFAULT_ANIMATION_DURATION = 8;
     private final static int BOW_ANIMATION_DURATION = 3;
@@ -28,6 +29,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     private final static float BLINK_DURATION = 0.1f;
     private final static float COOLDOWN = 0.75f;
 
+    //ANIMATIONS
     private int animation_duration;
     private Animation[] idleAnimations;
     private Animation[] swordAnimations;
@@ -37,16 +39,20 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     private Animation currentAnimation;
     private boolean animateAction;
 
+    //MISCELLANEOUS
     private ARPGPlayerHandler handler;
     private ARPGPlayerStatusGUI statusGUI;
 
+    //LIFE
     private float hp;
 
+    //INVENTORY
     private ARPGInventory inventory;
     private ARPGItem currentItem;
     private float actionTimer;
-
     private boolean shootArrow;
+
+    //EXTENSIONS
     private boolean canFly;
     private boolean invincible;
     private float invincibleTimeLeft;
@@ -54,7 +60,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     private float blinkTimeLeft;
 
     /**
-     * Default Player constructor
+     * ARPGPlayer constructor
      *
      * @param area        (Area): Owner Area, not null
      * @param coordinates (Coordinates): Initial position, not null
@@ -101,6 +107,13 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         shootArrow = false;
     }
 
+    /**
+     * This method is used to move or orientate the player
+     * in a specific orientation.
+     * @param orientation (Orientation): The given orientation
+     *                    to move or orientate to.
+     * @param button (Button): Checks if the button is down.
+     */
     private void moveOrientate(Orientation orientation, Button button) {
         Keyboard keyboard = getOwnerArea().getKeyboard();
         Button orientationKey = keyboard.get(Orientation.getCode(getOrientation()));
@@ -115,16 +128,28 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         }
     }
 
+    /**
+     * Implements FlyableEntity.
+     * @return (boolean): If the player can fly.
+     */
     @Override
     public boolean canFly() {
         return canFly;
     }
 
+    /**
+     * Implements InvincibleEntity.
+     * @return (boolean): If the player is invincible.
+     */
     @Override
     public boolean isInvincible() {
         return invincible;
     }
 
+    /**
+     * This method is called from update(float deltaTime)
+     * to manage the inventory.
+     */
     private void inventoryHandler(){
         final Button TAB = getOwnerArea().getKeyboard().get(Keyboard.TAB);
         final Button SPACE = getOwnerArea().getKeyboard().get(Keyboard.SPACE);
@@ -137,6 +162,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
             currentItem = (ARPGItem) inventory.switchItem(currentItem);
         }
 
+        //Switches item.
         if(TAB.isPressed()){
             currentItem = (ARPGItem) inventory.switchItem(currentItem);
             if(currentItem == ARPGItem.ARROW){
@@ -144,6 +170,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
             }
         }
 
+        //Uses the item and adapts the animations
         if(SPACE.isPressed() && !isDisplacementOccurs()){
             if(currentItem.use(getOwnerArea(), getOrientation(), getCurrentMainCellCoordinates())){
                 switch(currentItem){
@@ -171,12 +198,16 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
             }
         }
 
+        //Wings have a special treatment because SPACE needs to be down and not pressed
         if (currentItem == ARPGItem.WINGS && SPACE.isDown()) {
+            //Sets the animation for the current orientation. Make sure it doesn't fly yet
+            // so that the animation is not stuck.
             if (!canFly) {
-                currentAnimation = flyAnimations[getOrientation().ordinal()]; //Sets the animation for the current orientation. Make sure it doesn't fly yet so that the animation is not stuck.
+                currentAnimation = flyAnimations[getOrientation().ordinal()];
             }
             canFly = true;
         } else {
+            //Resets to idleAnimations
             if (canFly) {
                 currentAnimation = idleAnimations[getOrientation().ordinal()];
             }
@@ -229,10 +260,11 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         return getOwnerArea().getKeyboard().get(Keyboard.E).isPressed();
     }
 
-    private boolean isWeak() {
-        return (hp <= 0.f);
-    }
-
+    /**
+     * This method is used to give health points to the player
+     * (when he picks up a heart for example).
+     * @param hp (float): health points to give.
+     */
     private void strengthen(float hp) {
         this.hp += hp;
         if (this.hp > MAX_HP) {
@@ -240,6 +272,10 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         }
     }
 
+    /**
+     * This method is used to remove health points from the player.
+     * @param hit (float): health points to remove.
+     */
     public void weaken(float hit) {
         if (!isInvincible()) {
             hp -= hit;
@@ -317,7 +353,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
             }
         } else {
             if (canFly) {
-                flyAnimations[getOrientation().ordinal()].update(deltaTime); //Still want to update the animation if the player is flying even if he does not move
+                //Still want to update the animation if the player is flying even if he does not move
+                flyAnimations[getOrientation().ordinal()].update(deltaTime);
             }
 
             for (int i = 0; i < idleAnimations.length; i++) {
@@ -328,9 +365,9 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
                 if (!currentAnimation.isCompleted()) {
                     currentAnimation.update(deltaTime);
                 } else {
-                        animateAction = false;
-                        currentAnimation.reset();
-                        currentAnimation = idleAnimations[getOrientation().ordinal()];
+                    animateAction = false;
+                    currentAnimation.reset();
+                    currentAnimation = idleAnimations[getOrientation().ordinal()];
                 }
             }
 
@@ -348,6 +385,12 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         super.update(deltaTime);
     }
 
+    /**
+     * Implements Inventory.Holder.
+     * @param item (InventoryItem): The item we want to know if
+     *             it is possessed by the player.
+     * @return (boolean): If the player actually possesses the item.
+     */
     @Override
     public boolean possess(InventoryItem item) {
         return inventory.isInInventory(item);
@@ -395,7 +438,9 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
 
         @Override
         public void interactWith(Shop shop, Orientation orientation) {
-            if (getOrientation().opposite().equals(orientation)) {//We want that the shopper and the player face at each other so they need to have opposite orientations
+            //We want that the shopper and the player face at each other so they
+            // need to have opposite orientations
+            if (getOrientation().opposite().equals(orientation)) {
                 shop.shop(inventory);
             }
         }

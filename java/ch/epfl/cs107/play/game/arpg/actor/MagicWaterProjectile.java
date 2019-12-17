@@ -72,7 +72,7 @@ public class MagicWaterProjectile extends Projectile {
         @Override
         public void interactWith(Monster monster) {
             monster.weaken(1.f, Monster.Vulnerability.MAGIC);
-            setStop(true);
+            stop();
         }
 
         @Override

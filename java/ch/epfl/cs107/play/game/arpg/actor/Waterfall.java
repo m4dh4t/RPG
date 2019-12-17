@@ -17,6 +17,7 @@ import java.util.List;
 public class Waterfall extends AreaEntity implements FlyableEntity {
     private final static int ANIMATION_DURATION = 9;
     private Animation animation;
+
     /**
      * Waterfall constructor
      *

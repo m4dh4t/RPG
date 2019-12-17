@@ -40,6 +40,9 @@ public class LogMonster extends Monster {
         handler = new LogMonsterHandler();
     }
 
+    /**
+     * Extends from Monster.java
+     */
     @Override
     protected void spawnCollectables() {
         Coin coin = new Coin(getOwnerArea(), new DiscreteCoordinates((int)getPosition().x, (int)getPosition().y));
@@ -58,13 +61,14 @@ public class LogMonster extends Monster {
 
     @Override
     public boolean wantsViewInteraction() {
+        //If it is Idle : wants to switch to Attacking mode; if attacking, wants to damage the player
         return (currentState instanceof LogMonsterIdle) || (currentState instanceof LogMonsterAttacking);
     }
 
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
-        if (!isDead() && !isInactive()) {
+        if (!isDead() && !isInactive()) { //If inactive, does not do anything
             currentState.update(deltaTime);
         }
     }
@@ -80,7 +84,8 @@ public class LogMonster extends Monster {
             if (currentState instanceof LogMonsterAttacking) {
                 player.weaken(2);
             } else {
-                move(ANIMATION_DURATION); //Starts to move to prevent the logMonster to fall asleep if he wakes up seeing the player (he would not move so he would instantly fall asleep)
+                move(ANIMATION_DURATION); //Starts to move to prevent the logMonster to fall asleep
+                // if he wakes up seeing the player (he would not move so he would instantly fall asleep)
                 currentState = new LogMonsterAttacking(); //If not attacking, switches to mode "attack"
             }
         }
@@ -111,7 +116,7 @@ public class LogMonster extends Monster {
             ArrayList<DiscreteCoordinates> list = new ArrayList<>();
             Vector orientationVector = getOrientation().toVector();
 
-            for (int i = 0; i < FIELD_OF_VIEW_DISTANCE; ++i) {
+            for (int i = 0; i <= FIELD_OF_VIEW_DISTANCE; ++i) {
                  Vector vector = getCurrentMainCellCoordinates().toVector().add(orientationVector.mul(i));
                  list.add(new DiscreteCoordinates((int) vector.x, (int) vector.y));
             }
@@ -183,7 +188,7 @@ public class LogMonster extends Monster {
     private class LogMonsterWakingUp extends LogMonsterState {
         LogMonsterWakingUp() {
             super("zelda/logMonster.wakingUp", false, false);
-            setForceAnimation(true); //See Monster.java to properly understand this call. Without it, the logMonster won't be able to wake up because it won't move
+            setForceAnimation(true);
         }
 
         @Override
