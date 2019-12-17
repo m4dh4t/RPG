@@ -4,7 +4,6 @@ import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.*;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
-import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RandomGenerator;
 import ch.epfl.cs107.play.math.Vector;
@@ -29,6 +28,15 @@ public abstract class Monster extends MovableAreaEntity implements Interactor, I
     private Animation[] animationsAlive;
     private Animation currentAnimationAlive;
     private Animation deadAnimation;
+
+    /*
+    forceAnimation has been created because by default, if a monster does not
+    move we do not want its animations to update because we want it to stay
+    still if he does not move. But in certain cases (f. ex. when the LogMonster
+    is sleeping or waking up) we want the animation to update even if the
+    monster is standing still. That is why we created this attribute and
+    the method associated setForceAnimation(boolean bool) to set it as we want.
+     */
     private boolean forceAnimation;
 
     private boolean invincible;
@@ -57,7 +65,7 @@ public abstract class Monster extends MovableAreaEntity implements Interactor, I
         showAnimations = true;
 
         this.vulnerabilities = vulnerabilities;
-        forceAnimation = false; //See update(float deltaTime) to understand what this attribute is used for
+        forceAnimation = false;
 
         Sprite[][] aliveSprites = RPGSprite.extractSprites(spriteName, nbFrames, 2.f,2.f, this, 32, 32, new Vector(-0.5f, 0.f),orientations);
         animationsAlive = RPGSprite.createAnimations(ALIVE_ANIMATION_DURATION/2, aliveSprites);
@@ -67,19 +75,19 @@ public abstract class Monster extends MovableAreaEntity implements Interactor, I
         deadAnimation = new Animation(DEAD_ANIMATION_DURATION/2, deadSprites, false);
     }
 
-    public static int getAnimationDuration() {return ALIVE_ANIMATION_DURATION;}
+    protected static int getAnimationDuration() {return ALIVE_ANIMATION_DURATION;}
 
-    public boolean isAnimationCompleted() {
+    protected boolean isAnimationCompleted() {
         return currentAnimationAlive.isCompleted();
     }
 
-    public void setForceAnimation(boolean bool) { forceAnimation = bool; }
+    protected void setForceAnimation(boolean bool) { forceAnimation = bool; }
 
     public List<Vulnerability> getVulnerabilities() {
         return vulnerabilities;
     }
 
-    public void setAnimations(Animation[] animations, Orientation orientation) {
+    protected void setAnimations(Animation[] animations, Orientation orientation) {
         animationsAlive = animations;
         currentAnimationAlive = animationsAlive[orientation.ordinal()];
     }
@@ -166,7 +174,7 @@ public abstract class Monster extends MovableAreaEntity implements Interactor, I
             }
             currentAnimationAlive = animationsAlive[getOrientation().ordinal()];
             move(ALIVE_ANIMATION_DURATION);
-        } else if (wantsInactionPossibility) { //The flameSkull doesn't want an inaction time but the darkLord and the logMonster want it
+        } else if (wantsInactionPossibility) { //The flameSkull does not want an inaction time but the darkLord and the logMonster want it
             inactive = true;
             inactiveTimeLeft = RandomGenerator.getInstance().nextFloat() * MAX_INACTIVE_DURATION;
         }

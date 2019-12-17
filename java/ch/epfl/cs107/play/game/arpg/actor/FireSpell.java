@@ -47,7 +47,7 @@ public class FireSpell extends AreaEntity implements Interactor {
         animation = new Animation(ANIMATION_DURATION, sprites, true);
     }
 
-    public void summon() {
+    private void summon() {
         if (force > 1) {
             DiscreteCoordinates spellPosition = getCurrentMainCellCoordinates().jump(getOrientation().toVector());
             FireSpell spell = new FireSpell(getOwnerArea(), getOrientation(), spellPosition, force - 1);

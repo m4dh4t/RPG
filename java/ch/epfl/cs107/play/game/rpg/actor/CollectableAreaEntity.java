@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class CollectableAreaEntity extends AreaEntity {
-    boolean collected;
+    private boolean collected;
 
     /**
      * Default AreaEntity constructor
