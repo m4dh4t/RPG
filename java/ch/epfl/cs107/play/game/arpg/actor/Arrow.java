@@ -65,7 +65,7 @@ public class Arrow extends Projectile {
         @Override
         public void interactWith(Monster monster) {
             monster.weaken(1.f, Monster.Vulnerability.PHYSICAL);
-            setStop(true);
+            stop();
         }
 
         @Override
@@ -73,8 +73,10 @@ public class Arrow extends Projectile {
             if (grass.isBurnt()) {
                 grass.extinguish();
             } else {
-                if (!grass.isCut()) { //Checks if the grass is cut so that the arrow doesn't disappear if the grass is in a cut animation
-                    setStop(true);
+                //Checks if the grass is cut so that the arrow doesn't disappear
+                // if the grass is in a cut animation
+                if (!grass.isCut()) {
+                    stop();
                 }
                 grass.cut();
             }
@@ -83,7 +85,7 @@ public class Arrow extends Projectile {
         @Override
         public void interactWith(Bomb bomb) {
             bomb.explode();
-            setStop(true);
+            stop();
         }
 
         @Override
@@ -94,7 +96,7 @@ public class Arrow extends Projectile {
         @Override
         public void interactWith(Orb orb) {
             orb.hit();
-            setStop(true);
+            stop();
         }
     }
 }

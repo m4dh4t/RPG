@@ -44,8 +44,8 @@ public abstract class Projectile extends MovableAreaEntity implements Interactor
         super.update(deltaTime);
     }
 
-    protected void setStop(boolean b) {
-        stop = b;
+    protected void stop() {
+        stop = true;
     }
 
     @Override
