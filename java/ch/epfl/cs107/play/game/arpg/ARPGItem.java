@@ -10,14 +10,14 @@ import java.util.Collections;
 import java.util.List;
 
 public enum ARPGItem implements InventoryItem {
-    ARROW("Arrow", 0.5f, 10, "zelda/arrow.icon"),
-    SWORD("Sword", 1.5f, 50, "zelda/sword.icon"),
-    STAFF("Staff", 10.f, 200, "zelda/staff_water.icon"),
-    BOW("Bow", 1.5f, 100, "zelda/bow.icon"),
-    BOMB("Bomb", 15.f, 100, "zelda/bomb"),
+    ARROW("Arrow", 1.f, 10, "zelda/arrow.icon"),
+    SWORD("Sword", 15.f, 100, "zelda/sword.icon"),
+    STAFF("Staff", 15.f, 300, "zelda/staff_water.icon"),
+    BOW("Bow", 10.f, 150, "zelda/bow.icon"),
+    BOMB("Bomb", 25.f, 200, "zelda/bomb"),
     CASTLEKEY("Castle Key", 0.1f, 200, "zelda/key"),
-    WINGS("Wings", 10.f, 200, "wings"),
-    CHESTKEY("Chest Key", 0.1f, 100, "chestKey");
+    WINGS("Wings", 10.f, 250, "wings"),
+    CHESTKEY("Chest Key", 0.1f, 150, "chestKey");
 
     private String name;
     private float weight;

@@ -119,10 +119,15 @@ public class Shop extends AreaEntity {
      */
     private void buy(ARPGItem item) { //ARPGItem and not InventoryItem because we want its price.
         //Checks if the item is not null because the player would want to buy an empty slot but that does not make
-        //sense.
-        if (item != null && customerInventory.removeMoney(item.getPrice())) {
-            inventory.remove(item, 1);
-            customerInventory.add(item, 1);
+        //sense. We also want to make sure that his inventory lets him add the item. (He could be too heavy and not
+        // be able to buy the item).
+        if (item != null && customerInventory.add(item, 1)) {
+            if (customerInventory.removeMoney(item.getPrice())) { //If he has enough money, we remove the item from the shop
+                inventory.remove(item, 1);
+            } else {
+                customerInventory.remove(item,1); //If he has not, we need to put back the item that we added in
+                //line 124
+            }
         }
     }
 

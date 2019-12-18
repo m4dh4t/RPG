@@ -60,9 +60,8 @@ public class Bomb extends AreaEntity implements Interactor {
             } else {
                 sprite.draw(canvas);
             }
-        } else if (!animation.isCompleted()) { //We need this check to
-            //make sure the first frame is not drawn just before
-            //unregistering.
+        } else if (!animation.isCompleted()) {
+            //Prevents from seeing the first frame of the animation when it is actually completed
             animation.draw(canvas);
         }
     }

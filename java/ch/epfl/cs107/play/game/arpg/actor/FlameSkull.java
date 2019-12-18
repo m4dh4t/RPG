@@ -16,7 +16,7 @@ import java.util.List;
 public class FlameSkull extends Monster implements FlyableEntity {
     private final static int MIN_LIFE_TIME = 3;
     private final static int MAX_LIFE_TIME = 12;
-    private final static float MAXHP = 0.5f;
+    private final static float MAX_HP = 2.f;
 
     private float lifeTime;
     private FlameSkullHandler handler;
@@ -29,7 +29,7 @@ public class FlameSkull extends Monster implements FlyableEntity {
      * @param position        (Coordinate): Initial position of the entity. Not null
      */
     public FlameSkull(Area area, Orientation orientation, DiscreteCoordinates position) {
-        super(area, orientation, position, MAXHP, new ArrayList<>(Arrays.asList(Vulnerability.PHYSICAL, Vulnerability.MAGIC)), "zelda/flameSkull", 3 , new Orientation[] {Orientation.UP, Orientation.LEFT, Orientation.DOWN, Orientation.RIGHT});
+        super(area, orientation, position, MAX_HP, new ArrayList<>(Arrays.asList(Vulnerability.PHYSICAL, Vulnerability.MAGIC)), "zelda/flameSkull", 3 , new Orientation[] {Orientation.UP, Orientation.LEFT, Orientation.DOWN, Orientation.RIGHT});
         handler = new FlameSkullHandler();
         lifeTime = MIN_LIFE_TIME + RandomGenerator.getInstance().nextInt(MAX_LIFE_TIME - MIN_LIFE_TIME);
     }
@@ -81,7 +81,7 @@ public class FlameSkull extends Monster implements FlyableEntity {
     class FlameSkullHandler implements ARPGInteractionVisitor {
         @Override
         public void interactWith(Monster monster) {
-            monster.weaken(1.f, Vulnerability.FIRE);
+            monster.weaken(2.f, Vulnerability.FIRE);
         }
 
         @Override

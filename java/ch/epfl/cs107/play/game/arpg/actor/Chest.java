@@ -47,7 +47,7 @@ public class Chest extends AreaEntity {
         open = false;
         signal = Logic.FALSE;
 
-        inventory = new ARPGInventory(0,150);
+        inventory = new ARPGInventory(0,300);
         inventory.add(ARPGItem.STAFF, 1);
         inventory.add(ARPGItem.ARROW, 20);
         inventory.add(ARPGItem.WINGS, 1);

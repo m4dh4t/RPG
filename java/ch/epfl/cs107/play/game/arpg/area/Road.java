@@ -22,6 +22,7 @@ public class Road extends ARPGArea {
         registerActor(new Waterfall(this, new DiscreteCoordinates(15,4)));
         registerActor(new Orb(this, new DiscreteCoordinates(19, 8), new Bridge(this, new DiscreteCoordinates(15,10))));
         registerActor(new LogMonster(this, Orientation.UP, new DiscreteCoordinates(10, 6)));
+        registerActor(new LogMonster(this, Orientation.UP, new DiscreteCoordinates(6, 3)));
     }
 
     @Override
