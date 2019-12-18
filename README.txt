@@ -97,9 +97,10 @@ Paradise :
 
 ____________________________________❄_IMAGES_❄___________________________________
 
-We used 4 images that were not included in the default folders.
+We used 7 images that were not included in the default folders.
 These were :
 	- The chest sprite : https://lecodemv.github.io/leTBS/user-guide/entities.html#sprite-configuration
 	- The chest key sprite : http://www.iconarchive.com/show/noto-emoji-objects-icons-by-google/62952-old-key-icon.html
-	- Any other sprite was hand-made (The flying animations, the death animation,
-	the wings icon)
+	- Any other sprite/animation was hand-made (The flying animations, the death
+	animation, the wings icon), the paradise and the god were also hand-made from
+ 	a model.
