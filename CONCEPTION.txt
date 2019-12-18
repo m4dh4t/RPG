@@ -46,6 +46,19 @@ RPGSprite.java :
 	This method is basically the same as the third one except it extracts
 	the sprites vertically and not horizontally.
 
+SwingWindow.java :
+	- setCloseRequested(), used in ARPG.java :
+	We want to let the player decide at one point if he wants to quit the game.
+	By closing the window, it quits the game (when he dies for example or when
+	he saves the king).
+
+Window.java :
+	- setCloseRequested(), overridden in SwingWindow.java, used in ARPG.java :
+	We could have another type of window and we still want that window to
+	give the possibility to close it so we put this method in window.java.
+	The class that implements it in our project is SwingWindow.java so we
+	simply overrode this method, as explained above.
+
 _______________________________________❄_EXTENSIONS_❄_____________________________________
 
 The new features added to the game are :
@@ -57,6 +70,7 @@ The new features added to the game are :
 	- Chest in Temple
 	- Entities can be invincible
 	- Shop in Village
+	- Death animation and meet with God if you die/if you save the king.
 
 ______________________________❄_NEW_CLASSES_AND_INTERFACES_❄_______________________________
 
@@ -88,6 +102,9 @@ In arpg/actor :
 	- DarkLord.java
 	- FireSpell.java
 	- FlameSkull.java
+	- God.java :
+		Class representing God that you can find in paradise if you die or
+		if you save the king.
 	- Grass.java
 	- Heart.java
 	- King.java :
@@ -105,11 +122,15 @@ In arpg/actor :
 	- Waterfall.java :
 		Class representing a waterfall. We created this class to modelize
 		the waterfall in Road.
+	- WhiteHalo.java :
+		We created this class to bring a halo that fades over time when
+		the player respawns or when he gets to paradise.
 
 In arpg/area :
 	- ARPGArea.java
 	- Castle.java
 	- Farm.java
+	- Paradise.java
 	- Road.java
 	- RoadCastle.java
 	- RoadTemple.java

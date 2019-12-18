@@ -22,6 +22,7 @@ public interface Window extends Canvas, Audio, Attachable {
     /** @return (boolean): whether the user tried to close the window */
     boolean isCloseRequested();
 
+    /** Method used to force the window to close if we want to quit the game*/
     void setCloseRequested();
     
     // additional update with delta time parameter can be added if wanted
