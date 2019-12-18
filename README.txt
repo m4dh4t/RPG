@@ -21,7 +21,23 @@ __________________________________❄_CONTROLS_❄_____________________________
 
 _____________________________❄_ADDITIONAL_CONTROLS_❄____________________________
 
-In RoadCastle.java, you have additional controls, as the instructions mention.
+We added some additional controls if you want to make some tests with our
+inventory, as mentioned in the instructions :
+
+		R :	add an arrow
+		T :	add a sword
+		Y :	add a staff
+		U :	add a bow
+		I :	add a bomb
+		O :	add a castle key
+		P :	add wings
+		K :	add a chest key
+
+You will mostly need to add some space to the inventory to be able to carry the
+items you add (second argument of the constructor of ARPGInventory which is called
+in the player constructor, line 77 of class ARPGPlayer).
+
+In RoadCastle.java, you have additional controls :
 
 		L :	spawn a Log Monster
 		S :	spawn a Flame Skull
@@ -52,12 +68,16 @@ Village :
 	- You can use the arrow keys to select an item to buy. The price
 	is indicated in the bottom-right corner of the window. Your money
 	is indicated in the bottom-left corner. The numbers under each
-	article is the available number of each article.
+	article is the available number of each article. If you see that
+	you cannot buy an item, do not worry ! It simply means that you
+	do not have enough money or that you are too heavy. The best way
+	to get lighter is to drop your bombs by pressing SPACE (bombs are
+	the most heavy item).
 	- To find money to spend in the shop, you can either kill log
 	monsters or find coins in the grass in Road.
 
 Road :
-	- There is a log monster that you can fight.
+	- There is two log monsters that you can fight.
 	- There is a zone of grass that you can cut with your sword or
 	burn with your bomb. Beware ! Burning grass can hit you. Cutting
 	grass can give you a coin or a heart.

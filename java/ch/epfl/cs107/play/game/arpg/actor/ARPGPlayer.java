@@ -188,6 +188,33 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     private void inventoryHandler(){
         final Button TAB = getOwnerArea().getKeyboard().get(Keyboard.TAB);
         final Button SPACE = getOwnerArea().getKeyboard().get(Keyboard.SPACE);
+        final Button R = getOwnerArea().getKeyboard().get(Keyboard.R);
+        final Button T = getOwnerArea().getKeyboard().get(Keyboard.T);
+        final Button Y = getOwnerArea().getKeyboard().get(Keyboard.Y);
+        final Button U = getOwnerArea().getKeyboard().get(Keyboard.U);
+        final Button I = getOwnerArea().getKeyboard().get(Keyboard.I);
+        final Button O = getOwnerArea().getKeyboard().get(Keyboard.O);
+        final Button P = getOwnerArea().getKeyboard().get(Keyboard.P);
+        final Button K = getOwnerArea().getKeyboard().get(Keyboard.K);
+
+        //Used for tests, as asked in the instructions
+        if (R.isPressed()) {
+            inventory.add(ARPGItem.ARROW, 1);
+        } else if (T.isPressed()) {
+            inventory.add(ARPGItem.SWORD, 1);
+        } else if (Y.isPressed()) {
+            inventory.add(ARPGItem.STAFF, 1);
+        } else if (U.isPressed()) {
+            inventory.add(ARPGItem.BOW, 1);
+        } else if (I.isPressed()) {
+            inventory.add(ARPGItem.BOMB, 1);
+        } else if (O.isPressed()) {
+            inventory.add(ARPGItem.CASTLEKEY, 1);
+        } else if (P.isPressed()) {
+            inventory.add(ARPGItem.WINGS, 1);
+        } else if (K.isPressed()) {
+            inventory.add(ARPGItem.CHESTKEY, 1);
+        }
 
         /*If the player does not have any currentItem anymore we switch it (f. ex. if a player
         uses his last bomb or if the constructor assigns as the player's current item an item
@@ -337,9 +364,14 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
 
     @Override
     public void draw(Canvas canvas) {
-        if (showAnimations && !currentAnimation.isCompleted()) { //Used for blink
+        if (showAnimations && currentAnimation != deathAnimation) { //Used for blink
             currentAnimation.draw(canvas);
         }
+        //Prevents from seeing the first frame of the death animation when it is actually completed
+        if (currentAnimation == deathAnimation && !currentAnimation.isCompleted()) {
+            currentAnimation.draw(canvas);
+        }
+
         statusGUI.drawGUI(canvas, hp, currentItem, inventory.getMoney());
     }
 

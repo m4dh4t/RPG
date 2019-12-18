@@ -104,7 +104,8 @@ In arpg/actor :
 	- FlameSkull.java
 	- God.java :
 		Class representing God that you can find in paradise if you die or
-		if you save the king.
+		if you save the king. He is so kind that he will leave your items
+		when you respawn, you won't need to find them back.
 	- Grass.java
 	- Heart.java
 	- King.java :

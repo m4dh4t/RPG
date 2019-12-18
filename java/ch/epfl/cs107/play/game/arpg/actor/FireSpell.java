@@ -133,12 +133,12 @@ public class FireSpell extends AreaEntity implements Interactor {
     private class FireSpellHandler implements ARPGInteractionVisitor {
         @Override
         public void interactWith(ARPGPlayer player) {
-            player.weaken(1.f);
+            player.weaken(2.f);
         }
 
         @Override
         public void interactWith(Monster monster) {
-            monster.weaken(0.5f, Vulnerability.FIRE);
+            monster.weaken(1.f, Vulnerability.FIRE);
         }
 
         @Override

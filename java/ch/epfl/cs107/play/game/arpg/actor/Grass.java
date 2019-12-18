@@ -78,6 +78,7 @@ public class Grass extends AreaEntity implements Interactor {
         if (!cut && !burnt) {
             sprite.draw(canvas);
         } else if (!currentAnimation.isCompleted()){
+            //Prevents from seeing the first frame of the animation when it is actually completed
             currentAnimation.draw(canvas);
         }
     }

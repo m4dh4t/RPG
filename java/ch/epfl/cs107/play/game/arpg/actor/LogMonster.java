@@ -82,9 +82,9 @@ public class LogMonster extends Monster {
         @Override
         public void interactWith(ARPGPlayer player) {
             if (currentState instanceof LogMonsterAttacking) {
-                player.weaken(2);
+                player.weaken(3);
             } else {
-                move(ANIMATION_DURATION); //Starts to move to prevent the logMonster to fall asleep
+                move(ANIMATION_DURATION/2); //Starts to move to prevent the logMonster to fall asleep
                 // if he wakes up seeing the player (he would not move so he would instantly fall asleep)
                 currentState = new LogMonsterAttacking(); //If not attacking, switches to mode "attack"
             }
@@ -116,7 +116,7 @@ public class LogMonster extends Monster {
             ArrayList<DiscreteCoordinates> list = new ArrayList<>();
             Vector orientationVector = getOrientation().toVector();
 
-            for (int i = 0; i <= FIELD_OF_VIEW_DISTANCE; ++i) {
+            for (int i = 1; i <= FIELD_OF_VIEW_DISTANCE; ++i) {
                  Vector vector = getCurrentMainCellCoordinates().toVector().add(orientationVector.mul(i));
                  list.add(new DiscreteCoordinates((int) vector.x, (int) vector.y));
             }
