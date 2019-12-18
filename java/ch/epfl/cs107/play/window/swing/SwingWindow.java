@@ -494,5 +494,9 @@ public final class SwingWindow extends Node implements Window {
 		 }
 		 return height;
     }
-	
+
+    @Override
+	public void setCloseRequested() {
+		closeRequested = true;
+	}
 }

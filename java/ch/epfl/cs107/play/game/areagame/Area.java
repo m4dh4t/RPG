@@ -345,5 +345,4 @@ public abstract class Area implements Playable {
         // by default does nothing
     	// can save the Area state somewhere if wanted
     }
-
 }

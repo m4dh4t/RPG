@@ -21,6 +21,8 @@ public interface Window extends Canvas, Audio, Attachable {
         
     /** @return (boolean): whether the user tried to close the window */
     boolean isCloseRequested();
+
+    void setCloseRequested();
     
     // additional update with delta time parameter can be added if wanted
     // e.g. for mouse interpolation

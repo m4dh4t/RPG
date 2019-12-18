@@ -58,4 +58,8 @@ public interface ARPGInteractionVisitor extends RPGInteractionVisitor {
     default void interactWith(King king) {
         //by default the interaction is empty
     }
+
+    default void interactWith(God god) {
+        //by default the interaction is empty
+    }
 }

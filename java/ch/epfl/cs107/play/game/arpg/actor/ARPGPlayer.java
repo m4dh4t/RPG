@@ -7,15 +7,19 @@ import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.ARPGItem;
+import ch.epfl.cs107.play.game.arpg.area.Farm;
+import ch.epfl.cs107.play.game.arpg.area.Paradise;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.*;
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
 
+import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,6 +29,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     private final static int BOW_ANIMATION_DURATION = 3;
     private final static int SWORD_ANIMATION_DURATION = 1;
     private final static int STAFF_ANIMATION_DURATION = 2;
+    private final static int DEATH_ANIMATION_DURATION = 2;
     private final static float BLINK_DURATION = 0.1f;
     private final static float COOLDOWN = 0.75f;
 
@@ -35,6 +40,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     private Animation[] bowAnimations;
     private Animation[] staffAnimations;
     private Animation[] flyAnimations;
+    private Animation deathAnimation;
     private Animation currentAnimation;
     private boolean animateAction;
 
@@ -53,6 +59,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     private float invincibleTimeLeft;
     private boolean showAnimations; //used to make the sprite blink when the player is invincible
     private float blinkTimeLeft;
+    private boolean gameOver;
+    private boolean quitGame;
 
     /**
      * Default Player constructor
@@ -66,6 +74,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         inventory = new ARPGInventory(50, 100);
         inventory.add(ARPGItem.BOMB, 3);
         inventory.add(ARPGItem.SWORD, 1);
+        inventory.add(ARPGItem.WINGS, 1);
+
         currentItem = ARPGItem.SWORD;
 
         hp = MAX_HP;
@@ -96,22 +106,34 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         Sprite[][] flySprites = RPGSprite.extractSprites("zelda/player.fly", 4, 1,2,this,16,32, new Orientation[] {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT});
         flyAnimations = RPGSprite.createAnimations(DEFAULT_ANIMATION_DURATION, flySprites);
 
+        Sprite[] deathSprites = new Sprite[20];
+        for(int i = 0; i < deathSprites.length; i++){
+            deathSprites[i] = new RPGSprite("zelda/player.death", 1, 2, this, new RegionOfInterest(0, 0, 16, 32), new Vector(0, i*0.25f), 1-(i*0.05f), 3001);
+        }
+        deathAnimation = new Animation(DEATH_ANIMATION_DURATION, deathSprites, false);
+
+        flyAnimations = RPGSprite.createAnimations(DEFAULT_ANIMATION_DURATION, flySprites);
+
         currentAnimation = idleAnimations[getOrientation().ordinal()];
         animateAction = false;
         actionTimer = 2.f;
         shootArrow = false;
+        gameOver = false;
+        quitGame = false;
     }
 
     private void moveOrientate(Orientation orientation, Button button) {
-        Keyboard keyboard = getOwnerArea().getKeyboard();
-        Button orientationKey = keyboard.get(Orientation.getCode(getOrientation()));
+        if(!isWeak()) {
+            Keyboard keyboard = getOwnerArea().getKeyboard();
+            Button orientationKey = keyboard.get(Orientation.getCode(getOrientation()));
 
-        if (button.isDown() && !animateAction) {
-            if (getOrientation() == orientation) {
-                move(animation_duration);
-            } else if (!isDisplacementOccurs() && !orientationKey.isDown()) { //Prevents the player from orientating if the key which corresponds to its orientation is down
-                orientate(orientation);
-                currentAnimation = canFly ? flyAnimations[orientation.ordinal()] : idleAnimations[orientation.ordinal()];
+            if (button.isDown() && !animateAction) {
+                if (getOrientation() == orientation) {
+                    move(animation_duration);
+                } else if (!isDisplacementOccurs() && !orientationKey.isDown()) { //Prevents the player from orientating if the key which corresponds to its orientation is down
+                    orientate(orientation);
+                    currentAnimation = canFly ? flyAnimations[orientation.ordinal()] : idleAnimations[orientation.ordinal()];
+                }
             }
         }
     }
@@ -124,6 +146,25 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     @Override
     public boolean isInvincible() {
         return invincible;
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public void restartGame() {
+        orientate(Orientation.DOWN);
+        currentAnimation = idleAnimations[getOrientation().ordinal()];
+        gameOver = false;
+        strengthen(MAX_HP);
+    }
+
+    public void quitGame() {
+        quitGame = true;
+    }
+
+    public boolean getQuitGame() {
+        return quitGame;
     }
 
     private void inventoryHandler(){
@@ -227,10 +268,10 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
 
     @Override
     public boolean wantsViewInteraction() {
-        return getOwnerArea().getKeyboard().get(Keyboard.E).isPressed();
+        return getOwnerArea().getKeyboard().get(Keyboard.E).isPressed() || isGameOver();
     }
 
-    private boolean isWeak() {
+    public boolean isWeak() {
         return (hp <= 0.f);
     }
 
@@ -248,12 +289,22 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
             if (hp < 0) {
                 hp = 0;
             }
+
+            if(isWeak()){
+                currentAnimation = deathAnimation;
+            }
+        }
+    }
+
+    public void death(){
+        if (!getCurrentMainCellCoordinates().equals(new DiscreteCoordinates(11, 9))) {
+            move(30);
         }
     }
 
     @Override
     public void draw(Canvas canvas) {
-        if (showAnimations) { //Used for blink
+        if (showAnimations && !currentAnimation.isCompleted()) { //Used for blink
             currentAnimation.draw(canvas);
         }
         statusGUI.drawGUI(canvas, hp, currentItem, inventory.getMoney());
@@ -261,7 +312,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
 
     @Override
     public void update(float deltaTime) {
-        if (isInvincible()) {
+        if (isInvincible() && !isWeak()) {
             invincibleTimeLeft -= deltaTime;
             blinkTimeLeft -= deltaTime;
 
@@ -302,10 +353,30 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
             }
         }
 
+        if(keyboard.get(Keyboard.K).isPressed()){
+            weaken(10);
+        }
+
         moveOrientate(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
         moveOrientate(Orientation.UP, keyboard.get(Keyboard.UP));
         moveOrientate(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
         moveOrientate(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
+
+        if(isWeak()){
+            deathAnimation.update(deltaTime);
+            if(currentAnimation.isCompleted()){
+                gameOver = true;
+                orientate(Orientation.UP);
+            }
+        }
+
+        if(gameOver){
+            death();
+            if(currentAnimation == deathAnimation && getOwnerArea() instanceof Paradise) {
+                deathAnimation.reset();
+                currentAnimation = idleAnimations[getOrientation().ordinal()];
+            }
+        }
 
         inventoryHandler();
         actionTimer += deltaTime;
