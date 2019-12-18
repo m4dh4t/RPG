@@ -27,6 +27,11 @@ public class ARPGBehavior extends AreaBehavior {
         }
     }
 
+    /**
+     * Method used in ARPGArea.java to prevent the entities from moving (or to allow him back to move)
+     * (We want that nobody moves while the player is shopping).
+     * @param b (boolean): True to allow the entities to move. False to restrict them to move.
+     */
     public void setCanEnter(boolean b) {
         canEnter = b;
     }
@@ -82,7 +87,8 @@ public class ARPGBehavior extends AreaBehavior {
 
         @Override
         protected boolean canEnter(Interactable entity) {
-            if (entity instanceof FlyableEntity && ((FlyableEntity) entity).canFly()) { //Doesn't make a ClassCastException if entity isn't a FlyableEntity because it first checks if it is one
+            //Doesn't make a ClassCastException if entity isn't a FlyableEntity because it first checks if it is one
+            if (entity instanceof FlyableEntity && ((FlyableEntity) entity).canFly()) {
                 return canEnter && type.isFlyable;
             } else {
                 return canEnter && type.isWalkable && (!hasNonTraversableContent() || !entity.takeCellSpace());

@@ -20,6 +20,7 @@ public class King extends AreaEntity {
     private Sprite sprite;
     private Dialog dialog;
     private boolean showDialog;
+
     /**
      * King constructor
      *

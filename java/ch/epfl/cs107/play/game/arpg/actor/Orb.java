@@ -16,6 +16,7 @@ public class Orb extends MovableAreaEntity {
     private final static int ANIMATION_DURATION = 3;
     private TriggerableEntity triggerableEntity;
     private Animation animation;
+
     /**
      * Orb constructor
      *
@@ -31,6 +32,9 @@ public class Orb extends MovableAreaEntity {
         getOwnerArea().registerActor(triggerableEntity);
     }
 
+    /**
+     * Method used to trigger the triggerable entity
+     */
     public void hit() {
         Sprite[] sprites = RPGSprite.extractSprites("zelda/orb", 6, 1.f, 1.f, this, 32, 32, 32);
         animation = new Animation(ANIMATION_DURATION, sprites);

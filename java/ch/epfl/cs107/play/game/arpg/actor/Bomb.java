@@ -28,7 +28,7 @@ public class Bomb extends AreaEntity implements Interactor {
     private boolean exploded;
 
     /**
-     * Default AreaEntity constructor
+     * Bomb constructor
      *
      * @param area        (Area): Owner area. Not null
      * @param position    (DiscreteCoordinate): Initial position of the entity in the Area. Not null
@@ -54,17 +54,16 @@ public class Bomb extends AreaEntity implements Interactor {
     @Override
     public void draw(Canvas canvas) {
         if (!exploded) {
+            //Turns red just before it explodes
             if(timer <= 1){
                 redSprite.draw(canvas);
             } else {
                 sprite.draw(canvas);
             }
-        } else {
-            if (!animation.isCompleted()) {
-                animation.draw(canvas);
-            } else {
-                getOwnerArea().unregisterActor(this);
-            }
+        } else if (!animation.isCompleted()) { //We need this check to
+            //make sure the first frame is not drawn just before
+            //unregistering.
+            animation.draw(canvas);
         }
     }
 
@@ -121,7 +120,11 @@ public class Bomb extends AreaEntity implements Interactor {
                 explode();
             }
         } else {
-            animation.update(deltaTime);
+            if (animation.isCompleted()) {
+                getOwnerArea().unregisterActor(this);
+            } else {
+                animation.update(deltaTime);
+            }
         }
     }
 

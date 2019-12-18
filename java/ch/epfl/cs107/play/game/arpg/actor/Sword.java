@@ -36,6 +36,7 @@ public class Sword extends Weapon {
 
     @Override
     public void update(float deltaTime) {
+        //As soon as the sword hits something, it unregisters itself.
         if(hit){
             getOwnerArea().unregisterActor(this);
         }

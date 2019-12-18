@@ -31,13 +31,6 @@ public class CastleKey extends CollectableAreaEntity {
     }
 
     @Override
-    public void update(float deltaTime) {
-        if(isCollected()){
-            getOwnerArea().unregisterActor(this);
-        }
-    }
-
-    @Override
     public void acceptInteraction(AreaInteractionVisitor v) {
         ((ARPGInteractionVisitor)v).interactWith(this);
     }

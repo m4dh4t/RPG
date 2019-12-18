@@ -19,6 +19,7 @@ public class RoadCastle extends ARPGArea {
         registerActor(new DarkLord(this, Orientation.DOWN, new DiscreteCoordinates(9,9)));
     }
 
+    //Used to spawn monsters
     @Override
     public void update(float deltaTime) {
         if (getKeyboard().get(Keyboard.S).isPressed()) {

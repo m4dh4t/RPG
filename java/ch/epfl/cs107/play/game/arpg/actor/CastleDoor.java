@@ -51,8 +51,7 @@ public class CastleDoor extends Door {
     public List<DiscreteCoordinates> getCurrentCells() {
         ArrayList<DiscreteCoordinates> list = new ArrayList<>(super.getCurrentCells());
         /*In addition to the main cells of the door, we also want the two cells above it to be
-        uncrossable when the door is closed. This prevents the flame skulls to fly there or
-        the dark lord to teleport there.
+        uncrossable when the door is closed. This prevents the dark lord to teleport there.
          */
         list.addAll(Arrays.asList(super.getCurrentCells().get(0).jump(0,1), super.getCurrentCells().get(1).jump(0,1)));
         return list;
@@ -60,12 +59,8 @@ public class CastleDoor extends Door {
 
     @Override
     public boolean isViewInteractable() {
-        return !isOpen(); //Only accepts view interactions when it is closed to prevent the player to enter in the castle just by pressing E (and not moving into it)
-    }
-
-    @Override
-    protected void setSignal(Logic signal) {
-        super.setSignal(signal); //Override of this method because it has protected access in Door (rpg package) and we want to use it in ARPGPlayer in arpg package
+        return !isOpen(); //Only accepts view interactions when it is closed to prevent
+        // the player to enter in the castle just by pressing E (and not moving into it)
     }
 
     @Override

@@ -30,6 +30,7 @@ public class Bridge extends TriggerableEntity {
 
     @Override
     public void draw(Canvas canvas) {
+        //Draw the bridge only if it is triggered
         if(isTriggered()){
             sprite.draw(canvas);
         }
@@ -40,6 +41,8 @@ public class Bridge extends TriggerableEntity {
         return new ArrayList<>(Arrays.asList(getCurrentMainCellCoordinates().jump(1,0), getCurrentMainCellCoordinates().jump(2,0)));
     }
 
+    //We do not want the player to cross the river if the bridge
+    //has not yet been triggered.
     @Override
     public boolean takeCellSpace() {
         return !isTriggered();

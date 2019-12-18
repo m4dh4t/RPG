@@ -51,6 +51,7 @@ public class ARPGPlayerStatusGUI implements Graphics {
 
         //BACKGROUND
         gearDisplay[0] = new ImageGraphics(ResourcePath.getSprite("zelda/gearDisplay"), 1.5f, 1.5f, new RegionOfInterest(0, 0, 32, 32), anchor.add(new Vector(0, height - 1.5f)), 1, 2000);
+
         //ITEM
         if (item != null) {
             if (item == ARPGItem.WINGS) {

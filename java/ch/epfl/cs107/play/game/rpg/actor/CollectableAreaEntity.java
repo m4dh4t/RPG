@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class CollectableAreaEntity extends AreaEntity {
-    boolean collected;
+    private boolean collected;
 
     /**
      * Default AreaEntity constructor
@@ -23,10 +23,17 @@ public abstract class CollectableAreaEntity extends AreaEntity {
         collected = false;
     }
 
+    /**
+     * Method returning if the entity has been collected or not.
+     * @return (boolean): if the entity has been collected.
+     */
     public boolean isCollected() {
         return collected;
     }
 
+    /**
+     * As soon as it is collected, it disappears.
+     */
     public void collect(){
         collected = true;
         getOwnerArea().unregisterActor(this);

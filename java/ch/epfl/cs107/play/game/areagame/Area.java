@@ -121,6 +121,11 @@ public abstract class Area implements Playable {
         return registeredActors.add(a);
     }
 
+    /**
+     * Register an array of actors : will be added at next update
+     * @param a (Actor[]): The actors to register, not null
+     * @return (boolean): true if the actors are correctly registered
+     */
     public final boolean registerActors(Actor[] a){
         return registeredActors.addAll(Arrays.asList(a));
     }

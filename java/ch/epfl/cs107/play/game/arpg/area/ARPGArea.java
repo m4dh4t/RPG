@@ -4,7 +4,6 @@ import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.arpg.ARPG;
 import ch.epfl.cs107.play.game.arpg.ARPGBehavior;
 import ch.epfl.cs107.play.io.FileSystem;
-import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Window;
 
 abstract public class ARPGArea extends Area {
@@ -34,6 +33,11 @@ abstract public class ARPGArea extends Area {
         return ARPG.CAMERA_SCALE_FACTOR;
     }
 
+    /**
+     * Method used in Shop.java to prevent the entities from moving (or to allow him back to move)
+     * (We want that nobody moves while the player is shopping).
+     * @param b (boolean): True to allow the entities to move. False to restrict them to move.
+     */
     public void setCanEnter(boolean b) {
         behavior.setCanEnter(b);
     }

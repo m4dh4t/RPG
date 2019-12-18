@@ -6,7 +6,6 @@ import ch.epfl.cs107.play.game.arpg.actor.*;
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,13 +50,21 @@ public enum ARPGItem implements InventoryItem {
         return spriteName;
     }
 
+    /**
+     * This method is called when we want to use the current item.
+     * @param area (Area): The area in which we want to register the item.
+     * @param orientation (Orientation): The orientation of the player to know his front cell
+     * @param position (DiscreteCoordinates): The position of the player to calculate where to register the item
+     *                 (in addition to his orientation).
+     * @return (boolean): if the item has actually been used.
+     */
     public boolean use(Area area, Orientation orientation, DiscreteCoordinates position){
-        List<DiscreteCoordinates> frontCells = Collections.singletonList(position.jump(orientation.toVector()));
+        List<DiscreteCoordinates> frontCell = Collections.singletonList(position.jump(orientation.toVector()));
 
         switch (this){
             case BOMB:
                 Bomb bomb = new Bomb(area, position.jump(orientation.toVector()), 3);
-                if(area.canEnterAreaCells(bomb, frontCells)){
+                if(area.canEnterAreaCells(bomb, frontCell)){
                     area.registerActor(bomb);
                     return true;
                 } else {
@@ -67,7 +74,7 @@ public enum ARPGItem implements InventoryItem {
                 return true;
             case ARROW:
                 Arrow arrow = new Arrow(area, orientation, position.jump(orientation.toVector()), 5f, 5f);
-                if(area.canEnterAreaCells(arrow, frontCells)){
+                if(area.canEnterAreaCells(arrow, frontCell)){
                     area.registerActor(arrow);
                     return true;
                 } else {
@@ -75,7 +82,7 @@ public enum ARPGItem implements InventoryItem {
                 }
             case STAFF:
                 MagicWaterProjectile magicWaterProjectile = new MagicWaterProjectile(area, orientation, position.jump(orientation.toVector()), 5f, 5f);
-                if(area.canEnterAreaCells(magicWaterProjectile, frontCells)){
+                if(area.canEnterAreaCells(magicWaterProjectile, frontCell)){
                     area.registerActor(magicWaterProjectile);
                     return true;
                 } else {
@@ -83,7 +90,7 @@ public enum ARPGItem implements InventoryItem {
                 }
             case SWORD:
                 Sword sword = new Sword(area, orientation, position.jump(orientation.toVector()));
-                if(area.canEnterAreaCells(sword, frontCells)){
+                if(area.canEnterAreaCells(sword, frontCell)){
                     area.registerActor(sword);
                     return true;
                 } else {

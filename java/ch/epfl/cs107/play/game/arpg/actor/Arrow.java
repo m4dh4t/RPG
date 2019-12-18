@@ -27,8 +27,8 @@ public class Arrow extends Projectile {
      * @param area        (Area): Owner area. Not null
      * @param orientation (Orientation): Initial orientation of the entity. Not null
      * @param position    (Coordinate): Initial position of the entity. Not null
-     * @param moveDuration
-     * @param maxTravel
+     * @param moveDuration (float): move speed of the arrow
+     * @param maxTravel (float): max distance before the arrow disappears
      */
     public Arrow(Area area, Orientation orientation, DiscreteCoordinates position, float moveDuration, float maxTravel) {
         super(area, orientation, position, moveDuration, maxTravel);
@@ -56,6 +56,9 @@ public class Arrow extends Projectile {
         other.acceptInteraction(handler);
     }
 
+    /*We wanted the arrow to have view interactions so that the arrow disappears just before the cell it interacts with
+     and not when it is on the cell. (its field of view is the cell just in front of it)
+     */
     @Override
     public boolean wantsViewInteraction() {
         return true;
@@ -65,7 +68,7 @@ public class Arrow extends Projectile {
         @Override
         public void interactWith(Monster monster) {
             monster.weaken(1.f, Monster.Vulnerability.PHYSICAL);
-            setStop(true);
+            stop();
         }
 
         @Override
@@ -73,8 +76,10 @@ public class Arrow extends Projectile {
             if (grass.isBurnt()) {
                 grass.extinguish();
             } else {
-                if (!grass.isCut()) { //Checks if the grass is cut so that the arrow doesn't disappear if the grass is in a cut animation
-                    setStop(true);
+                //Checks if the grass is cut so that the arrow doesn't disappear
+                // if the grass is in a cut animation
+                if (!grass.isCut()) {
+                    stop();
                 }
                 grass.cut();
             }
@@ -83,7 +88,7 @@ public class Arrow extends Projectile {
         @Override
         public void interactWith(Bomb bomb) {
             bomb.explode();
-            setStop(true);
+            stop();
         }
 
         @Override
@@ -94,7 +99,7 @@ public class Arrow extends Projectile {
         @Override
         public void interactWith(Orb orb) {
             orb.hit();
-            setStop(true);
+            stop();
         }
     }
 }
