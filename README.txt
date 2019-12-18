@@ -101,6 +101,5 @@ We used 4 images that were not included in the default folders.
 These were :
 	- The chest sprite : https://lecodemv.github.io/leTBS/user-guide/entities.html#sprite-configuration
 	- The chest key sprite : http://www.iconarchive.com/show/noto-emoji-objects-icons-by-google/62952-old-key-icon.html
-	- The wings sprite : Home-made.
-	- The flying animations of the player : Home-made from the basic
-	sprites of the player and a blue triangle we also made.
+	- Any other sprite was hand-made (The flying animations, the death animation,
+	the wings icon)

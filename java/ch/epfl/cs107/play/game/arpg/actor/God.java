@@ -84,7 +84,9 @@ public class God extends AreaEntity implements Interactor {
 
     @Override
     public void draw(Canvas canvas) {
-        currentAnimation.draw(canvas);
+        if (!currentAnimation.isCompleted()) {
+            currentAnimation.draw(canvas);
+        }
 
         if(dialogs != null && skipCount <= 1){
             dialogs[skipCount].draw(canvas);
