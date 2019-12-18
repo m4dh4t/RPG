@@ -90,6 +90,10 @@ RoadCastle :
 Castle :
 	- Save the king and finish the game !
 
+Paradise :
+	- If you die or if you save the king you will find yourself in
+	paradise ! You can either restart the game or quit the game if
+	you die, or you simply win the game if you saved the king.
 
 ____________________________________❄_IMAGES_❄___________________________________
 
