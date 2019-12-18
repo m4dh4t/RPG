@@ -67,9 +67,9 @@ public class God extends AreaEntity implements Interactor {
         spellAnimation = new Animation(SPELL_ANIMATION_DURATION, spellSprites, false);
 
         Sprite[] selectedSprites = new Sprite[2];
-        selectedAnchor = new Vector(-3.8f,-1.65f);
-        selectedSprites[0] = new Sprite("zelda/inventory.selector",3f,3f,this, new RegionOfInterest(0,0,64,64), selectedAnchor,1.f,3001);
-        selectedSprites[1] = new Sprite("zelda/inventory.selector",3f,3f,this, new RegionOfInterest(64,0,64,64), selectedAnchor,1.f,3001);
+        selectedAnchor = new Vector(6.125f,8.f);
+        selectedSprites[0] = new Sprite("zelda/inventory.selector",3.75f,3.75f, null, new RegionOfInterest(0,0,64,64), selectedAnchor,1.f,3001);
+        selectedSprites[1] = new Sprite("zelda/inventory.selector",3.75f,3.75f, null, new RegionOfInterest(64,0,64,64), selectedAnchor,1.f,3001);
         //Did not use RPGSprite.extractSprites(...) here because we need the depth argument
         selectedAnimation = new Animation(SELECTED_ANIMATION_DURATION, selectedSprites);
 
@@ -102,12 +102,10 @@ public class God extends AreaEntity implements Interactor {
         ImageGraphics background = new ImageGraphics(ResourcePath.getSprite("zelda/inventory.background"), canvas.getScaledWidth(),canvas.getScaledHeight() - 2, null, backgroundAnchor, 1.f, 3000);
         background.draw(canvas);
         //CHOICES
-        Vector yesAnchor = new Vector(-1.5f, 0.f);
-        Vector noAnchor = new Vector(2.5f, 0.f);
+        Vector yesAnchor = anchor.add(-3.f, 1.f);
+        Vector noAnchor = anchor.add(3.f, 1.f);
         TextGraphics yes = new TextGraphics("YES", 1.25f, Color.BLACK, null, 1, false, false, yesAnchor, TextAlign.Horizontal.CENTER, TextAlign.Vertical.MIDDLE, 1.f, 3001);
         TextGraphics no = new TextGraphics("NO", 1.25f, Color.BLACK, null, 1, false, false, noAnchor, TextAlign.Horizontal.CENTER, TextAlign.Vertical.MIDDLE, 1.f, 3001);
-        yes.setParent(this);
-        no.setParent(this);
         yes.draw(canvas);
         no.draw(canvas);
         //SELECTOR
@@ -122,10 +120,10 @@ public class God extends AreaEntity implements Interactor {
 
         if (RIGHT.isPressed() || LEFT.isPressed()) {
             if (selectedSlot == 0) {
-                selectedAnchor = selectedAnchor.add(4.5f, 0f);
+                selectedAnchor = selectedAnchor.add(6.25f, 0f);
                 selectedSlot = 1;
             } else {
-                selectedAnchor = selectedAnchor.add(-4.5f, 0f);
+                selectedAnchor = selectedAnchor.sub(6.25f, 0f);
                 selectedSlot = 0;
             }
             selectedAnimation.setAnchor(selectedAnchor);

@@ -255,8 +255,8 @@ public class Shop extends AreaEntity {
                 selectedAnimation.setAnchor(selectedAnchor);
             }
             selectedSlot[0] = Math.min(selectedSlot[0] + 1, 1); //Has only two rows
-        } else if (RIGHT.isPressed()) { //Max column case
-            if (selectedSlot[1] != 3) {
+        } else if (RIGHT.isPressed()) {
+            if (selectedSlot[1] != 3) { //Max column case
                 selectedAnchor = selectedAnchor.add(3, 0);
                 selectedAnimation.setAnchor(selectedAnchor);
             }

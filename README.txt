@@ -1,10 +1,10 @@
-﻿____________________________❄_HOW_TO_LAUNCH_❄_____________________________
+﻿_______________________________❄_HOW_TO_LAUNCH_❄________________________________
 
 
 		To launch the game simply run Play.java
 
 
-_______________________________❄_CONTROLS_❄_______________________________
+__________________________________❄_CONTROLS_❄__________________________________
 
 
 		UP : 	walk up
@@ -19,7 +19,7 @@ _______________________________❄_CONTROLS_❄_______________________________
 		W :	while shopping, makes you leave
 
 
-__________________________❄_ADDITIONAL_CONTROLS_❄__________________________
+_____________________________❄_ADDITIONAL_CONTROLS_❄____________________________
 
 In RoadCastle.java, you have additional controls, as the instructions mention.
 
@@ -28,7 +28,7 @@ In RoadCastle.java, you have additional controls, as the instructions mention.
 		B :	spawn a Bomb
 
 
-_________________________________❄_WINGS_❄_________________________________
+____________________________________❄_WINGS_❄___________________________________
 
 
 	We added wings to the game and we wanted to give some precision
@@ -40,7 +40,7 @@ _________________________________❄_WINGS_❄_________________________________
 	while flying to move faster.
 
 
-_________________________________❄_AREAS_❄_________________________________
+____________________________________❄_AREAS_❄___________________________________
 
 Farm :
 	- You spawn there. Nothing very interesting except 2 log monsters
@@ -91,12 +91,12 @@ Castle :
 	- Save the king and finish the game !
 
 
-________________________________❄_IMAGES_❄________________________________
+____________________________________❄_IMAGES_❄___________________________________
 
 We used 4 images that were not included in the default folders.
 These were :
 	- The chest sprite : https://lecodemv.github.io/leTBS/user-guide/entities.html#sprite-configuration
 	- The chest key sprite : http://www.iconarchive.com/show/noto-emoji-objects-icons-by-google/62952-old-key-icon.html
-	- The wings sprite : https://www.iconfinder.com/search/?q=wings&maximum=16
-	- The flying animations of the player : home-made from the basic
-	sprites of the player and a random blue triangle.
+	- The wings sprite : Home-made.
+	- The flying animations of the player : Home-made from the basic
+	sprites of the player and a blue triangle we also made.
