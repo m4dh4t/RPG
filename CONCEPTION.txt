@@ -49,7 +49,7 @@ RPGSprite.java :
 SwingWindow.java :
 	- setCloseRequested(), used in ARPG.java :
 	We want to let the player decide at one point if he wants to quit the game.
-	By closing the window, it quits the game (when he dies for example or when
+	By closing the window, it quits the game (when he dies or when
 	he saves the king).
 
 Window.java :
