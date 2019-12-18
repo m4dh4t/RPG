@@ -1,4 +1,4 @@
-﻿______________________❄_CHANGES_MADE_TO_DEFAULT_FILES_❄____________________
+﻿___________________________❄_CHANGES_MADE_TO_DEFAULT_FILES_❄___________________________
 
 Orientation.java :
 	- getCode(Orientation orientation), used in ARPGPlayer :
@@ -46,7 +46,7 @@ RPGSprite.java :
 	This method is basically the same as the third one except it extracts
 	the sprites vertically and not horizontally.
 
-_________________________________❄_EXTENSIONS_❄_______________________________
+_______________________________________❄_EXTENSIONS_❄_____________________________________
 
 The new features added to the game are :
 	- Animated Waterfall in Road
@@ -58,7 +58,7 @@ The new features added to the game are :
 	- Entities can be invincible
 	- Shop in Village
 
-__________________________❄_NEW_CLASSES_AND_INTERFACES_❄______________________
+______________________________❄_NEW_CLASSES_AND_INTERFACES_❄_______________________________
 
 You will find below each new class that we created. A brief description of the
 class is given if it is part of an extension.
@@ -142,7 +142,7 @@ In rpg/actor :
 		Abstract class representing a weapon. A weapon can be registered
 		on a cell and will want a cell interaction.
 
-_____________________________❄_CHOICES_OF_PACKAGES_❄__________________________
+___________________________________❄_CHOICES_OF_PACKAGES_❄________________________________
 
 Most of our classes have been put in the arpg/actor package. Each class that is
 not specific to an ARPG game has been put in the rpg or rpg/actor package. An
@@ -153,10 +153,15 @@ class is in arpg/actor except the areas and the ARPG handler which have been
 put in their packages respectively.
 
 
-________________________❄_DIFFERENCES_WITH_THE_INSTRUCTIONS_❄__________________
+______________________________❄_DIFFERENCES_WITH_THE_INSTRUCTIONS_❄________________________
 
 We did everything as the guideline told us to do except for the health system.
 Instead of representing each health point with a heart, we represented each
 health point with a half-heart, that means that a heart represents two health
 points. No difference is seen in-game, but we can manipulate integers instead
 of floats in our code as a half-heart is 1 health point instead of 1/2.
+
+We also did not create an ARPGCollectableAreaEntity class as the guideline would
+suggest in " Dans votre jeu ARPG, un objet ramassable aura une déclinaison spécifique
+: il sera automatiquement ramassé lorsqu’on lui marche dessus." because we did not
+find it useful to create a class only for this reason.
