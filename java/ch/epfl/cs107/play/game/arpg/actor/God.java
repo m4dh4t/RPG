@@ -47,6 +47,7 @@ public class God extends AreaEntity implements Interactor {
     private ARPGPlayer player;
     private boolean restartGame;
     private boolean quitGame;
+    private boolean hasInteracted;
 
     /**
      * God constructor
@@ -73,7 +74,8 @@ public class God extends AreaEntity implements Interactor {
         //Did not use RPGSprite.extractSprites(...) here because we need the depth argument
         selectedAnimation = new Animation(SELECTED_ANIMATION_DURATION, selectedSprites);
 
-        showChoices = true;
+        hasInteracted = false;
+        showChoices = false;
         restartGame = false;
         quitGame = false;
         handler = new GodHandler();
@@ -120,23 +122,33 @@ public class God extends AreaEntity implements Interactor {
         Button LEFT = keyboard.get(Keyboard.LEFT);
         Button ENTER = keyboard.get(Keyboard.ENTER);
 
-        if (RIGHT.isPressed() || LEFT.isPressed()) {
-            if (selectedSlot == 0) {
-                selectedAnchor = selectedAnchor.add(6.25f, 0f);
-                selectedSlot = 1;
-            } else {
-                selectedAnchor = selectedAnchor.sub(6.25f, 0f);
-                selectedSlot = 0;
+        if(ENTER.isPressed()){
+            ++skipCount;
+        }
+
+        if (showChoices) {
+            if (RIGHT.isPressed() || LEFT.isPressed()) {
+                if (selectedSlot == 0) {
+                    selectedAnchor = selectedAnchor.add(6.25f, 0f);
+                    selectedSlot = 1;
+                } else {
+                    selectedAnchor = selectedAnchor.sub(6.25f, 0f);
+                    selectedSlot = 0;
+                }
+                selectedAnimation.setAnchor(selectedAnchor);
+            } else if (ENTER.isPressed() && skipCount >= 3) {
+                showChoices = false;
+                currentAnimation = spellAnimation;
+
+                if (selectedSlot == 0) {
+                    restart();
+                } else {
+                    quit();
+                }
             }
-            selectedAnimation.setAnchor(selectedAnchor);
-        } else if (ENTER.isPressed() && skipCount >= 3){
-            showChoices = false;
+        } else if (ENTER.isPressed() && skipCount >= 2){
             currentAnimation = spellAnimation;
-            if(selectedSlot == 0){
-                restart();
-            } else {
-                quit();
-            }
+            quit();
         }
     }
 
@@ -153,14 +165,7 @@ public class God extends AreaEntity implements Interactor {
         currentAnimation.update(deltaTime);
         selectedAnimation.update(deltaTime);
 
-        Button enterButton = getOwnerArea().getKeyboard().get(Keyboard.ENTER);
-        if (enterButton.isPressed()) { //if Enter is pressed, the message disappears
-            ++skipCount;
-        }
-
-        if(skipCount >= 2){
-            controls();
-        }
+        controls();
 
         if(currentAnimation.isCompleted()) {
             if (restartGame) {
@@ -172,11 +177,19 @@ public class God extends AreaEntity implements Interactor {
     }
 
     public void speak(ARPGPlayer player){
+        hasInteracted = true;
         this.player = player;
         currentAnimation = speechAnimation;
         dialogs = new Dialog[2];
-        dialogs[0] = new Dialog("Welcome in paradise brave hero. Sadly, you failed your quest.", "zelda/dialog", getOwnerArea());
-        dialogs[1] = new Dialog("But there's still hope, do you want to try to save the kingdom again ?", "zelda/dialog", getOwnerArea());
+        if(player.isGameOver()){
+            dialogs[0] = new Dialog("Welcome in paradise brave hero. Sadly, you failed your quest.", "zelda/dialog", getOwnerArea());
+            dialogs[1] = new Dialog("But there's still hope, do you want to try to save the kingdom again ?", "zelda/dialog", getOwnerArea());
+            showChoices = true;
+        } else {
+            dialogs[0] = new Dialog("Welcome in paradise brave hero. You succeeded in your quest.", "zelda/dialog", getOwnerArea());
+            dialogs[1] = new Dialog("It's time for you to get some rest, you earned it. See you soon...", "zelda/dialog", getOwnerArea());
+            showChoices = false;
+        }
     }
 
     @Override
@@ -196,7 +209,7 @@ public class God extends AreaEntity implements Interactor {
 
     @Override
     public boolean wantsViewInteraction() {
-        return showChoices;
+        return !hasInteracted;
     }
 
     @Override

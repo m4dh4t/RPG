@@ -64,6 +64,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     private float blinkTimeLeft;
     private boolean gameOver;
     private boolean quitGame;
+    private boolean savedKing;
+    private boolean win;
 
     /**
      * ARPGPlayer constructor
@@ -119,6 +121,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         shootArrow = false;
         gameOver = false;
         quitGame = false;
+        savedKing = false;
+        win = false;
     }
 
     /**
@@ -129,7 +133,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
      * @param button (Button): Checks if the button is down.
      */
     private void moveOrientate(Orientation orientation, Button button) {
-        if(!isWeak()) {
+        if(!isWeak() && !hasWon()) {
             Keyboard keyboard = getOwnerArea().getKeyboard();
             Button orientationKey = keyboard.get(Orientation.getCode(getOrientation()));
 
@@ -179,6 +183,10 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
 
     public boolean getQuitGame() {
         return quitGame;
+    }
+
+    public boolean hasWon() {
+        return win;
     }
 
     /**
@@ -356,7 +364,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         }
     }
 
-    public void death(){
+    public void paradiseMove(){
         if (!getCurrentMainCellCoordinates().equals(new DiscreteCoordinates(11, 9))) {
             move(30);
         }
@@ -432,11 +440,18 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         }
 
         if(gameOver){
-            death();
+            paradiseMove();
             if(currentAnimation == deathAnimation && getOwnerArea() instanceof Paradise) {
                 deathAnimation.reset();
                 currentAnimation = idleAnimations[getOrientation().ordinal()];
             }
+        }
+
+        if(savedKing){
+            if(getOwnerArea().getKeyboard().get(Keyboard.ENTER).isPressed()){
+                win = true;
+            }
+            paradiseMove();
         }
 
         inventoryHandler();
@@ -545,6 +560,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         @Override
         public void interactWith(King king) {
             king.save();
+            savedKing = true;
         }
     }
 }

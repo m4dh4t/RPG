@@ -15,7 +15,7 @@ public class ARPG extends RPG {
 
     private ARPGPlayer player;
     private Area currentArea;
-    private final String startingArea = "zelda/Farm";
+    private final String startingArea = "zelda/Castle";
     private final DiscreteCoordinates startingPosition = new DiscreteCoordinates(6, 10);
 
     private void createAreas(){
@@ -31,16 +31,16 @@ public class ARPG extends RPG {
 
     @Override
     public void update(float deltaTime) {
-        if(player.isGameOver() && !(currentArea instanceof Paradise)){
+        if((player.isGameOver() || player.hasWon()) && !(currentArea instanceof Paradise)){
             player.leaveArea();
             currentArea = setCurrentArea("Paradise", true);
             player.enterArea(currentArea, new DiscreteCoordinates(11, 7));
-        } else if (!player.isGameOver() && currentArea instanceof Paradise){
+        } else if (!player.isGameOver() && !player.hasWon() && currentArea instanceof Paradise){
             player.leaveArea();
             currentArea = setCurrentArea("zelda/Farm", false);
             player.enterArea(currentArea, startingPosition);
             currentArea.registerActor(new WhiteHalo(currentArea, startingPosition));
-        } else if (player.isGameOver() && player.getQuitGame()){
+        } else if (player.getQuitGame()){
             getWindow().setCloseRequested();
         }
 
