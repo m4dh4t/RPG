@@ -432,7 +432,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         moveOrientate(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
 
         if(isWeak()){
-            deathAnimation.update(deltaTime);
+            currentAnimation.update(deltaTime);
             if(currentAnimation.isCompleted()){
                 gameOver = true;
                 orientate(Orientation.UP);
@@ -442,7 +442,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         if(gameOver){
             paradiseMove();
             if(currentAnimation == deathAnimation && getOwnerArea() instanceof Paradise) {
-                deathAnimation.reset();
+                currentAnimation.reset();
                 currentAnimation = idleAnimations[getOrientation().ordinal()];
             }
         }
@@ -452,6 +452,10 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
                 win = true;
             }
             paradiseMove();
+        }
+
+        if(getOwnerArea().getKeyboard().get(Keyboard.K).isPressed()){
+            weaken(10);
         }
 
         inventoryHandler();

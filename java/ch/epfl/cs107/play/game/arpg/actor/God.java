@@ -48,6 +48,8 @@ public class God extends AreaEntity implements Interactor {
     private boolean restartGame;
     private boolean quitGame;
     private boolean hasInteracted;
+    DiscreteCoordinates frontCell;
+
 
     /**
      * God constructor
@@ -74,6 +76,7 @@ public class God extends AreaEntity implements Interactor {
         //Did not use RPGSprite.extractSprites(...) here because we need the depth argument
         selectedAnimation = new Animation(SELECTED_ANIMATION_DURATION, selectedSprites);
 
+        frontCell = position.jump(getOrientation().toVector());
         hasInteracted = false;
         showChoices = false;
         restartGame = false;
@@ -94,7 +97,7 @@ public class God extends AreaEntity implements Interactor {
             dialogs[skipCount].draw(canvas);
         }
 
-        if(skipCount >= 2 && showChoices){
+        if(skipCount >= 2 && showChoices && player.getCurrentCells().contains(frontCell)){
             drawChoice(canvas);
         }
     }
