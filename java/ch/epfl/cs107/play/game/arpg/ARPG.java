@@ -15,7 +15,7 @@ public class ARPG extends RPG {
 
     private ARPGPlayer player;
     private Area currentArea;
-    private final String startingArea = "zelda/Castle";
+    private final String startingArea = "zelda/Farm";
     private final DiscreteCoordinates startingPosition = new DiscreteCoordinates(6, 10);
 
     private void createAreas(){

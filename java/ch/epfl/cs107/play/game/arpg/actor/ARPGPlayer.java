@@ -454,10 +454,6 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
             paradiseMove();
         }
 
-        if(getOwnerArea().getKeyboard().get(Keyboard.K).isPressed()){
-            weaken(10);
-        }
-
         inventoryHandler();
         actionTimer += deltaTime;
 
