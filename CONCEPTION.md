@@ -186,7 +186,7 @@ class is in arpg/actor except the areas and the ARPG handler which have been
 put in their packages respectively.
 
 
-### _DIFFERENCES_WITH_THE_INSTRUCTIONS_
+### _DIFFERENCES WITH THE INSTRUCTIONS_
 
 We did everything as the guideline told us to do except for the health system.
 Instead of representing each health point with a heart, we represented each
