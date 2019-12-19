@@ -1,67 +1,73 @@
-﻿___________________________❄_CHANGES_MADE_TO_DEFAULT_FILES_❄___________________________
+﻿### _CHANGES MADE TO DEFAULT FILES_
 
-Orientation.java :
-	- getCode(Orientation orientation), used in ARPGPlayer :
-	We added this method because we were having a bug letting the player
-	orientate when it would not be natural to do so. If the player was
-	facing a wall and holding down the key in the wall direction (f. ex.
-	the left arrow when facing a wall to the left) and pressed another
-	arrow key (f.ex. up) he would orientate to that direction without
-	moving. By adding this method, it is now impossible to do so, you
-	are stuck in the direction of the wall and you cannot orientate.
+#### `Orientation.java`
 
-Area.java :
-	- registerActors(Actor[] a), used in Road.java :
-	This method is useful if we want to register a lot of actors at once.
-	We used it in Road.java to spawn a full region of grass at once,
-	combined with the static method grassZone in Grass.
+	- getCode(Orientation orientation)
+	
+Used in `ARPGPlayer.java` :	
+We added this method because we were having a bug letting the player
+orientate when it would not be natural to do so. If the player was
+facing a wall and holding down the key in the wall direction (f. ex.
+the left arrow when facing a wall to the left) and pressed another
+arrow key (f.ex. up) he would orientate to that direction without
+moving. By adding this method, it is now impossible to do so, you
+are stuck in the direction of the wall and you cannot orientate.
 
-RPGSprite.java :
-	Every method added in RPGSprite.java is used to facilitate the
-	animations.
-	- extractSprites(String name, int nbFrames, float width, float height, 
-	Positionable parent, int regionWidth, int regionHeight), used in
-	Coin.java, FireSpell.java, Grass.java, Heart.java, MagicWaterProjectile.java,
-	Waterfall.java :
-	This method is useful when the entity linked to the sprites does not
-	have a specific orientation (or at least, the sprite does not change
-	even if the orientation does). Each of the classes that use this
-	method have their orientation independent of the sprites.
+#### `Area.java`
 
-	- extractSprites(String name, int nbFrames, float width, float height,
-	Positionable parent, int heightOfRegion, int regionWidth, int regionHeight),
-	used in Orb.java :
-	This method is useful if the sprites we want is not at the top of the
-	image. It allows us to choose the height of the region.
+	- registerActors(Actor[] a)
+Used in `Road.java` :
+This method is useful if we want to register a lot of actors at once.
+We used it in Road.java to spawn a full region of grass at once,
+combined with the static method grassZone in Grass.
 
-	- extractSprites(String name, int nbFrames, float width, float height,
-	Positionable parent, int regionWidth, int regionHeight, Vector anchor),
-	used in Bomb.java, Monster.java :
-	This method is basically the same as the first one except we can add
-	an anchor argument.
+#### `RPGSprite.java`
 
-	- extractVerticalSprites(String name, int nbFrames, float width,
-	float height, Positionable parent, int regionWidth, int regionHeight,
-	Vector anchor), used in LogMonster.java :
-	This method is basically the same as the third one except it extracts
-	the sprites vertically and not horizontally.
+Every method added in RPGSprite.java is used to facilitate the
+animations.
+	
+	- extractSprites(String name, int nbFrames, float width, float height, Positionable parent, int regionWidth, int regionHeight)
+Used in `Coin.java`, `FireSpell.java`, `Grass.java`, `Heart.java`,` MagicWaterProjectile.java`, `Waterfall.java` :
+This method is useful when the entity linked to the sprites does not
+have a specific orientation (or at least, the sprite does not change
+even if the orientation does). Each of the classes that use this
+method have their orientation independent of the sprites.
 
-SwingWindow.java :
-	- setCloseRequested(), used in ARPG.java :
-	We want to let the player decide at one point if he wants to quit the game.
-	By closing the window, it quits the game (when he dies or when
-	he saves the king).
+	- extractSprites(String name, int nbFrames, float width, float height, Positionable parent, int heightOfRegion, int regionWidth, int regionHeight)
+Used in `Orb.java` :
+This method is useful if the sprites we want is not at the top of the
+image. It allows us to choose the height of the region.
 
-Window.java :
-	- setCloseRequested(), overridden in SwingWindow.java, used in ARPG.java :
-	We could have another type of window and we still want that window to
-	give the possibility to close it so we put this method in window.java.
-	The class that implements it in our project is SwingWindow.java so we
-	simply overrode this method, as explained above.
+	- extractSprites(String name, int nbFrames, float width, float height, Positionable parent, int regionWidth, int regionHeight, Vector anchor)
+Used in `Bomb.java`, `Monster.java` :
+This method is basically the same as the first one except we can add
+an anchor argument.
 
-_______________________________________❄_EXTENSIONS_❄_____________________________________
+	- extractVerticalSprites(String name, int nbFrames, float width, float height, Positionable parent, int regionWidth, int regionHeight, Vector anchor)	
+Used in `LogMonster.java` :
+This method is basically the same as the third one except it extracts
+the sprites vertically and not horizontally.
+
+#### `SwingWindow.java`
+
+	- setCloseRequested()
+Used in `ARPG.java` :
+We want to let the player decide at one point if he wants to quit the game.
+By closing the window, it quits the game (when he dies or when
+he saves the king).
+
+#### `Window.java`
+	- setCloseRequested()
+Overridden in `SwingWindow.java`, used in `ARPG.java` :
+We could have another type of window and we still want that window to
+give the possibility to close it so we put this method in window.java.
+The class that implements it in our project is SwingWindow.java so we
+simply overrode this method, as explained above.
+
+### _EXTENSIONS_
 
 The new features added to the game are :
+
 	- Animated Waterfall in Road
 	- The player can fly if you have wings
 	- The player can sprint (or fly faster) by pressing Q
@@ -72,18 +78,19 @@ The new features added to the game are :
 	- Shop in Village
 	- Death animation and meet with God if you die/if you save the king.
 
-______________________________❄_NEW_CLASSES_AND_INTERFACES_❄_______________________________
+### _NEW CLASSES AND INTERFACES_
 
 You will find below each new class that we created. A brief description of the
 class is given if it is part of an extension.
 
+In `arpg` :
 
-In arpg :
 	- ARPG.java
 	- ARPGBehavior.java
 	- ARPGItem.java
 
-In arpg/actor :
+In `arpg/actor` :
+
 	- ARPGInventory.java
 	- ARPGPlayer.java
 	- ARPGPlayerStatusGUI.java
@@ -127,7 +134,8 @@ In arpg/actor :
 		We created this class to bring a halo that fades over time when
 		the player respawns or when he gets to paradise.
 
-In arpg/area :
+In `arpg/area` :
+
 	- ARPGArea.java
 	- Castle.java
 	- Farm.java
@@ -138,14 +146,17 @@ In arpg/area :
 	- Temple.java
 	- Village.java
 
-In arpg/handler :
+In `arpg/handler` :
+
 	- ARPGInteractionVisitor.java
 
-In rpg :
+In `rpg` :
+
 	- InventoryItem.java
 	- RPG.java
 
-In rpg/actor :
+In `rpg/actor` :
+
 	- CollectableAreaEntity.java
 	- FlyableEntity.java
 	- Inventory.java
@@ -164,7 +175,7 @@ In rpg/actor :
 		Abstract class representing a weapon. A weapon can be registered
 		on a cell and will want a cell interaction.
 
-___________________________________❄_CHOICES_OF_PACKAGES_❄________________________________
+### _CHOICES OF PACKAGES_
 
 Most of our classes have been put in the arpg/actor package. Each class that is
 not specific to an ARPG game has been put in the rpg or rpg/actor package. An
@@ -175,7 +186,7 @@ class is in arpg/actor except the areas and the ARPG handler which have been
 put in their packages respectively.
 
 
-______________________________❄_DIFFERENCES_WITH_THE_INSTRUCTIONS_❄________________________
+### _DIFFERENCES_WITH_THE_INSTRUCTIONS_
 
 We did everything as the guideline told us to do except for the health system.
 Instead of representing each health point with a heart, we represented each
@@ -183,7 +194,8 @@ health point with a half-heart, that means that a heart represents two health
 points. No difference is seen in-game, but we can manipulate integers instead
 of floats in our code as a half-heart is 1 health point instead of 1/2.
 
-We also did not create an ARPGCollectableAreaEntity class as the guideline would
-suggest in " Dans votre jeu ARPG, un objet ramassable aura une déclinaison spécifique
-: il sera automatiquement ramassé lorsqu’on lui marche dessus." because we did not
-find it useful to create a class only for this reason.
+We also did not create an ARPGCollectableAreaEntity class as the guideline would suggest : 
+
+    "Dans votre jeu ARPG, un objet ramassable aura une déclinaison spécifique: il sera automatiquement ramassé lorsqu’on lui marche dessus."
+    
+because we did not find necessary to create a class only for this reason.
