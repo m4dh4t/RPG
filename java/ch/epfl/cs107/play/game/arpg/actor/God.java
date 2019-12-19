@@ -6,8 +6,6 @@ import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.*;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.areagame.io.ResourcePath;
-import ch.epfl.cs107.play.game.arpg.ARPG;
-import ch.epfl.cs107.play.game.arpg.ARPGItem;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.Dialog;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
@@ -93,10 +91,13 @@ public class God extends AreaEntity implements Interactor {
             currentAnimation.draw(canvas);
         }
 
+        //Prevent IndexOutOfBound by stopping the dialog if it's empty or skipContent is out of the array
         if(dialogs != null && skipCount <= 1){
             dialogs[skipCount].draw(canvas);
         }
 
+        //We want to show choices to the player only if he skipped the dialogs first
+        //and he his not moving (in the cell in front of God)
         if(skipCount >= 2 && showChoices && player.getCurrentCells().contains(frontCell)){
             drawChoice(canvas);
         }
@@ -125,10 +126,12 @@ public class God extends AreaEntity implements Interactor {
         Button LEFT = keyboard.get(Keyboard.LEFT);
         Button ENTER = keyboard.get(Keyboard.ENTER);
 
+        //If the player presses enter, the dialog array index is updated
         if(ENTER.isPressed()){
             ++skipCount;
         }
 
+        //Special behavior if the player must make a choice
         if (showChoices) {
             if (RIGHT.isPressed() || LEFT.isPressed()) {
                 if (selectedSlot == 0) {
@@ -149,6 +152,7 @@ public class God extends AreaEntity implements Interactor {
                     quit();
                 }
             }
+        //If he doesn't have to make a choice, he just quit after reading the dialogs
         } else if (ENTER.isPressed() && skipCount >= 2){
             currentAnimation = spellAnimation;
             quit();
@@ -168,8 +172,10 @@ public class God extends AreaEntity implements Interactor {
         currentAnimation.update(deltaTime);
         selectedAnimation.update(deltaTime);
 
+        //Gives Area-specific controls to the player
         controls();
 
+        //Leave the area only after God completed his animation
         if(currentAnimation.isCompleted()) {
             if (restartGame) {
                 player.restartGame();
@@ -180,23 +186,25 @@ public class God extends AreaEntity implements Interactor {
     }
 
     public void speak(ARPGPlayer player){
-        hasInteracted = true;
+        hasInteracted = true; //Prevent lopping interaction with the player
         this.player = player;
-        currentAnimation = speechAnimation;
+        currentAnimation = speechAnimation; //Update God's animation
         dialogs = new Dialog[2];
+        //Generate a dialog depending on why the player is here
         if(player.isGameOver()){
             dialogs[0] = new Dialog("Welcome in paradise brave hero. Sadly, you failed your quest.", "zelda/dialog", getOwnerArea());
             dialogs[1] = new Dialog("But there's still hope, do you want to try to save the kingdom again ?", "zelda/dialog", getOwnerArea());
-            showChoices = true;
+            showChoices = true; //If gameOver, the player must choose if he wants to respawn
         } else {
             dialogs[0] = new Dialog("Welcome in paradise brave hero. You succeeded in your quest.", "zelda/dialog", getOwnerArea());
             dialogs[1] = new Dialog("It's time for you to get some rest, you earned it. See you soon...", "zelda/dialog", getOwnerArea());
-            showChoices = false;
+            showChoices = false; //If not gameOver, it will just leave the game after the dialogs
         }
     }
 
     @Override
     public List<DiscreteCoordinates> getCurrentCells() {
+        //God takes two cells
         return new ArrayList<>(Arrays.asList(getCurrentMainCellCoordinates(), getCurrentMainCellCoordinates().jump(1,0)));
     }
 
@@ -212,6 +220,7 @@ public class God extends AreaEntity implements Interactor {
 
     @Override
     public boolean wantsViewInteraction() {
+        //If he already interacted, then don't allow any more
         return !hasInteracted;
     }
 
@@ -237,7 +246,6 @@ public class God extends AreaEntity implements Interactor {
 
     @Override
     public void acceptInteraction(AreaInteractionVisitor v) {
-        ((ARPGInteractionVisitor)v).interactWith(this);
     }
 
     private class GodHandler implements ARPGInteractionVisitor {

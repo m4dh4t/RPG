@@ -1,6 +1,5 @@
 package ch.epfl.cs107.play.game.arpg.actor;
 
-import ch.epfl.cs107.play.game.actor.ImageGraphics;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Animation;
 import ch.epfl.cs107.play.game.areagame.actor.AreaEntity;
@@ -9,7 +8,6 @@ import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
-import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
@@ -22,12 +20,14 @@ public class WhiteHalo extends AreaEntity {
 
     /**
      * WhiteHalo constructor
+     * This actor is just used whenever the player enter or left the Paradise Area.
      *
      * @param area        (Area): Owner area. Not null
      */
     public WhiteHalo(Area area, DiscreteCoordinates position) {
         super(area, Orientation.DOWN, position);
 
+        //We construct an animation where the alpha value slowly decrease to make it fade away
         Sprite[] haloSprites = new Sprite[20];
         for(int i = 0; i < haloSprites.length; i++){
             haloSprites[i] = new RPGSprite("whiteHalo", 100, 100, this, null, new Vector(-10f, -10f), 1-(i*0.05f), 9999);

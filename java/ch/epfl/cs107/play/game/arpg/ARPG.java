@@ -31,15 +31,18 @@ public class ARPG extends RPG {
 
     @Override
     public void update(float deltaTime) {
+        //If the player is dead or won the game, teleport him to Paradise
         if((player.isGameOver() || player.hasWon()) && !(currentArea instanceof Paradise)){
             player.leaveArea();
             currentArea = setCurrentArea("Paradise", true);
             player.enterArea(currentArea, new DiscreteCoordinates(11, 7));
+        //If the player is in paradise and want to continue, make him respawn
         } else if (!player.isGameOver() && !player.hasWon() && currentArea instanceof Paradise){
             player.leaveArea();
             currentArea = setCurrentArea("zelda/Farm", false);
             player.enterArea(currentArea, startingPosition);
             currentArea.registerActor(new WhiteHalo(currentArea, startingPosition));
+        //If he wants to quit, close the window
         } else if (player.getQuitGame()){
             getWindow().setCloseRequested();
         }

@@ -133,6 +133,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
      * @param button (Button): Checks if the button is down.
      */
     private void moveOrientate(Orientation orientation, Button button) {
+        //If the player is dead or has won, it will go to paradise
+        //he should not be allowed to move in this area
         if(!isWeak() && !hasWon()) {
             Keyboard keyboard = getOwnerArea().getKeyboard();
             Button orientationKey = keyboard.get(Orientation.getCode(getOrientation()));
@@ -166,10 +168,16 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         return invincible;
     }
 
+    /**
+     * @return (Boolean): If the player is game over
+     */
     public boolean isGameOver() {
         return gameOver;
     }
 
+    /**
+     * Respawn the player with his original animation and hp
+     */
     public void restartGame() {
         orientate(Orientation.DOWN);
         currentAnimation = idleAnimations[getOrientation().ordinal()];
@@ -177,14 +185,23 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         strengthen(MAX_HP);
     }
 
+    /**
+     * Make the player quit the game
+     */
     public void quitGame() {
         quitGame = true;
     }
 
+    /**
+     * @return (Boolean): If the player wants to quit the game
+     */
     public boolean getQuitGame() {
         return quitGame;
     }
 
+    /**
+     * @return (Boolean): If the player has won
+     */
     public boolean hasWon() {
         return win;
     }
@@ -358,12 +375,16 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
                 hp = 0;
             }
 
-            if(isWeak()){
+            if(isWeak()){ //Play the death animation
                 currentAnimation = deathAnimation;
             }
         }
     }
 
+    /**
+     * This function is used when the player enter the Paradise
+     * area to make him move forward automatically until he reaches god
+     */
     public void paradiseMove(){
         if (!getCurrentMainCellCoordinates().equals(new DiscreteCoordinates(11, 9))) {
             move(30);
@@ -385,7 +406,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
 
     @Override
     public void update(float deltaTime) {
-        if (isInvincible() && !isWeak()) {
+        if (isInvincible() && !isWeak()) { //If the player is dead, it should not blink when entering Paradise Area
             invincibleTimeLeft -= deltaTime;
             blinkTimeLeft -= deltaTime;
 
@@ -431,6 +452,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         moveOrientate(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
         moveOrientate(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
 
+        //If the player is weak, the game is over
         if(isWeak()){
             currentAnimation.update(deltaTime);
             if(currentAnimation.isCompleted()){
@@ -439,6 +461,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
             }
         }
 
+        //If the game is over the player should walk to God
         if(gameOver){
             paradiseMove();
             if(currentAnimation == deathAnimation && getOwnerArea() instanceof Paradise) {
@@ -447,6 +470,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
             }
         }
 
+        //If king is saved the player should walk to God
         if(savedKing){
             if(getOwnerArea().getKeyboard().get(Keyboard.ENTER).isPressed()){
                 win = true;
@@ -455,7 +479,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
         }
 
         inventoryHandler();
-        actionTimer += deltaTime;
+        actionTimer += deltaTime; //Cooldown used mainly for the bow
 
         if (isDisplacementOccurs()) {
             if (canFly) {
@@ -483,6 +507,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
                 }
             }
 
+            //If the player is shooting an arrow, he must wait until the bow animation has ended
             if(shootArrow && currentAnimation.isCompleted()){
                 if (possess(ARPGItem.ARROW)) {
                     if (ARPGItem.ARROW.use(getOwnerArea(), getOrientation(), getCurrentMainCellCoordinates())) {
@@ -511,7 +536,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
     private class ARPGPlayerHandler implements ARPGInteractionVisitor {
         @Override
         public void interactWith(Door door) {
-            if(door instanceof CastleDoor){
+            //Two types of Doors
+            if(door instanceof CastleDoor){ //CASTLE DOOR
                 if(door.isOpen()){
                     setIsPassingADoor(door);
                     ((CastleDoor) door).close();
@@ -520,7 +546,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder, FlyableEntit
                         ((CastleDoor) door).open();
                     }
                 }
-            } else {
+            } else { //SIMPLE DOOR
                 setIsPassingADoor(door);
             }
         }
