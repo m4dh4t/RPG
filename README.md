@@ -51,12 +51,12 @@ In RoadCastle.java, you have additional controls :
 
 ### _AREAS_
 
-###### Farm
+#### Farm
 	
 	You spawn there. Nothing very interesting except 2 log monsters
 	that you can hit with your sword or your bomb.
 
-###### Village
+#### Village
 
 	- You can find a shop there. Refer to the controls to know how to
 	talk to the shopper and leave.
@@ -71,7 +71,7 @@ In RoadCastle.java, you have additional controls :
 	- To find money to spend in the shop, you can either kill log
 	monsters or find coins in the grass in Road.
 
-###### Road
+#### Road
 
 	    - There is two log monsters that you can fight.
 	    - There is a zone of grass that you can cut with your sword or
@@ -82,12 +82,12 @@ In RoadCastle.java, you have additional controls :
 	need arrows. This will summon a bridge and you will be able to cross
 	the river and enter in the next area : RoadTemple.
 
-###### RoadTemple
+#### RoadTemple
     
 	    - Beware of the log monster !
 	    - You can enter the temple.
 
-###### Temple
+#### Temple
     
 	    - There is a chest that you can open only if you have a chest key.
 	You can find a chest key in the shop. The chest gives you the items
@@ -95,7 +95,7 @@ In RoadCastle.java, you have additional controls :
 	items will be given to you and the remaining ones will stay in the
 	chest. You can always come back and take them if you are lighter).
 
-###### RoadCastle
+#### RoadCastle
     
 	    - The great boss is here ! The dark lord is only vulnerable to
 	magic so you need to get a staff if you want to defeat him.
@@ -106,11 +106,11 @@ In RoadCastle.java, you have additional controls :
 	    - The dark lord spawns a castle key when he dies, which you can
 	use to open the castle door and enter the castle.
 
-###### Castle
+#### Castle
     
 	    - Save the king and finish the game !
 
-###### Paradise
+#### Paradise
     
 	    - If you die or if you save the king you will find yourself in
 	paradise ! You can either restart the game or quit the game if
